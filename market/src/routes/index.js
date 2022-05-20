@@ -6,8 +6,12 @@ const appId = process.env.REACT_APP_MORALIS_APPLICATION_ID;
 
 /* GET home page. */
 
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' , serverUrl: serverUrl, appId: appId});
+router.get('/', function(req, res) {
+  res.render('index', {serverUrl: serverUrl, appId: appId});
+});
+
+router.get('/profile', function(req, res,) {
+  res.render('profile', {serverUrl: serverUrl, appId: appId});
 });
 
 module.exports = router;

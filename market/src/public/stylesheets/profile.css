@@ -87,6 +87,10 @@ body{
     font-family: 'Poppins';
 }
 
+.card.nft-card {
+    border-top-left-radius:30px 30px;
+    border-top-right-radius:30px 30px;
+}
 
 .nft-card {
     margin-bottom: 40px;
@@ -98,26 +102,45 @@ body{
 
 
 .nft-card .card-nft-body .nft-img-wrapper {
-    height: 200px;
+    height: 100%;
 }
 
 .nft-card .card-nft-body .nft-img-wrapper .img-nft {
     object-fit: cover;
-    height: 200px;
-    width: 100%
+    height: 300px;
+    width: 100%;
+    border-radius: 30px;
 }
 
-.nft-card .card-nft-body .row-nft{
+.nft-card .card-nft-body .row-nft {
     margin-left: -20px;
     margin-right: -20px;
     text-align: center;
 }
 
-.nft-card .card-nft-body .row-nft .nft-buttons{
+.nft-card .card-nft-body .row-nft .nft-buttons {
     border: 1px solid #ccd4d4;
     padding: 5px;
 }
 
-.nft-card .card-nft-body .row-nft .nft-buttons h6{
+.nft-card .card-nft-body .row-nft .nft-buttons h6 {
     margin-bottom: 0;   
+}
+
+.nft-card .card-nft-body .row-nft .nft-buttons a {
+    color: #5b6464;
+    font-size: 20px;
+}
+
+.nft-card .card-nft-body .row-nft .nft-buttons a:hover {
+    color: #59a796;   
+}
+
+.nft-card .card-nft-body .row-nft .nft-buttons i {
+    font-size: 20px;   
+}
+
+.nft-card .card-nft-body .row-nft .nft-buttons img {
+    height: 20px;
+    width: auto;   
 }

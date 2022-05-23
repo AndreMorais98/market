@@ -14,4 +14,10 @@ router.get('/profile', function(req, res,) {
   res.render('profile', {serverUrl: serverUrl, appId: appId});
 });
 
+router.get('/nft/:id', function(req, res,) {
+  id = req.params.id
+  res.render('nft', {serverUrl: serverUrl, appId: appId, id: id});
+});
+
+
 module.exports = router;

@@ -1,0 +1,39 @@
+.main-body {
+    margin-bottom: 50px;
+}
+
+.img-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.img-wrapper .nft-img {
+    max-height: 500px;
+    height: 100%;
+    width: auto;
+    border-radius: 30px;
+    box-shadow: rgb(4 17 29 / 50%) 0px 0px 8px 0px;
+}
+
+.card-body-composition,
+.card.nft-info,
+.card.nft-size,
+.card.nft-description {
+    display: flex;
+    border-radius: 15px;
+    
+}
+
+.card-body-description {
+    margin-bottom: 20px;
+}
+
+.card-title {
+    
+}
+
+.nft-history h2 {
+    font-family: 'Poppins';
+    font-weight: 600;
+}

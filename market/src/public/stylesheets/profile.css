@@ -65,8 +65,25 @@ body{
     height: 200px;
     width: 200px;
     border-radius: 50%;
-    border: 1px solid #5b6464;
+    border: 1px solid #d7e0e0;
     object-fit: cover;
+}
+
+.username {
+    font-family: 'Poppins';
+    font-weight: 500;
+}
+
+.links .username-div {
+    display: flex;
+    justify-content: center; 
+}
+
+.img-verified {
+    margin-left: 5px;
+    margin-top: 5px;
+    width: 20px;
+    height: 20px;
 }
 
 .links a {
@@ -113,8 +130,8 @@ body{
 }
 
 .nft-card .card-nft-body .row-nft {
-    margin-left: -20px;
-    margin-right: -20px;
+    margin-left: -16px;
+    margin-right: -16px;
     text-align: center;
 }
 
@@ -141,6 +158,6 @@ body{
 }
 
 .nft-card .card-nft-body .row-nft .nft-buttons img {
-    height: 20px;
+    height: 17px;
     width: auto;   
 }

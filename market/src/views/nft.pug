@@ -5,82 +5,126 @@ block content
   a(name="home")
   div(class="container")
     div(class="main-body")
+      h1 Rolex Datejust (title)
       div(class="row gutters-sm")
         div(class="col-6")
           div(class="row")
             div(class="col-12")
               div(class="img-wrapper")
-                img(class="nft-img" src='https://upload.wikimedia.org/wikipedia/commons/0/0f/Eiffel_Tower_Vertical.JPG' alt='Admin')
+                img(class="nft-img" src='https://content.rolex.com/dam/new-watches-2020/homepage/roller/all-watches/watches_0000_m326238-0009-sky-dweller_portrait.jpg?imwidth=420' alt='Admin')
             div(class="col-12")
               div(class="accordion-item")
                   h2(class="accordion-header" id="panelsStayOpen-headingFour")
-                    button(class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFour" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree")
+                    button(class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFour" aria-expanded="true" aria-controls="panelsStayOpen-collapseThree")
                       Accordion Buy
-
-                  div(id="panelsStayOpen-collapseFour" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingFour")
-                    div(class="accordion-body")
-                      strong This is the third item's accordion body. It is hidden by default, until the collapse plugin adds the appro
+                  div(id="panelsStayOpen-collapseFour" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-headingFour")
+                    div(class="accordion-body accordion-buy")
+                      div(class="row")
+                        div(class="col-6 align-self-center")
+                          h6 Current price: 
+                          span(class="price")
+                            img(src="../images/polygon-matic-logo.png")
+                            |  450
+                        div(class="col-6 button-col")
+                          button(type="button" class="btn btn-primary") Buy
                 
         div(class="col-md-6 just-content-center")
           div(class="row")
             div(class="col-12" style="margin-bottom:30px")
               div(class="card nft-description")
-                h5 Created by ?????????
-                h2 id 
-                h5 Owned by ?????
-                h2 Description
+                h5(class="created-by") Created by 
+                  a(class="created-by-link" href="/profile") Rolex
+                h2(class="description-title") About
+                h4 small description
+                p Website: 
+                  a(href="https://www.rolex.com/") www.rolex.com
+                p Token ID: #{id}
+                h5(class="created-by") Owned by: 
+                  a(class="created-by-link" href="/profile") André Morais
 
             div(class="col-12")
               div(class="accordion" id="accordionPanelsStayOpenExample")
                 div(class="accordion-item")
                   h2(class="accordion-header" id="panelsStayOpen-headingOne")
                     button(class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne")
-                      Accordion Item #1
+                      Accordion Info
                   div(id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-headingOne")
                     div(class="accordion-body")
-                      strong This is the first item's accordion body. It is shown by default, until the collapse pl
-
+                      strong Relógio cronógrafo de aço inxodável 
+                      p Mostrador redondo, movimento a quartzo, pulseira ajustável em corrente, fecho de encaixe, ponteiros e coroa de rosca. Esta peça possui garantia padrão de dois anos da marca.
+                      ul
+                        li Brand ID: 1791718
+                        li Made In: Switzerland
+                        li Color: Black and Gold
                 div(class="accordion-item")
                   h2(class="accordion-header" id="panelsStayOpen-headingTwo")
                     button(class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo")
-                      Accordion Item #2
+                      Accordion Composition
                   div(id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo")
                     div(class="accordion-body")
-                      strong This is the second item's accordion body. It is hidden by default, until the collapse plugin add
+                      ul
+                        li Vidro: 100%
+                        li Aço Inoxidável: 100%
 
                 div(class="accordion-item")
                   h2(class="accordion-header" id="panelsStayOpen-headingThree")
                     button(class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree")
-                      Accordion Item #3
+                      Accordion Size
 
                   div(id="panelsStayOpen-collapseThree" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingThree")
                     div(class="accordion-body")
-                      strong This is the third item's accordion body. It is hidden by default, until the collapse plugin adds the appro
+                      ul
+                        li Circunferência: 21 cm
+                        li Diâmetro: 4,6 cm
+                        li Espessura:	1,2 cm
+                        li Largura:	2,8 cm
 
     div(class="nft-history")
       h2 NFT History
       table.table
         thead
           tr
-            th(scope='col') #
-            th(scope='col') First
-            th(scope='col') Last
-            th(scope='col') Handle
+            th(scope='col') EVENT
+            th(scope='col') PRICE
+            th(scope='col') FROM
+            th(scope='col') TO
+            th(scope='col') VERIFIED BY
+            th(scope='col') DATE
         tbody
           tr
-            th(scope='row') 1
-            td Mark
+            th
+              i(class="fas fa-tag") List
+            td 
+              img(src="../images/polygon-matic-logo.png")
+              |  50
+            td 
+              a(href="/profile") Rolex
+            td 
+            td 
+            td 27-05-2022
+          tr
+            th 
+              i(class="fas fa-handshake") Transfer
+            td 
+              img(src="../images/polygon-matic-logo.png")
+              |  200
+            td 
+              a(href="/profile") Rolex
             td Otto
-            td @mdo
+            td 
+              a(href="/profile") Rolex
+            td 27-05-2022
           tr
-            th(scope='row') 2
-            td Jacob
-            td Thornton
-            td @fat
-          tr
-            th(scope='row') 3
-            td(colspan='2') Larry the Bird
-            td @twitter
+            th 
+              i(class="fas fa-handshake") Transfer
+            td 
+              img(src="../images/polygon-matic-logo.png")
+              |  400
+            td Otto
+            td Larry the Bird
+            td 
+              a(href="/profile") Rolex
+            td 31-05-2022
 
 
   div(class="footer")

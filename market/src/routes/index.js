@@ -10,20 +10,25 @@ router.get('/', function(req, res) {
   res.render('index', {serverUrl: serverUrl, appId: appId});
 });
 
-router.get('/profile', function(req, res,) {
+router.get('/profile', function(req, res) {
   res.render('profile', {serverUrl: serverUrl, appId: appId});
 });
 
-router.get('/create', function(req, res,) {
+router.get('/edit', function(req, res) {
+  res.render('edit', {serverUrl: serverUrl, appId: appId});
+});
+
+
+router.get('/create', function(req, res) {
   res.render('create', {serverUrl: serverUrl, appId: appId});
 });
 
-router.get('/market', function(req, res,) {
+router.get('/market', function(req, res) {
   res.render('market', {serverUrl: serverUrl, appId: appId});
 });
 
 
-router.get('/nft/:id', function(req, res,) {
+router.get('/nft/:id', function(req, res) {
   id = req.params.id
   res.render('nft', {serverUrl: serverUrl, appId: appId, id: id});
 });

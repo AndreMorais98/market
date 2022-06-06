@@ -51,9 +51,16 @@ body{
 .shadow-none {
     box-shadow: none!important;
 }
+ 
+.card-body .edit-link {
+    text-decoration: none;
+}
 
-.social-media-card {
-    margin: auto;
+.card-body .icon-edit {
+    display: flex;
+    position: absolute;
+    right: 30px;
+    color: black;
 }
 
 .list-group .text-secondary:hover {
@@ -158,6 +165,6 @@ body{
 }
 
 .nft-card .card-nft-body .row-nft .nft-buttons img {
-    height: 17px;
+    height: 12px;
     width: auto;   
 }

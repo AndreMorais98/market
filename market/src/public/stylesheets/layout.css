@@ -1,5 +1,11 @@
+html{
+  background-color: white;
+}
 body {
-  color: #59a796;
+  height: 100vh;
+}
+.main-container{
+  min-height: calc(100% - 140px - 72px);
 }
 
 .header-wrap {

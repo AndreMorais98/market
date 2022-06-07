@@ -11,10 +11,12 @@ html
     script(src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous")
     script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous")
   body
+    a(name="home")
     div(class="header-wrap")
       div(class="img-wrap")
-        img(src="../images/logo.png" class="img-logo")
-
+        a(href="/")
+          img(src="../images/logo.png" class="img-logo")
+          
       div(class="header-right")
         a(href="/market")
           i(class="fa fa-shopping-cart") Market
@@ -24,4 +26,23 @@ html
           i(class="fa fa-user") Profile
         button#btn-login(class="button-login")  
           i(class="fa fa-wallet")
-    block content
+    div(class="main-container")
+      block content
+
+    div(class="footer")
+      div(class="container footer-container")
+        div(class="row footer-row")
+          div(class="col-md-12 col-lg-12")
+            a(href="https://www.facebook.com/andre.morais1998/")
+              i(class="fa fa-facebook-official fa-7x w3-hover-opacity")
+            a(href="https://github.com/AndreMorais98")
+              i(class="fa fa-github fa-7x w3-hover-opacity")
+            a(href="https://www.linkedin.com/in/andremorais1998/")
+              i(class="fa fa-linkedin fa-7x w3-hover-opacity")
+          div(class="col-md-12 col-lg-1 line-div")
+        div(class="row developer-line")
+          div(class="col-12")
+            p © 2022 - Developed by André Morais
+        div(class="button-position")
+          a(href="#home")
+            i(class="fa fa-arrow-up fa-7x")

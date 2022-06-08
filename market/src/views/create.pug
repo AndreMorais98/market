@@ -6,7 +6,7 @@ block content
       div(class="main-form")
         h1 Create your NFT
         div(class='nft-form')
-          form
+          form(action="/" method="POST" target="blank")
             div(class="form-group")
               label(for="metadataName") NFT Name*
               input(id='metadataName' type='text' name='nome' class="form-control")
@@ -94,8 +94,18 @@ block content
             div(class="form-group")
               label(for="metadataDescription") Product Composition*
               textarea(id='metadataDescription' class="form-control" name="metadataDescription" placeholder="Composition about your product (Ex: 100% Cottom)")
-              
-            button(id='upload' type='submit' class='btn btn-primary btn-upload') Upload
+            
+            h3 Upload Photo:
+            div(class="preview")
+              img(id="file-ip-1-preview")
+              label(for="file-ip-1") Upload Image
+              input(type="file" id="file-ip-1" accept="image/*" onchange="showPreview(event);")
+
+
+            h3 Now you just have to click on the magic button:
+            div(class="btn-upload")
+              button(type='submit' class='btn btn-primary') Create
     
     script.
     script(src="/javascripts/select.js")
+    script(src="/javascripts/up.js")

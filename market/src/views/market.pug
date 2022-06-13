@@ -1,0 +1,18 @@
+extends layout
+
+block content
+
+    div(class="market-container")
+      div(class="container")
+        form(action="")
+          div(class="search-bar")
+            input(type="text" placeholder="Search.." name="search")
+            button(type="submit" class="btn")
+              i(class="fa fa-search")
+            
+            a(class="btn btn-primary" data-bs-toggle="collapse" href="#collapsedFilters" role="button" aria-expanded="false" aria-controls="collapsedFilters")
+              span Filters
+              i(class="idd-icon idd-icon-sliders" aria-hidden="true")
+            
+          div(id="collapsedFilters" class="collapse filters-market")
+              h1 22

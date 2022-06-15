@@ -15,4 +15,41 @@ block content
               i(class="idd-icon idd-icon-sliders" aria-hidden="true")
             
           div(id="collapsedFilters" class="collapse filters-market")
-              h1 22
+            div(class="filter-info")
+              div(class="row")
+                div(class="col-6")
+                  div(class="form-group")
+                    label(for="exampleFormControlSelect1") Type of Product:
+                    select(class="form-control" id="exampleFormControlSelect1" name="type_cloth" data-select)
+                      option Watch
+                      option Jewellery
+                      option Clothes
+                      option Shoes
+                      option Bags
+                div(class="col-6")
+                  div(class="form-group d-none select-clothes" data-show-clothes data-show)
+                    label(for="exampleFormControlSelect2") Down or Upper Body?
+                    select(class="form-control" id="exampleFormControlSelect2" name="type_cloth"  data-select-clothes disabled)
+                      option Shirt/Coat
+                      option Trousers/Shorts
+
+              div(class="row")
+                div(class="col-6")
+                  div(class="form-group range-form-group")
+                    h5 Price Range (MATIC):
+                    div(style="display: flex")
+                      div(class="range-group")
+                        label(for="maxRange") Max
+                        input(id='maxRange' type='text' name='max' class="form-control" style="margin-bottom:10px")
+                      div(class="range-group")
+                        label(for="minRange") Min
+                        input(id='minRange' type='text' name='min' class="form-control")
+                
+                div(class="col-6")
+                  div(class="form-group")
+                    label(for="exampleFormControlSelect1" style="margin-bottom: 20px") Sorted by:
+                    select(class="form-control" id="exampleFormControlSelect1" name="order" data-select)
+                      option Price low to high
+                      option Price high to low
+    script.
+    script(src="/javascripts/select.js")

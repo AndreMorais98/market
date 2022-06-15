@@ -69,3 +69,7 @@ i::before {
 .header-right .button-login:hover {
   color: #59a796;
 }
+
+.header-right span {
+  font-family: 'Poppins';
+}

@@ -75,6 +75,40 @@
 }
 
 .market-container .filters-market {
-    background: #000;
-    height: 200px;
+    background: rgb(89,167,150, 0.3);
+    margin: 20px 30px;    
+}
+
+.market-container .filters-market .filter-info {
+    padding: 20px;
+}
+
+.market-container .filters-market .filter-info label{
+    font-family: 'Poppins';
+}
+
+.market-container .filters-market .filter-info option{
+    font-family: 'Poppins';
+}
+
+.market-container .filters-market .filter-info .form-group{
+    font-family: 'Poppins';
+}
+
+.market-container .filters-market .filter-info .range-form-group{
+    width: 300px;
+}
+
+.market-container .filters-market .filter-info .range-group{
+    margin-right: 20px;
+}
+
+.market-container .filters-market .filter-info .range-group input{
+    width: 100%;
+}
+
+.market-container .filters-market .filter-info .range-form-group H5{
+    font-family: 'Poppins';
+    font-size: 15px;
+    font-weight: 400;
 }

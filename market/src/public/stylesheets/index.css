@@ -45,15 +45,22 @@
 }
 
 .front-page .front-text .btn-claim {
+  background-color: white;
+  border-color: white;
+}
+
+.front-page .front-text .btn-claim  a{
   font-family: 'Poppins';
   color: #5b6464;
   font-size: 30px;
   font-weight: 400;
   background-color: white;
   border-color: white;
+  text-decoration: none;
 }
 
-.front-page .front-text .btn-claim:hover {
+
+.front-page .front-text .btn-claim a:hover {
   color: #59a796;
 }
 

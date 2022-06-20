@@ -1,5 +1,6 @@
 .market-container {
     margin-top: 100px;
+    margin-bottom: 40px;
 }
 
 
@@ -84,6 +85,7 @@
 }
 
 .market-container .filters-market .filter-info label{
+    font-weight: 600;
     font-family: 'Poppins';
 }
 
@@ -107,8 +109,8 @@
     width: 100%;
 }
 
-.market-container .filters-market .filter-info .range-form-group H5{
+.market-container .filters-market .filter-info .range-form-group h5{
     font-family: 'Poppins';
     font-size: 15px;
-    font-weight: 400;
+    font-weight: 600;
 }

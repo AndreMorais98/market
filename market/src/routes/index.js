@@ -18,15 +18,18 @@ router.get('/edit', function(req, res) {
   res.render('edit', {serverUrl: serverUrl, appId: appId});
 });
 
-
 router.get('/create', function(req, res) {
   res.render('create', {serverUrl: serverUrl, appId: appId});
 });
 
 router.get('/market', function(req, res) {
+  var search = req.query.search;
+  var type_cloth = req.query.type_cloth;
+  var max = req.query.max;
+  var min = req.query.min;
+  var order = req.query.order;
   res.render('market', {serverUrl: serverUrl, appId: appId});
 });
-
 
 router.get('/nft/:id', function(req, res) {
   id = req.params.id

@@ -18,8 +18,12 @@ router.get('/edit', function(req, res) {
   res.render('edit', {serverUrl: serverUrl, appId: appId});
 });
 
-router.get('/create', function(req, res) {
-  res.render('create', {serverUrl: serverUrl, appId: appId});
+router.get('/create/step1', function(req, res) {
+  res.render('step1', {serverUrl: serverUrl, appId: appId});
+});
+
+router.get('/create/step2', function(req, res) {
+  res.render('step2', {serverUrl: serverUrl, appId: appId});
 });
 
 router.get('/market', function(req, res) {
@@ -38,3 +42,4 @@ router.get('/nft/:id', function(req, res) {
 
 
 module.exports = router;
+ 

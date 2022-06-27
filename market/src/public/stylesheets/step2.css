@@ -1,0 +1,50 @@
+.upload-form h3 {
+    margin-top: 50px;
+    font-weight: 500;
+    font-family: 'Poppins';
+    text-align: left;
+    margin-bottom: 15px;
+}
+
+.upload-form p {
+    font-family: 'Poppins';
+}
+
+.upload-form label {
+    margin-left: 0;
+}
+  
+.form-control:focus {
+    border-color: #59a796!important;
+    box-shadow: 0 0 0 0.25rem rgba(112, 184, 168, 0.25)!important;
+}
+
+.upload-form .btn-primary {
+    background-color: #59a796;
+    border-color: #59a796;
+}
+
+.upload-form .btn-primary:hover{
+    background-color: #59a796;
+    border-color: #59a796;
+}
+
+.upload-form .btn-primary:not(:disabled):not(.disabled):active:focus {
+    box-shadow: 0 0 0 0.2rem rgb(89 167 150 / 50%)!important;
+}
+
+.upload-form .btn-primary:not(:disabled):not(.disabled):active {
+    background-color: #3f5c56!important;
+    border-color: #3f5c56!important;
+}
+
+.upload-form .btn-upload {
+    margin-bottom: 50px;
+    font-family: 'Poppins';
+}
+
+.upload-form .btn-upload button{
+    font-family: 'Poppins';
+    width:150px;
+    height:45px;
+}

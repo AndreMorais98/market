@@ -1,0 +1,44 @@
+extends layout
+
+block content
+
+    div(class="container"  )
+      div(class="main-form")
+        h1 Create your NFT collection
+        div(class='nft-form')
+          form(action="/" method="POST" target="blank")
+            div(class="form-group")
+              label(for="metadataName") Collection Name:
+              input(id='metadataName' type='text' name='nome' class="form-control")
+
+            div(class="form-group")
+              label(for="metadataToken") Abreviation Token:
+              input(id='metadataToken' type='text' name='token' class="form-control")
+            
+            div(class="form-group")
+              label(for="metadataTotal") Number of elements of your collection:
+              input(id='metadataTotal' type='number' name='number' class="form-control")
+
+            div(class="form-group")
+              label(for="exampleFormControlSelect1") Type of Product:
+              select(class="form-control" id="exampleFormControlSelect1" data-select)
+                option Watch
+                option Jewellery
+                option Clothes
+                option Shoes
+                option Bags
+            
+            div(class="form-group d-none select-clothes" data-show-clothes data-show)
+              label(for="exampleFormControlSelect2") Down or Upper Body?:
+              select(class="form-control" id="exampleFormControlSelect2" data-select-clothes disabled)
+                option Shirt/Coat
+                option Trousers/Shorts
+            
+            div(class="btn-upload")
+              button(type='submit' class='btn btn-primary') Generate CSV
+
+
+
+    script.
+    script(src="/javascripts/select.js")
+    script(src="/javascripts/up.js")

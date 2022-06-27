@@ -4,19 +4,26 @@ block content
 
     div(class="container"  )
       div(class="upload-form")
-        form(action="/" method="POST" target="blank")
-          h3 Upload Images
-          p The images must be submitted under the same name that was given to them in your csv file.
-          div(class="preview")
-            label(for="file-ip-1") Upload Images
-            input(type="file" id="file-ip-1" accept="image/*") 
+        h3 Upload Images
+        p The images must be submitted under the same name that was given to them in your csv file.
+        form(action="")
+          div
+            label(for="upload")
+              input(type="file" id="upload" multiple) 
+              | Upload Files
+          div(class="files")
+            h2(style="margin-top: 0") Files Selected
+            ul
           
           h3 Upload your CSV file
           p Before submit, verify if your information is correct!
           div(class="preview")
-            label(for="file-ip-1") Upload CSV
-            input(type="file" id="file-ip-1" accept="image/*")
+            label(for="file-ip-1" style="padding:0") Upload CSV
+            input(type="file" id="file-ip-1" accept="*.csv")
 
           h3(class="mb-2") The beginning of your collection
           div(class="btn-upload")
-            button(type='submit' class='btn btn-primary') Create
+            input(type="submit" value="Submit" name="create" id="submit")
+
+    script.
+    script(src="/javascripts/up.js")

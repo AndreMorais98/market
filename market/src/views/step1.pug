@@ -6,22 +6,22 @@ block content
       div(class="main-form")
         h1 Create your NFT collection
         div(class='nft-form')
-          form(action="/" method="POST" target="blank")
+          form(action="/step1" method="POST")
             div(class="form-group")
               label(for="metadataName") Collection Name:
-              input(id='metadataName' type='text' name='nome' class="form-control")
+              input(id='metadataName' type='text' name='name' required class="form-control")
 
             div(class="form-group")
               label(for="metadataToken") Abreviation Token:
-              input(id='metadataToken' type='text' name='token' class="form-control")
+              input(id='metadataToken' type='text' name='token' required class="form-control")
             
             div(class="form-group")
               label(for="metadataTotal") Number of elements of your collection:
-              input(id='metadataTotal' type='number' name='number' class="form-control")
+              input(id='metadataTotal' type='number' name='number' required class="form-control")
 
             div(class="form-group")
               label(for="exampleFormControlSelect1") Type of Product:
-              select(class="form-control" id="exampleFormControlSelect1" data-select)
+              select(class="form-control" id="exampleFormControlSelect1" name="product" required data-select)
                 option Watch
                 option Jewellery
                 option Clothes
@@ -30,7 +30,7 @@ block content
             
             div(class="form-group d-none select-clothes" data-show-clothes data-show)
               label(for="exampleFormControlSelect2") Down or Upper Body?:
-              select(class="form-control" id="exampleFormControlSelect2" data-select-clothes disabled)
+              select(class="form-control" id="exampleFormControlSelect2" name="clothes" required data-select-clothes disabled)
                 option Shirt/Coat
                 option Trousers/Shorts
             
@@ -41,4 +41,3 @@ block content
 
     script.
     script(src="/javascripts/select.js")
-    script(src="/javascripts/up.js")

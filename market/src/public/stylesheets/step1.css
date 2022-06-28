@@ -44,7 +44,12 @@
 .main-form .nft-form .btn-upload button{
     font-family: 'Poppins';
     width:150px;
-    height:45px;
+    height: 52px;
+    border-radius: 10px;
+}
+
+.main-form .nft-form .btn-upload button:hover{
+    background-color:#3f5c56;
 }
 
 .main-form .preview {
@@ -75,14 +80,14 @@
 .preview label {
     font-family: 'Poppins';
     width:150px;
-    height:45px;
+    height:52px;
     margin-left: 37%;
     line-height:50px;
     text-align:center;
     background:#59a796;
     color:#fff;
     font-size:15px;
-    border-radius:5px;
+    border-radius:10px;
     cursor:pointer;
 }
   

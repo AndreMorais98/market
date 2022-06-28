@@ -51,7 +51,7 @@
 .upload-form .btn-upload button{
     font-family: 'Poppins';
     width:150px;
-    height:45px;
+    height:52px;
 }
 
 
@@ -81,6 +81,17 @@
     transition: 0.2s all;
 }
 
+.upload-form label[for="file-ip-1"]:hover {
+    background: #3f5c56;
+    transition: 0.2s all;
+}
+
+.upload-form label[for="upload"]:hover {
+    background: #3f5c56;
+    transition: 0.2s all;
+}
+
+
 .upload-form label {
     color: #fff;
 	position: relative;
@@ -100,7 +111,7 @@
 }
 
 .upload-form div.files {
-    background: #59a796;
+    background: #71a096;
     padding: 1rem;
     margin:1rem 0;
     border-radius:10px;

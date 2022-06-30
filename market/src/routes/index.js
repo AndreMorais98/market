@@ -1,7 +1,6 @@
 var express = require('express');
 var router = express.Router();
-
-var json2csv = require('json2csv');
+var csvwriter = require('csv-writer');
 const fs = require('fs');
 
 var parseUrl = require('body-parser')
@@ -9,6 +8,7 @@ let encodeUrl = parseUrl.urlencoded({ extended: false })
 
 const serverUrl = process.env.REACT_APP_MORALIS_SERVER_URL;
 const appId = process.env.REACT_APP_MORALIS_APPLICATION_ID;
+
 
 /* GET home page. */
 
@@ -31,37 +31,76 @@ router.get('/create/step1', function(req, res) {
 router.post('/step1' ,function(req, res) {
   var name = req.body.name
   var token = req.body.token
-  var number = req.body.number
   var product = req.body.product
   var clothes = req.body.clothes
 
-  var fields = [name, token, number, product, 'description', 'brand_id', 'product_id', 'made_in', 'color', 'composition'];
-  var fieldNames = ['Name', 'Abreviation Token', 'Number', 'Product', 'Descrição', 'Brand ID', 'Product ID', 'Made In', 'Color', 'Composition'];
+  
+  const headers = [
+    {id: 'title', title: 'Title'},
+    {id: 'description', title: 'Description'},
+    {id: 'image', title: 'Image Name'},
+    {id: 'brand_id', title: 'Brand ID'},
+    {id: 'product_id', title: 'Product ID'},
+    {id: 'made_in', title: 'Made In'},
+    {id: 'color', title: 'Color'},
+    {id: 'composition', title: 'Composition'},
+  ]
+
+  const records = []
   
   if (product == "Watch"){
-    fields.push('circumference', 'diameter', 'height', 'width');
-    fieldNames.push('Circumference', 'Diameter', 'Height', 'Width');
+    headers.push(
+      {id: 'circumference', title: 'Circumference'},
+      {id: 'diameter', title: 'Diameter'},
+      {id: 'height', title: 'Height'},
+      {id: 'width', title: 'Width'},
+    )
   }
   else if (product == "Jewellery"){
-    fields.push('circumference', 'length', 'width');
-    fieldNames.push('Circumference', 'Length', 'Width');
+    headers.push(
+      {id: 'circumference', title: 'Circumference'},
+      {id: 'length', title: 'Length'},
+      {id: 'width', title: 'Width'},
+    )
   }
   else if (product == "Clothes"){
-    fields.push(clothes, 'size');
-    fieldNames.push('Clothes', 'Size');
+    if (clothes == "Shirt/Coat") {
+      headers.push(
+        {id: 'size', title: 'Size'},
+      )
+    }
+    else if(clothes == "Trousers/Shorts") {
+      headers.push(
+        {id: 'size', title: 'Size'},
+      )
+    }
+    product = clothes
   }
   else if (product == "Shoes"){
-    fields.push('size');
-    fieldNames.push('Size');
+    headers.push(
+      {id: 'size', title: 'Size'},
+    )
   }
   else if (product == "Bags"){
-    fields.push('depth', 'handle', 'height', 'width');
-    fieldNames.push('Depth', 'Handle', 'Height', 'Width');
+    headers.push(
+      {id: 'depth', title: 'Depth'},
+      {id: 'handle', title: 'Handle'},
+      {id: 'height', title: 'Height'},
+      {id: 'width', title: 'Width'},
+    )
   }
-  var data = json2csv({ data: docs, fields: fields, fieldNames: fieldNames });
-  res.attachment('filename.csv');
-  res.status(200).send(data);
-  res.redirect("/create/step2")
+
+  console.log(headers)
+  const createCsvWriter = csvwriter.createObjectCsvWriter({
+    path: 'public/files/nft_collection_form.csv',
+    header: headers,
+  })
+
+  createCsvWriter.writeRecords(records)
+    .then(() => {
+      res.download('public/files/nft_collection_form.csv');
+      res.redirect("/create/step2?token=" + token + "&name=" + name + "&product=" + product + "&file=" + file)
+    });
 });
 
 router.get('/create/step2', function(req, res) {

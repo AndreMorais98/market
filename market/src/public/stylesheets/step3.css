@@ -1,0 +1,120 @@
+.upload-form-step3  h1 {
+    margin-top: 50px;
+    font-weight: 500;
+    font-family: 'Poppins';
+    text-align: left;
+    margin-bottom: 30px;
+}
+
+.upload-form-step3 h3 {
+    margin-top: 50px;
+    margin-bottom: 20px;
+}
+
+.upload-form-step3 p {
+    font-weight: 500;
+    font-family: 'Poppins';
+    margin-bottom: 30px;
+    width: 80%;
+}
+
+.upload-form-step3 h2 {
+    margin-top: 50px;
+    font-weight: 500;
+    font-family: 'Poppins';
+    text-align: left;
+    margin-bottom: 15px;
+}
+
+.upload-form-step3 h2 {
+    color: white;
+}
+
+.upload-form-step3 p {
+    font-family: 'Poppins';
+}
+
+.upload-form-step3 label {
+    margin-left: 0;
+}
+  
+.form-control:focus {
+    border-color: #59a796!important;
+    box-shadow: 0 0 0 0.25rem rgba(112, 184, 168, 0.25)!important;
+}
+
+.upload-form-step3 .btn-primary {
+    background-color: #59a796;
+    border-color: #59a796;
+}
+
+.upload-form-step3 .btn-primary:hover{
+    background-color: #59a796;
+    border-color: #59a796;
+}
+
+.upload-form-step3 .btn-primary:not(:disabled):not(.disabled):active:focus {
+    box-shadow: 0 0 0 0.2rem rgb(89 167 150 / 50%)!important;
+}
+
+.upload-form-step3 .btn-primary:not(:disabled):not(.disabled):active {
+    background-color: #3f5c56!important;
+    border-color: #3f5c56!important;
+}
+
+.upload-form-step3 .btn-upload {
+    margin-bottom: 50px;
+    font-family: 'Poppins';
+}
+
+.upload-form-step3 .btn-upload button{
+    font-family: 'Poppins';
+    width:150px;
+    height:52px;
+}
+
+
+.upload-form-step3 input[type="file"] {
+	position: absolute;
+	right: -9999px;
+	visibility: hidden;
+	opacity: 0;
+}
+
+.upload-form-step3 input {
+	position: relative;
+	padding: 1rem 3rem;
+	background: #59a796;
+	display: inline-block;
+	text-align: center;
+	overflow: hidden;
+	border-radius: 10px;
+	border: 0;
+	color:#fff;
+}
+
+.upload-form-step3 input:hover {
+    background: #3f5c56;
+    color: #fff;
+    cursor: pointer;
+    transition: 0.2s all;
+}
+
+
+.upload-form-step3 label {
+    color: #fff;
+	position: relative;
+	padding: 1rem 3rem;
+	background: #59a796;
+	display: inline-block;
+	text-align: center;
+	overflow: hidden;
+	border-radius: 10px;
+}
+
+.upload-form-step3 label:hover {
+    background: #3f5c56;
+    color: #fff;
+    cursor: pointer;
+    transition: 0.2s all;
+}

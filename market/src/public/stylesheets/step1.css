@@ -6,6 +6,18 @@
     margin-bottom: 30px;
 }
 
+.main-form h3 {
+    margin-top: 50px;
+    margin-bottom: 20px;
+}
+
+.main-form p {
+    font-weight: 500;
+    font-family: 'Poppins';
+    margin-bottom: 30px;
+    width: 80%;
+}
+
 .main-form .nft-form {
     width: 60%;
 }

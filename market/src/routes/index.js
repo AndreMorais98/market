@@ -90,21 +90,27 @@ router.post('/step1' ,function(req, res) {
     )
   }
 
-  console.log(headers)
+  const url = "create/step2?token=" + token + "&name=" + name + "&product=" + product
+
   const createCsvWriter = csvwriter.createObjectCsvWriter({
     path: 'public/files/nft_collection_form.csv',
     header: headers,
   })
 
   createCsvWriter.writeRecords(records)
-    .then(() => {
-      res.download('public/files/nft_collection_form.csv');
-      res.redirect("/create/step2?token=" + token + "&name=" + name + "&product=" + product + "&file=" + file)
-    });
+  .then(() => {
+    res.redirect(url);
+  });
 });
 
 router.get('/create/step2', function(req, res) {
   res.render('step2', {serverUrl: serverUrl, appId: appId});
+});
+
+
+
+router.get('/create/step3', function(req, res) {
+  res.render('step3', {serverUrl: serverUrl, appId: appId});
 });
 
 router.get('/market', function(req, res) {

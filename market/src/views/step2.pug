@@ -3,9 +3,14 @@ extends layout
 block content
 
     div(class="container"  )
-      div(class="upload-form")
-        h3 Upload Images
-        p The images must be submitted under the same name that was given to them in your csv file.
+      div(class="upload-form-step2")
+        h1 Upload Images
+        h3 Step 2
+
+        button(class="btn btn-primary" onclick="location.href='../files/nft_collection_form.csv'") Download CSV File
+
+        p(style="margin-bottom: 5px") Upload the photos that will represent your nft before filling out the .csv file, giving them numerical names to make them easier to handle, for example, 0.png. 
+        p After the upload of the images, you just have to choose which image correspond to each NFT, in the 'Image name' column on your csv.
         form(action="")
           div
             label(for="upload")
@@ -15,15 +20,16 @@ block content
             h2(style="margin-top: 0") Files Selected
             ul
           
-          h3 Upload your CSV file
-          p Before submit, verify if your information is correct!
-          div(class="preview")
-            label(for="file-ip-1" style="padding:0") Upload CSV
-            input(type="file" id="file-ip-1" accept="*.csv")
-
-          h3(class="mb-2") The beginning of your collection
           div(class="btn-upload")
-            input(type="submit" value="Submit" name="create" id="submit")
+              button(type='submit' class='btn btn-primary' onclick="uploadImage()") Continue
 
     script.
+
+      uploadImage = () => {
+        const file = new Moralis.File(data.name, data)
+        file.saveIPFS();
+        console.log(file.ipfs(), file.hash());
+        return file.ipfs();
+      }
+
     script(src="/javascripts/up.js")

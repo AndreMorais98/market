@@ -1,0 +1,20 @@
+extends layout
+
+block content
+
+    div(class="container"  )
+      div(class="upload-form-step3")
+        h1 Upload your CSV File
+        h3 Step 3
+        p Before submit, verify if your information is correct! Once your nfts are created, will be forever online and cannot be modified.
+        form(action="")
+          div(class="preview")
+            label(for="file-ip-1" style="padding:0") Upload CSV
+            input(type="file" id="file-ip-1" accept="*.csv")
+
+          h3(class="mb-2") The beginning of your collection
+          div(class="btn-upload")
+            input(type="submit" value="Submit" name="create" id="submit")
+
+    script.
+    script(src="/javascripts/up.js")

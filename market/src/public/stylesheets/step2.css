@@ -68,8 +68,8 @@
 }
 
 .upload-form-step2 button{
-	padding: 1rem 3rem;
-    border-radius: 15px;
+	padding: 1rem 1.5rem;
+    border-radius: 10px;
     font-family: 'Poppins';
     margin-bottom: 20px;
 }
@@ -81,7 +81,7 @@
 }
 
 .upload-form-step2 .btn-upload button{
-    border-radius: 15px;
+    border-radius: 10px;
     font-family: 'Poppins';
     padding: 1rem 3rem;
 }

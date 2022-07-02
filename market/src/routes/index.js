@@ -2,22 +2,25 @@ var express = require('express');
 var router = express.Router();
 var csvwriter = require('csv-writer');
 const fs = require('fs');
-
+require("dotenv-safe").config();
 var parseUrl = require('body-parser')
 let encodeUrl = parseUrl.urlencoded({ extended: false })
+const Moralis = require("moralis/node");
 
-const serverUrl = process.env.REACT_APP_MORALIS_SERVER_URL;
-const appId = process.env.REACT_APP_MORALIS_APPLICATION_ID;
+
+const serverUrl = process.env.APP_MORALIS_SERVER_URL;
+const appId = process.env.APP_MORALIS_APPLICATION_ID;
+const masterKey = process.env.APP_MORALIS_MASTER_KEY;
 
 
 /* GET home page. */
-
 router.get('/', function(req, res) {
-  res.render('index', {serverUrl: serverUrl, appId: appId});
+  // IMPLEMENTAR COOKIES
+  res.render('index', {serverUrl: serverUrl, appId: appId, isLogged: isLogged});
 });
 
 router.get('/profile', function(req, res) {
-  res.render('profile', {serverUrl: serverUrl, appId: appId});
+    res.render('profile', {serverUrl: serverUrl, appId: appId});
 });
 
 router.get('/edit', function(req, res) {
@@ -127,6 +130,15 @@ router.get('/nft/:id', function(req, res) {
   res.render('nft', {serverUrl: serverUrl, appId: appId, id: id});
 });
 
+async function isLogged(req,res,next) {
+  Moralis.start({ serverUrl, appId });
+  if (Moralis.User.current()){;
+    next();
+  }
+  else {
+    await Moralis.authenticate();
+  }
+}
 
 module.exports = router;
  

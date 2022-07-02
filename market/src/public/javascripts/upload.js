@@ -1,3 +1,5 @@
+Moralis.start({ serverUrl, appId });
+
 async function upload() {
   let user = Moralis.User.current();
   if (!user) {
@@ -31,7 +33,7 @@ uploadMetadata = async (imageURL) => {
   console.log(file.ipfs())
 }
 
-document.getElementById("upload").onclick = upload;
+// document.getElementById("upload").onclick = upload;
 
 
 function show_value(x)

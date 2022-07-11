@@ -11,33 +11,25 @@ import Chains from "components/Chains";
 import TokenPrice from "components/TokenPrice";
 import ERC20Balance from "components/ERC20Balance";
 import ERC20Transfers from "components/ERC20Transfers";
-import DEX from "components/DEX";
-import NFTBalance from "components/NFTBalance";
 import Wallet from "components/Wallet";
-import { Layout, Tabs } from "antd";
+import { Layout } from "antd";
 import "antd/dist/antd.min.css";
 import NativeBalance from "components/NativeBalance";
 import "./style.css";
-import QuickStart from "components/QuickStart";
-import Contract from "components/Contract/Contract";
-import Text from "antd/lib/typography/Text";
+import HomePage from "components/HomePage";
 import Ramper from "components/Ramper";
 import MenuItems from "./components/MenuItems";
 const { Header, Footer } = Layout;
 
 const styles = {
   content: {
-    display: "flex",
-    justifyContent: "center",
     fontFamily: 'Poppins',
-    color: "#041836",
-    marginTop: "130px",
-    padding: "10px",
+    marginTop: "72px",
     minHeight: "calc(100vh - 270px)"
   },
   header: {
     position: "fixed",
-    zIndex: 1,
+    zIndex: 5,
     width: "100%",
     height: "72px",
     background: "#fff",
@@ -119,64 +111,36 @@ const App = ({ isServerInfo }) => {
   return (
     <Layout style={{ minHeight: "100vh", overflow: "auto" }}>
       <Router>
-        <a name="home" />
         <Header style={styles.header}>
           <Logo />
           <MenuItems />
           <div style={styles.headerRight}>
             <Chains />
-            <TokenPrice
-              address="0x1f9840a85d5af5bf1d1762f925bdaddc4201f984"
-              chain="eth"
-              image="https://cloudflare-ipfs.com/ipfs/QmXttGpZrECX5qCyXbBQiqgQNytVGeZW5Anewvh2jc4psg/"
-              size="40px"
-            />
             <NativeBalance />
             <Account />
           </div>
         </Header>
 
         <div style={styles.content}>
+          <a name="home"/>
           <Switch>
-            <Route exact path="/quickstart">
-              <QuickStart isServerInfo={isServerInfo} />
+            <Route exact path="/">
+              <HomePage />
             </Route>
             <Route path="/wallet">
               <Wallet />
             </Route>
-            <Route path="/1inch">
-              <Tabs defaultActiveKey="1" style={{ alignItems: "center" }}>
-                <Tabs.TabPane tab={<span>Ethereum</span>} key="1">
-                  <DEX chain="eth" />
-                </Tabs.TabPane>
-                <Tabs.TabPane tab={<span>Binance Smart Chain</span>} key="2">
-                  <DEX chain="bsc" />
-                </Tabs.TabPane>
-                <Tabs.TabPane tab={<span>Polygon</span>} key="3">
-                  <DEX chain="polygon" />
-                </Tabs.TabPane>
-              </Tabs>
-            </Route>
-            <Route path="/erc20balance">
+            <Route path="/create">
               <ERC20Balance />
             </Route>
-            <Route path="/onramp">
+            <Route path="/market">
               <Ramper />
             </Route>
-            <Route path="/erc20transfers">
+            <Route path="/profile">
               <ERC20Transfers />
             </Route>
-            <Route path="/nftBalance">
-              <NFTBalance />
-            </Route>
-            <Route path="/contract">
-              <Contract />
-            </Route>
             <Route path="/">
-              <Redirect to="/quickstart" />
-            </Route>
-            <Route path="/ethereum-boilerplate">
-              <Redirect to="/quickstart" />
+              <Redirect to="/" />
             </Route>
             <Route path="/nonauthenticated">
               <>Please login using the "Authenticate" button</>
@@ -220,7 +184,7 @@ const App = ({ isServerInfo }) => {
 export const Logo = () => (
   <div style={styles.imgWrap}>
     <a href="/" >
-      <img src="diamond.png" style={styles.imgLogo} />
+      <img src="diamond.png" style={styles.imgLogo} alt="logo"/>
     </a>
   </div>
 );

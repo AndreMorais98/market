@@ -19,7 +19,7 @@ function MenuItems() {
       defaultSelectedKeys={[pathname]}
     >
       <Menu.Item key="/create">
-        <NavLink to="/create"> Create </NavLink>
+        <NavLink to="/create"> New Collection </NavLink>
       </Menu.Item>
       <Menu.Item key="/market">
         <NavLink to="/market"> Market</NavLink>

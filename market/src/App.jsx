@@ -8,16 +8,15 @@ import {
 } from "react-router-dom";
 import Account from "components/Account/Account";
 import Chains from "components/Chains";
-import TokenPrice from "components/TokenPrice";
 import ERC20Balance from "components/ERC20Balance";
-import ERC20Transfers from "components/ERC20Transfers";
+import Profile from "components/Profile/Profile";
 import Wallet from "components/Wallet";
 import { Layout } from "antd";
 import "antd/dist/antd.min.css";
 import NativeBalance from "components/NativeBalance";
 import "./style.css";
 import HomePage from "components/HomePage";
-import Ramper from "components/Ramper";
+import Market from "components/Market/Market";
 import MenuItems from "./components/MenuItems";
 const { Header, Footer } = Layout;
 
@@ -25,7 +24,7 @@ const styles = {
   content: {
     fontFamily: 'Poppins',
     marginTop: "72px",
-    minHeight: "calc(100vh - 270px)"
+    minHeight: "calc(100vh - 212px)"
   },
   header: {
     position: "fixed",
@@ -58,12 +57,10 @@ const styles = {
   footer: {
     backgroundColor: "#5b6464",
     height: "140px",
-    position: "absolute",
+    position: "sticky",
     padding: "0",
     bottom: "0",
     width: "100%",
-    position: "sticky"
-
   },
   footerContainer: {
     padding: "20px 0",
@@ -98,7 +95,7 @@ const styles = {
   
 };
 const App = ({ isServerInfo }) => {
-  const { isWeb3Enabled, enableWeb3, isAuthenticated, isWeb3EnableLoading } =
+  const { isWeb3Enabled, enableWeb3, isAuthenticated, isWeb3EnableLoading} =
     useMoralis();
 
   useEffect(() => {
@@ -106,7 +103,7 @@ const App = ({ isServerInfo }) => {
     if (isAuthenticated && !isWeb3Enabled && !isWeb3EnableLoading)
       enableWeb3({ provider: connectorId });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAuthenticated, isWeb3Enabled]);
+  }, [isAuthenticated, isWeb3Enabled,]);
 
   return (
     <Layout style={{ minHeight: "100vh", overflow: "auto" }}>
@@ -134,10 +131,10 @@ const App = ({ isServerInfo }) => {
               <ERC20Balance />
             </Route>
             <Route path="/market">
-              <Ramper />
+              <Market />
             </Route>
             <Route path="/profile">
-              <ERC20Transfers />
+              <Profile />
             </Route>
             <Route path="/">
               <Redirect to="/" />
@@ -150,29 +147,29 @@ const App = ({ isServerInfo }) => {
       </Router>
 
       <Footer style={styles.footer}>
-        <div class="container" style={styles.footerContainer}>
-          <div class="row" style={styles.footerRow}>
-            <div class="col-md-12 col-lg-12">
+        <div className="container" style={styles.footerContainer}>
+          <div className="row" style={styles.footerRow}>
+            <div className="col-md-12 col-lg-12">
               <a style={styles.a} href="https://www.facebook.com/andre.morais1998/">
-                <i class="fa fa-facebook-official fa-7x w3-hover-opacity"></i>
+                <i className="fa fa-facebook-official fa-7x w3-hover-opacity"></i>
               </a>
               <a style={styles.a} href="https://github.com/AndreMorais98">
-                <i class="fa fa-github fa-7x w3-hover-opacity"></i>
+                <i className="fa fa-github fa-7x w3-hover-opacity"></i>
               </a>
               <a style={styles.a} href="https://www.linkedin.com/in/andremorais1998/">
-                <i class="fa fa-linkedin fa-7x w3-hover-opacity"></i>
+                <i className="fa fa-linkedin fa-7x w3-hover-opacity"></i>
               </a>
             </div>
-            <div class="col-md-12 col-lg-1" style={{ width: "1px", height: "100%", backgroundColor: "white"}}></div>
+            <div className="col-md-12 col-lg-1" style={{ width: "1px", height: "100%", backgroundColor: "white"}}></div>
           </div>
-          <div class="row" style={{ margin: "0 50px", borderTop: "1px solid white"}}>
-            <div class="col-12">
+          <div className="row" style={{ margin: "0 50px", borderTop: "1px solid white"}}>
+            <div className="col-12">
               <p style={styles.p}>© 2022 - Developed by André Morais</p>
             </div>
           </div>
-          <div class="button-position">
+          <div className="button-position">
             <a style={styles.buttonPosition} href="#home">
-              <i class="fa fa-arrow-up fa-2x" style={{color: "white",marginRight: "0"}}></i>
+              <i className="fa fa-arrow-up fa-2x" style={{color: "white",marginRight: "0"}}></i>
             </a>
           </div>
         </div>

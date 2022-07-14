@@ -5,7 +5,7 @@ import Filter from "components/Filter/Filter";
 import "./market.css";
 
 function Profile() {
-  const { isAuthenticated, account } =
+  const { isAuthenticated, account, } =
   useMoralis();
 
   if (!isAuthenticated || !account) {

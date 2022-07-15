@@ -12,7 +12,10 @@ export default function QuickStart( ) {
             <div className="front-text">
               <div className="center">
                 <h1>Buy, Sell and Claim your Luxury Assets With Crypto</h1>
-                <h3>The first world NFT Market to guarantee the authenticity of your luxury object</h3><button className="btn-claim"><a className="button" href="/market">Explore it Now</a></button>
+                <h3>The first world NFT Market to guarantee the authenticity of your luxury object</h3>
+                <button className="btn-claim">
+                  <a className="button" href="/market">Explore it Now</a>
+                </button>
               </div>
             </div>
           </div>

@@ -9,6 +9,7 @@
   font-family: 'Poppins';
   padding: 5px;
   font-size: 20px;
+  border-color: snow;
 }
 
 .search-bar input::placeholder {

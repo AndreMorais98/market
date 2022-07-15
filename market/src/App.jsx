@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useMoralis } from "react-moralis";
+import { useMoralis, useMoralisCloudFunction } from "react-moralis";
 import {
   BrowserRouter as Router,
   Switch,
@@ -10,7 +10,8 @@ import Account from "components/Account/Account";
 import Chains from "components/Chains";
 import ERC20Balance from "components/ERC20Balance";
 import Profile from "components/Profile/Profile";
-import Wallet from "components/Wallet";
+import PublicProfile from "components/PublicProfile/PublicProfile";
+import Nft from "components/Nft/Nft";
 import { Layout } from "antd";
 import "antd/dist/antd.min.css";
 import NativeBalance from "components/NativeBalance";
@@ -94,9 +95,15 @@ const styles = {
   }
   
 };
+
+
 const App = ({ isServerInfo }) => {
-  const { isWeb3Enabled, enableWeb3, isAuthenticated, isWeb3EnableLoading} =
-    useMoralis();
+  const { isWeb3Enabled, enableWeb3, isAuthenticated, isWeb3EnableLoading, account} = useMoralis();
+
+  const params = {ethAddress: account}
+  const { data } = useMoralisCloudFunction("getUsers", params);
+  console.log("data",data)
+
 
   useEffect(() => {
     const connectorId = window.localStorage.getItem("connectorId");
@@ -124,8 +131,8 @@ const App = ({ isServerInfo }) => {
             <Route exact path="/">
               <HomePage />
             </Route>
-            <Route path="/wallet">
-              <Wallet />
+            <Route path="/nft">
+              <Nft />
             </Route>
             <Route path="/create">
               <ERC20Balance />
@@ -135,6 +142,12 @@ const App = ({ isServerInfo }) => {
             </Route>
             <Route path="/profile">
               <Profile />
+            </Route> 
+            <Route path="/edit">
+              <ERC20Balance />
+            </Route>
+            <Route path="/profile/:id">
+              <PublicProfile />
             </Route>
             <Route path="/">
               <Redirect to="/" />

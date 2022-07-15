@@ -1,9 +1,9 @@
 import { useMoralis } from "react-moralis";
 import Login from "components/Account/Login";
 import Market from "components/Market/Market";
-import "./profile.css";
+import "./publicprofile.css";
 
-function Profile() {
+function PublicProfile() {
   const { isAuthenticated, account, user } =
   useMoralis();
 
@@ -25,9 +25,6 @@ function Profile() {
           <div className="col-md-6 align-items-center">
             <div className="card">
               <div className="card-body">
-                <a className="edit-link" href="/edit">
-                  <i className="fa fa-pencil icon-edit"></i>
-                </a>
                 <div className="d-flex flex-column align-items-center text-center">
                   <img className="img-account" src="https://imageio.forbes.com/specials-images/imageserve/5ce316de87fac400077d52a5/0x0.jpg?format=jpg&amp;crop=416,416,x0,y0,safe&amp;height=416&amp;width=416&amp;fit=bounds" alt="Admin" />
                   <div className="mt-3 links">
@@ -73,4 +70,4 @@ function Profile() {
   );
 }
 
-export default Profile;
+export default PublicProfile;

@@ -29,12 +29,8 @@ function Profile() {
         <div className="card">
           <div className="card-body">
             <div className="row">
-              <div className="col-md-4 col-lg-3">
-                <Item />
-              </div>
-              <div className="col-md-4 col-lg-3">
-                <Item />
-              </div>
+              <Item />
+              <Item />
             </div>
           </div>
         </div>

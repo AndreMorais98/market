@@ -2,7 +2,7 @@ import React from "react";
 import "./homepage.css";
 
 
-export default function QuickStart( ) {
+export default function HomePage( ) {
 
   return (
     <>

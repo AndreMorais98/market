@@ -1,3 +1,4 @@
+import React, { useState, useEffect} from 'react';
 import { useMoralis } from "react-moralis";
 import Login from "components/Account/Login";
 import Market from "components/Market/Market";
@@ -5,10 +6,7 @@ import "./profile.css";
 
 function Profile() {
   const { isAuthenticated, account, user } =
-  useMoralis();
-
-  const username = user.attributes["username"]
-  console.log(user)
+  useMoralis();  
   
   if (!isAuthenticated || !account) {
     return (
@@ -32,7 +30,7 @@ function Profile() {
                   <img className="img-account" src="https://imageio.forbes.com/specials-images/imageserve/5ce316de87fac400077d52a5/0x0.jpg?format=jpg&amp;crop=416,416,x0,y0,safe&amp;height=416&amp;width=416&amp;fit=bounds" alt="Admin" />
                   <div className="mt-3 links">
                     <div className="username-div">
-                      <h4 className="username"> {username} </h4>
+                      <h4 className="username"> {user.attributes.username} </h4>
                       <img className="img-verified" src="verified.png" alt="verified"/>
                     </div>
                     <p className="text-muted font-size-sm" style={{marginBottom: "10px"}}> {account} </p>

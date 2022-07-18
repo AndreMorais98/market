@@ -4,6 +4,7 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
+  Routes,
   Redirect,
 } from "react-router-dom";
 import Account from "components/Account/Account";
@@ -123,10 +124,10 @@ const App = ({ isServerInfo }) => {
             <NativeBalance />
             <Account />
           </div>
+      
         </Header>
 
         <div style={styles.content}>
-          <a name="home"/>
           <Switch>
             <Route exact path="/">
               <HomePage />

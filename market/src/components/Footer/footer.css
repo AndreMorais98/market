@@ -1,0 +1,62 @@
+.footer {
+  background-color: #5b6464;
+  height: 140px;
+  position: relative;
+  position: sticky;
+  padding: 0;
+  bottom: 0;
+  width: 100%;
+}
+
+.footer-container {
+  padding: 20px 0;
+  text-align: center;
+}
+
+.footer .footer-row{
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.footer p {
+  margin-top: 10px;
+  font-family: 'Poppins';
+  font-size: 16px;
+  color: white;
+}
+
+.footer a {
+  text-decoration:none;
+  font-size: 5px;
+  color: white;
+  margin-right: 10px;
+}
+.footer a:hover {
+  color: #59a796;
+}
+
+.footer .line-div {
+  width: 1px;
+  height: 100%;
+  background-color: white;
+}
+
+.footer .developer-line {
+  margin: 0 50px;
+  border-top: 1px solid white ;
+}
+
+.footer .button-position a{
+  padding: 8px;
+  margin-right: 0;
+  text-decoration: none;
+  border: 1px solid white;
+  border-radius: 5cm;
+  position: absolute;
+  right: 25px;
+  top: 35%
+}
+
+.footer .button-position i:before{
+  margin-right: 0;
+}

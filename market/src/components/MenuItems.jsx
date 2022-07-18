@@ -1,9 +1,7 @@
-import { useLocation } from "react-router";
 import { Menu } from "antd";
 import { NavLink } from "react-router-dom";
 
 function MenuItems() {
-  const { pathname } = useLocation();
 
   return (
     <Menu
@@ -16,7 +14,6 @@ function MenuItems() {
         width: "100%",
         justifyContent: "left",
       }}
-      defaultSelectedKeys={[pathname]}
     >
       <Menu.Item key="/create">
         <NavLink to="/create"> New Collection </NavLink>

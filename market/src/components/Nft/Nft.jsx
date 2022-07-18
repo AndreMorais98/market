@@ -15,32 +15,32 @@ function Nft() {
   }
   return (
   <>
-    <div class="container">
-      <div class="main-body">
-        <h1>Rolex Datejust (title)</h1>
-        <div class="row gutters-sm">
-          <div class="col-6">
-            <div class="row">
-              <div class="col-12">
-                <div class="img-wrapper"><img class="nft-img" src="https://content.rolex.com/dam/new-watches-2020/homepage/roller/all-watches/watches_0000_m326238-0009-sky-dweller_portrait.jpg?imwidth=420" alt="Admin" /></div>
+    <div className="container">
+      <div className="main-body">
+        <h1 style={{"textAlign": "center", "marginTop": "50px"}}>Rolex Datejust (title)</h1>
+        <div className="row gutters-sm">
+          <div className="col-6">
+            <div className="row">
+              <div className="col-12">
+                <div className="img-wrapper"><img className="nft-img" src="https://content.rolex.com/dam/new-watches-2020/homepage/roller/all-watches/watches_0000_m326238-0009-sky-dweller_portrait.jpg?imwidth=420" alt="Admin" /></div>
               </div>
-              <div class="col-12">
-                <div class="accordion-item">
-                  <h2 class="accordion-header" id="panelsStayOpen-headingFour">
-                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFour" aria-expanded="true" aria-controls="panelsStayOpen-collapseThree"> Buy </button>
+              <div className="col-12">
+                <div className="accordion-item">
+                  <h2 className="accordion-header" id="panelsStayOpen-headingFour">
+                    <button className="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFour" aria-expanded="true" aria-controls="panelsStayOpen-collapseThree"> Buy </button>
                   </h2>
-                  <div class="accordion-collapse collapse show" id="panelsStayOpen-collapseFour" aria-labelledby="panelsStayOpen-headingFour">
-                    <div class="accordion-body accordion-buy">
-                      <div class="row">
-                        <div class="col-6 align-self-center">
+                  <div className="accordion-collapse collapse show" id="panelsStayOpen-collapseFour" aria-labelledby="panelsStayOpen-headingFour">
+                    <div className="accordion-body accordion-buy">
+                      <div className="row">
+                        <div className="col-6 align-self-center">
                           <h6>Current price: </h6>
-                          <span class="price">
+                          <span className="price">
                             <img src="polygon-matic-logo.png" alt="polygon-icon"/>
                             450
                           </span>
                         </div>
-                        <div class="col-6 button-col">
-                          <button class="btn btn-primary" type="button">Buy</button>
+                        <div className="col-6 button-col">
+                          <button className="btn btn-primary" type="button">Buy</button>
                         </div>
                       </div>
                     </div>
@@ -50,31 +50,30 @@ function Nft() {
             </div>
           </div>
 
-          <div class="col-md-6 just-content-center">
-            <div class="row">
-              <div class="col-12" style={{"marginBottom":"30px"}}>
-                <div class="card nft-description">
-                  <h5 class="created-by">Created by
-                    <a class="created-by-link" href="/profile">{user}</a>
+          <div className="col-md-6 just-content-center">
+            <div className="row">
+              <div className="col-12" style={{"marginBottom":"30px"}}>
+                <div className="card nft-description">
+                  <h5 className="created-by">Created by
                   </h5>
-                  <h2 class="description-title">About</h2>
+                  <h2 className="description-title">About</h2>
                   <h4>small description</h4>
                   <p>Website:
                     <a href="https://www.rolex.com/">www.rolex.com</a>
                   </p>
                   <p>Token ID: </p>
                   <p>Product ID: </p>
-                  <h5 class="created-by">Owned by: <a class="created-by-link" href="/profile">André Morais</a></h5>
+                  <h5 className="created-by">Owned by: <a className="created-by-link" href="/profile">André Morais</a></h5>
                 </div>
               </div>
-              <div class="col-12">
-                <div class="accordion" id="accordionPanelsStayOpenExample">
-                  <div class="accordion-item">
-                    <h2 class="accordion-header" id="panelsStayOpen-headingOne">
-                      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne"> Info </button>
+              <div className="col-12">
+                <div className="accordion" id="accordionPanelsStayOpenExample">
+                  <div className="accordion-item">
+                    <h2 className="accordion-header" id="panelsStayOpen-headingOne">
+                      <button className="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne"> Info </button>
                     </h2>
-                    <div class="accordion-collapse collapse show" id="panelsStayOpen-collapseOne" aria-labelledby="panelsStayOpen-headingOne">
-                      <div class="accordion-body">
+                    <div className="accordion-collapse collapse show" id="panelsStayOpen-collapseOne" aria-labelledby="panelsStayOpen-headingOne">
+                      <div className="accordion-body">
                         <strong>Relógio cronógrafo de aço inxodável </strong>
                         <p>Mostrador redondo, movimento a quartzo, pulseira ajustável em corrente, fecho de encaixe, ponteiros e coroa de rosca. Esta peça possui garantia padrão de dois anos da marca.</p>
                         <ul>
@@ -85,12 +84,12 @@ function Nft() {
                       </div>
                     </div>
                   </div>
-                  <div class="accordion-item">
-                    <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
-                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo"> Composition </button>
+                  <div className="accordion-item">
+                    <h2 className="accordion-header" id="panelsStayOpen-headingTwo">
+                      <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo"> Composition </button>
                     </h2>
-                    <div class="accordion-collapse collapse" id="panelsStayOpen-collapseTwo" aria-labelledby="panelsStayOpen-headingTwo">
-                      <div class="accordion-body">
+                    <div className="accordion-collapse collapse" id="panelsStayOpen-collapseTwo" aria-labelledby="panelsStayOpen-headingTwo">
+                      <div className="accordion-body">
                         <ul>
                           <li>Vidro: 100%</li>
                           <li>Aço Inoxidável: 100%</li>
@@ -98,12 +97,12 @@ function Nft() {
                       </div>
                     </div>
                   </div>
-                  <div class="accordion-item">
-                    <h2 class="accordion-header" id="panelsStayOpen-headingThree">
-                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree"> Size </button>
+                  <div className="accordion-item">
+                    <h2 className="accordion-header" id="panelsStayOpen-headingThree">
+                      <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree"> Size </button>
                     </h2>
-                    <div class="accordion-collapse collapse" id="panelsStayOpen-collapseThree" aria-labelledby="panelsStayOpen-headingThree">
-                      <div class="accordion-body">
+                    <div className="accordion-collapse collapse" id="panelsStayOpen-collapseThree" aria-labelledby="panelsStayOpen-headingThree">
+                      <div className="accordion-body">
                         <ul>
                           <li>Circunferência: 21 cm</li>
                           <li>Diâmetro: 4,6 cm</li>
@@ -120,9 +119,9 @@ function Nft() {
         </div>
       </div>
 
-      <div class="nft-history">
+      <div className="nft-history">
         <h2>NFT History</h2>
-        <table class="table">
+        <table className="table">
           <thead>
             <tr>
               <th scope="col">EVENT</th>
@@ -137,7 +136,7 @@ function Nft() {
           <tbody>
             <tr>
               <th>
-                <i class="fas fa-tag">List</i>
+                <i className="fas fa-tag">List</i>
               </th>
               <td> 
                 <img src="polygon-matic-logo.png" alt="polygon-icon"/> 50
@@ -152,7 +151,7 @@ function Nft() {
 
             <tr>
               <th> 
-                <i class="fas fa-handshake">Transfer</i>
+                <i className="fas fa-handshake">Transfer</i>
               </th>
               <td> 
                 <img src="polygon-matic-logo.png" alt="polygon-icon"/> 200
@@ -169,7 +168,7 @@ function Nft() {
 
             <tr>
               <th> 
-                <i class="fas fa-handshake">Transfer</i>
+                <i className="fas fa-handshake">Transfer</i>
               </th>
               <td> 
                 <img src="polygon-matic-logo.png" alt="polygon-icon"/> 400

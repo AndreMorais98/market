@@ -4,13 +4,15 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Routes,
   Redirect,
 } from "react-router-dom";
 import Account from "components/Account/Account";
 import Chains from "components/Chains";
 import ERC20Balance from "components/ERC20Balance";
 import Profile from "components/Profile/Profile";
+import Step1 from "components/Step1/Step1";
+import Step2 from "components/Step2/Step2";
+import Step3 from "components/Step3/Step3";
 import PublicProfile from "components/PublicProfile/PublicProfile";
 import Nft from "components/Nft/Nft";
 import { Layout } from "antd";
@@ -136,7 +138,7 @@ const App = ({ isServerInfo }) => {
               <Nft />
             </Route>
             <Route path="/create">
-              <ERC20Balance />
+              <Step1 />
             </Route>
             <Route path="/market">
               <Market />
@@ -149,6 +151,15 @@ const App = ({ isServerInfo }) => {
             </Route>
             <Route path="/profile/:id">
               <PublicProfile />
+            </Route>
+            <Route path="/step1">
+              <Step1 />
+            </Route>
+            <Route path="/step2">
+              <Step2 />
+            </Route>
+            <Route path="/step3">
+              <Step3 />
             </Route>
             <Route path="/">
               <Redirect to="/" />

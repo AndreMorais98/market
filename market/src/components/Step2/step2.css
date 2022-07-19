@@ -1,0 +1,177 @@
+.upload-form-step2  h1 {
+    margin-top: 50px;
+    font-weight: 500;
+    font-family: 'Poppins';
+    text-align: left;
+    margin-bottom: 30px;
+}
+
+.upload-form-step2 h3 {
+    margin-top: 50px;
+    margin-bottom: 20px;
+}
+
+.upload-form-step2 p {
+    font-weight: 500;
+    font-family: 'Poppins';
+    margin-bottom: 30px;
+    width: 100%;
+}
+
+.upload-form-step2 h2 {
+    margin-top: 50px;
+    font-weight: 500;
+    font-family: 'Poppins';
+    text-align: left;
+    margin-bottom: 15px;
+}
+
+.upload-form-step2 h2 {
+    color: white;
+}
+
+.upload-form-step2 p {
+    font-family: 'Poppins';
+}
+
+.upload-form-step2 label {
+    margin-left: 0;
+}
+  
+.form-control:focus {
+    border-color: #59a796!important;
+    box-shadow: 0 0 0 0.25rem rgba(112, 184, 168, 0.25)!important;
+}
+
+.upload-form-step2 .btn-primary {
+    background-color: #59a796;
+    border-color: #59a796;
+}
+
+.upload-form-step2 .btn-primary:hover{
+    background-color: #3f5c56;
+    border-color: #3f5c56;
+}
+
+.upload-form-step2 .btn-primary:focus{
+    background-color: #3f5c56;
+    border-color: #3f5c56;
+}
+
+.upload-form-step2 .btn-primary:not(:disabled):not(.disabled):active:focus {
+    box-shadow: 0 0 0 0.2rem rgb(89 167 150 / 50%)!important;
+}
+
+.upload-form-step2 .btn-primary:not(:disabled):not(.disabled):active {
+    background-color: #3f5c56!important;
+    border-color: #3f5c56!important;
+}
+
+.upload-form-step2 button{
+	padding: 1rem 1.5rem;
+    border-radius: 10px;
+    font-family: 'Poppins';
+    margin-bottom: 20px;
+}
+
+
+.upload-form-step2 .btn-upload {
+    margin-bottom: 50px;
+    font-family: 'Poppins';
+}
+
+.upload-form-step2 .btn-upload button{
+    border-radius: 10px;
+    font-family: 'Poppins';
+    padding: 1rem 3rem;
+}
+
+
+.upload-form-step2 input[type="file"] {
+	position: absolute;
+	right: -9999px;
+	visibility: hidden;
+	opacity: 0;
+}
+
+.upload-form-step2 input[type="submit"] {
+	position: relative;
+	padding: 1rem 3rem;
+	background: #59a796;
+	display: inline-block;
+	text-align: center;
+	overflow: hidden;
+	border-radius: 10px;
+	border: 0;
+	color:#fff;
+}
+
+.upload-form-step2 input[type="submit"]:hover {
+    background: #3f5c56;
+    color: #fff;
+    cursor: pointer;
+    transition: 0.2s all;
+}
+
+.upload-form-step2 label[for="file-ip-1"]:hover {
+    background: #3f5c56;
+    transition: 0.2s all;
+}
+
+.upload-form-step2 label[for="upload"]:hover {
+    background: #3f5c56;
+    transition: 0.2s all;
+}
+
+
+.upload-form-step2 label {
+    color: #fff;
+	position: relative;
+	padding: 1rem 3rem;
+	background: #59a796;
+	display: inline-block;
+	text-align: center;
+	overflow: hidden;
+	border-radius: 10px;
+}
+
+.upload-form-step2 label:hover {
+    background: #59a796;
+    color: #fff;
+    cursor: pointer;
+    transition: 0.2s all;
+}
+
+.upload-form-step2 div.files {
+    background: #71a096;
+    padding: 1rem;
+    margin:1rem 0;
+    border-radius:10px;
+}
+
+.upload-form-step2 div.files ul{
+    list-style:none;
+    padding:0;
+    max-height:150px;
+    overflow:auto;
+}
+
+.upload-form-step2 div.files ul li{
+    padding:0.5rem 0;
+    padding-right:2rem;
+    position:relative;
+}
+
+.upload-form-step2 div.files ul li i{
+    cursor:pointer;
+    position:absolute;
+    top:50%;
+    right:0;
+    transform:translatey(-50%);
+    color: white;
+}
+
+.upload-form-step2 span.file-size {
+	color: white;
+	padding-left: 0.5rem;
+}

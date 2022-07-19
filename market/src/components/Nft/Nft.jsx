@@ -34,9 +34,8 @@ function Nft() {
                       <div className="row">
                         <div className="col-6 align-self-center">
                           <h6>Current price: </h6>
-                          <span className="price">
-                            <img src="polygon-matic-logo.png" alt="polygon-icon"/>
-                            450
+                          <span className="price" style={{"display": "flex"}}>
+                            <img src="./polygon-matic-logo.png" alt="polygon-icon" style={{"marginRight": "10px"}}/>450
                           </span>
                         </div>
                         <div className="col-6 button-col">
@@ -138,8 +137,8 @@ function Nft() {
               <th>
                 <i className="fas fa-tag">List</i>
               </th>
-              <td> 
-                <img src="polygon-matic-logo.png" alt="polygon-icon"/> 50
+              <td style={{"display": "flex"}}> 
+                <img src="polygon-matic-logo.png" alt="polygon-icon" style={{"marginRight": "5px"}}/> 50
               </td>
               <td> 
                 <a href="/profile">Rolex</a>
@@ -153,8 +152,8 @@ function Nft() {
               <th> 
                 <i className="fas fa-handshake">Transfer</i>
               </th>
-              <td> 
-                <img src="polygon-matic-logo.png" alt="polygon-icon"/> 200
+              <td style={{"display": "flex"}}> 
+                <img src="polygon-matic-logo.png" alt="polygon-icon" style={{"marginRight": "5px"}}/> 200
               </td>
               <td> 
                 <a href="/profile">Rolex</a>
@@ -170,8 +169,8 @@ function Nft() {
               <th> 
                 <i className="fas fa-handshake">Transfer</i>
               </th>
-              <td> 
-                <img src="polygon-matic-logo.png" alt="polygon-icon"/> 400
+              <td style={{"display": "flex"}}> 
+                <img src="polygon-matic-logo.png" alt="polygon-icon" style={{"marginRight": "5px"}}/> 400
               </td>
               <td>Otto</td>
               <td>Larry the Bird</td>

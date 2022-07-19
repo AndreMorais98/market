@@ -28,7 +28,7 @@ function Item() {
         </div>
         <div className="row row-nft">
           <div className="col-4 nft-buttons">
-            <a href="/nft/" target="_blank" rel="noreferrer">
+            <a href="/nft" target="_blank" rel="noreferrer">
               <i className="fa fa-cart-arrow-down"></i>
             </a>
           </div>

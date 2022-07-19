@@ -15,8 +15,8 @@ function MenuItems() {
         justifyContent: "left",
       }}
     >
-      <Menu.Item key="/create">
-        <NavLink to="/create"> New Collection </NavLink>
+      <Menu.Item key="/step1">
+        <NavLink to="/step1"> New Collection </NavLink>
       </Menu.Item>
       <Menu.Item key="/market">
         <NavLink to="/market"> Market</NavLink>

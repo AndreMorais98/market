@@ -1,13 +1,11 @@
 import { useMoralis } from "react-moralis";
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Login from "components/Account/Login";
 import "./step2.css";
 
 function Step2() {
 
   const [uploadedFiles, setUploadedFiles] = useState([])
-  const [fileLimit, setFileLimit] = useState(false);
-
 
   const handleUploadFiles = files => {
     const uploaded = [...uploadedFiles];

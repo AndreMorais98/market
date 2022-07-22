@@ -67,7 +67,7 @@
     border-color: #3f5c56!important;
 }
 
-.upload-form-step2 button{
+.upload-form-step2 .download-btn{
 	padding: 1rem 1.5rem;
     border-radius: 10px;
     font-family: 'Poppins';

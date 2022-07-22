@@ -2,9 +2,8 @@ import { useEffect } from "react";
 import { useMoralis, useMoralisCloudFunction } from "react-moralis";
 import {
   BrowserRouter as Router,
-  Switch,
+  Routes,
   Route,
-  Redirect,
 } from "react-router-dom";
 import Account from "components/Account/Account";
 import Chains from "components/Chains";
@@ -130,44 +129,18 @@ const App = ({ isServerInfo }) => {
         </Header>
 
         <div style={styles.content}>
-          <Switch>
-            <Route exact path="/">
-              <HomePage />
-            </Route>
-            <Route path="/nft">
-              <Nft />
-            </Route>
-            <Route path="/create">
-              <Step1 />
-            </Route>
-            <Route path="/market">
-              <Market />
-            </Route>
-            <Route path="/profile">
-              <Profile />
-            </Route> 
-            <Route path="/edit">
-              <ERC20Balance />
-            </Route>
-            <Route path="/profile/:id">
-              <PublicProfile />
-            </Route>
-            <Route path="/step1">
-              <Step1 />
-            </Route>
-            <Route path="/step2">
-              <Step2 />
-            </Route>
-            <Route path="/step3">
-              <Step3 />
-            </Route>
-            <Route path="/">
-              <Redirect to="/" />
-            </Route>
-            <Route path="/nonauthenticated">
-              <>Please login using the "Authenticate" button</>
-            </Route>
-          </Switch>
+          <Routes>
+            <Route exact path="/" element={<HomePage />} />
+            <Route path="/nft" element={<Nft />} />
+            <Route path="/create" element={<Nft />} />
+            <Route path="/market" element={<Market />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/edit" element={<ERC20Balance />} />
+            <Route path="/profile/:id" element={<PublicProfile />} />
+            <Route path="/step1" element={<Step1 />} /> 
+            <Route path="/step2" element={<Step2 />} />
+            <Route path="/step3" element={<Step3 />} />
+          </Routes>
         </div>
       </Router>
 

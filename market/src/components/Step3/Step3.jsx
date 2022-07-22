@@ -22,7 +22,7 @@ function Step3() {
         <p>Before submit, verify if your information is correct! Once your nfts are created, will be forever online and cannot be modified.</p>
         <form action="">
           <div className="preview">
-            <label for="file-ip-1" style={{"padding":"0"}}>Upload CSV</label>
+            <label htmlFor="file-ip-1" style={{"padding":"0"}}>Upload CSV</label>
             <input type="file" id="file-ip-1" accept="*.csv" />
           </div>
           <h3 className="mb-2">The beginning of your collection starts now!</h3>

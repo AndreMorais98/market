@@ -1,6 +1,7 @@
 import { useMoralis, useMoralisWeb3Api } from "react-moralis";
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { Buffer } from 'buffer';
 import Login from "components/Account/Login";
 import { CSVLink } from "react-csv";
 import "./step2.css";
@@ -60,16 +61,35 @@ function Step2() {
   const filename = collection+'_'+token+'_form.csv'
 
   const [uploadedFiles, setUploadedFiles] = useState([])
+  const [option, setOptions] = useState({abi:[]})
 
   const handleUploadFiles = files => {
     const uploaded = [...uploadedFiles];
+    const promises = []
+    const ipfsArray = []
+
     // eslint-disable-next-line array-callback-return
-    files.some((file) => {
-      if (uploaded.findIndex((f) => f.name === file.name) === -1) {
-        uploaded.push(file);
-      }
+    for (const fileIndex in files) {
+      const file = files[fileIndex]
+      promises.push(new Promise((res, rej) => {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          uploaded.push(file);
+          ipfsArray.push({
+            path: token + '/' + collection + '/images/' + file.name,
+            content: event.target.result
+          })
+          res();
+        };
+        reader.readAsDataURL(file);
+
+      }))
+    }
+    Promise.all(promises).then(() => {
+      option.abi = ipfsArray
+      console.log(option)
+      setUploadedFiles(uploaded)
     })
-    setUploadedFiles(uploaded)
   }
 
   const handleFileEvent = (e) => {
@@ -80,42 +100,15 @@ function Step2() {
 
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const Web3Api = useMoralisWeb3Api();
+
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    const path = await Web3Api.storage.uploadFolder(option);
     navigate('/step3', {state: {collection: collection, token:token, product:product, upper:upper}})
   };
 
-  console.log(uploadedFiles)
-
-  const Web3Api = useMoralisWeb3Api();
-  const options = {abi: [
-    {
-      path: collection + '/images/' + file.name,
-      content: file.toString("base64")
-    },
-    {
-      path: collection + '/images/' + file.name,
-      content: file.toString("base64")
-    },
-    {
-      path: collection + '/images/' + file.name,
-      content: file.toString("base64")
-    },{
-      path: collection + '/images/' + file.name,
-      content: file.toString("base64")
-    }
-  ]}
-
-  const handleUploadFolder = async () => {
-    uploadedFiles.map((file) => {
-      const info = {
-        path: collection + '/images/' + file.name,
-        content: file.toString("base64")
-      }
-    })
-    const path = await Web3Api.storage.uploadFolder(options);
-    console.log(path)
-  }
 
 
   const { isAuthenticated, account } = useMoralis();

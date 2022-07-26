@@ -1,7 +1,6 @@
 import { useMoralis, useMoralisWeb3Api } from "react-moralis";
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Buffer } from 'buffer';
 import Login from "components/Account/Login";
 import { CSVLink } from "react-csv";
 import "./step2.css";
@@ -105,8 +104,14 @@ function Step2() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const path = await Web3Api.storage.uploadFolder(option);
-    navigate('/step3', {state: {collection: collection, token:token, product:product, upper:upper}})
+    console.log(option.abi)
+    if( option.abi.length === 0){
+      alert("Please upload atleast 1 file")
+    }
+    else {
+      const path = await Web3Api.storage.uploadFolder(option);
+      navigate('/step3', {state: {collection:collection, token:token, product:product, path:path}})
+    }
   };
 
 

@@ -10,53 +10,70 @@ function Step2() {
 
   const {state} = useLocation();
   const { collection, token, product, upper} = state;
+  let data = []
 
   const headers = [
-    { label: "Title", key: "title" },
-    { label: "Description", key: "description" },
-    { label: "Image Name", key: "image" },
-    { label: "Brand ID", key: "brand_id" },
-    { label: "Product ID", key: "product_id" },
-    { label: "Made In", key: "made_in" },
-    { label: "Color", key: "color" },
-    { label: "Composition", key: "composition" },
+    { label: "title", key: "title" },
+    { label: "description", key: "description" },
+    { label: "image", key: "image" },
+    { label: "brand_id", key: "brand_id" },
+    { label: "product_id", key: "product_id" },
+    { label: "made_in", key: "made_in" },
+    { label: "color", key: "color" },
+    { label: "composition", key: "composition" },
+    { label: "type", key: "type" },
   ];
 
   if (product === "Watch"){
     headers.push(
-      { label: "Circumference", key: "circumference" },
-      { label: "Diameter", key: "diameter" },
-      { label: "Height", key: "height" },
-      { label: "Width", key: "width" },
+      { label: "circumference", key: "circumference" },
+      { label: "diameter", key: "diameter" },
+      { label: "height", key: "height" },
+      { label: "width", key: "width" },
     )
+    data.push({type: "watch"})
   }
   else if (product === "Jewellery"){
     headers.push(
-      { label: "Circumference", key: "circumference" },
-      { label: "Length", key: "length" },
-      { label: "Width", key: "width" },
+      { label: "circumference", key: "circumference" },
+      { label: "length", key: "length" },
+      { label: "width", key: "width" },
     )
+    data.push({type: "jewellery"})
   }
   else if (product === "Clothes"){
     headers.push(
-      { label: "Size", key: "size" },
+      { label: "size", key: "size" },
     )
+    if (upper === "Shirt") {
+      data.push({type: "shirt"})
+    }
+    if (upper === "Coat") {
+      data.push({type: "coat"})
+    }
+    if (upper === "Trousers") {
+      data.push({type: "trousers"})
+    }
+    if (upper === "Shorts") {
+      data.push({type: "shorts"})
+    }
   }
   else if (product === "Shoes"){
     headers.push(
-      { label: "Size", key: "size" },
+      { label: "size", key: "size" },
     )
+    data.push({type: "shoes"})
   }
   else if (product === "Bags"){
     headers.push(
-      { label: "Depth", key: "depth" },
-      { label: "Handle", key: "handle" },
-      { label: "Height", key: "height" },
-      { label: "Width", key: "width" },
+      { label: "depth", key: "depth" },
+      { label: "handle", key: "handle" },
+      { label: "height", key: "height" },
+      { label: "width", key: "width" },
     )
+    data.push({type: "bags"})
   }
   
-  const data = [{}]
   const filename = collection+'_'+token+'_form.csv'
 
   const [uploadedFiles, setUploadedFiles] = useState([])

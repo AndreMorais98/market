@@ -10,8 +10,8 @@ function Step3() {
   const {state} = useLocation();
   const { collection, token, product, path} = state;
 
-  console.log(collection, token, path)
-  const [valid, setValid] = useState(true)
+  const url = path[0].path
+  const simple_url = url.slice(0, url.lastIndexOf('/'));
 
   const handleCSVUpload = (e) => {
     const files = e.target.files;
@@ -28,34 +28,81 @@ function Step3() {
 
   const handeCSVtoJson = file => {
     const ipfsArray = []
-
-    console.log(file)
-    if (product==='Watch') {
-      for (const fileIndex in file) {
-        if (fileIndex === 0) {
-          const header = file[fileIndex]
-          if (header.length !== 12) {
-            alert("Please, verify if the headers are correct")
+  
+    if (product==='Watch' || product==='Bags') {
+      const header = file[0]
+      if (header.length !== 13) {
+        alert("Please, verify if the headers are correct")
+        return
+      }
+      for (let i=1; i < file.length-1; i++) {
+        const row = file[i]
+        let dicio = {} 
+        for(let j=0; j< header.length ; j++){
+          if(j === 2) {
+            const str =  simple_url + "/" + row[j]
+            dicio[header[j]] = str
           }
           else {
-            // criar o dict com os atributos
+            dicio[header[j]] = row[j]
           }
+          
         }
-        
+        ipfsArray.push({
+          path: token + '/' + collection + '/metadata/' + i,
+          content: dicio
+        })
       }
     }
     else if (product==='Jewellery'){
-      console.log(collection, token, path)
+      const header = file[0]
+      if (header.length !== 12) {
+        alert("Please, verify if the headers are correct")
+        return
+      }
+      for (let i=1; i < file.length-1; i++) {
+        const row = file[i]
+        let dicio = {} 
+        for(let j=0; j< header.length ; j++){
+          if(j === 2) {
+            const str =  simple_url + "/" + row[j]
+            dicio[header[j]] = str
+          }
+          else {
+            dicio[header[j]] = row[j]
+          }
+        }
+        ipfsArray.push({
+          path: token + '/' + collection + '/metadata/' + i,
+          content: dicio
+        })
+      }
     }
-    else if (product==='Clothes'){
-      console.log(collection, token, path)
+    else if (product==='Clothes' || product==='Shoes'){
+      const header = file[0]
+      if (header.length !== 10) {
+        alert("Please, verify if the headers are correct")
+        return
+      }
+      for (let i=1; i < file.length-1; i++) {
+        const row = file[i]
+        let dicio = {} 
+        for(let j=0; j< header.length ; j++){
+          if(j === 2) {
+            const str =  simple_url + "/" + row[j]
+            dicio[header[j]] = str
+          }
+          else {
+            dicio[header[j]] = row[j]
+          }
+        }
+        ipfsArray.push({
+          path: token + '/' + collection + '/metadata/' + i,
+          content: dicio
+        })
+      }
     }
-    else if (product==='Shoes'){
-      console.log(collection, token, path)
-    }
-    else if (product==='Bags'){
-      console.log(collection, token, path)
-    }
+    console.log("AQUI" , ipfsArray)
   }
 
   const { isAuthenticated, account } = useMoralis();

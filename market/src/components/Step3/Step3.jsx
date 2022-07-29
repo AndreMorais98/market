@@ -1,7 +1,7 @@
-import { useMoralis } from "react-moralis";
+import { useMoralis, useMoralisWeb3Api } from "react-moralis";
 import React, { useState } from 'react';
 import Login from "components/Account/Login";
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import "./step3.css";
 import Papa from "papaparse";
 
@@ -12,6 +12,8 @@ function Step3() {
 
   const url = path[0].path
   const simple_url = url.slice(0, url.lastIndexOf('/'));
+
+  const option = {abi:[]}
 
   const handleCSVUpload = (e) => {
     const files = e.target.files;
@@ -33,7 +35,7 @@ function Step3() {
       const header = file[0]
       if (header.length !== 13) {
         alert("Please, verify if the headers are correct")
-        return
+        return option
       }
       for (let i=1; i < file.length-1; i++) {
         const row = file[i]
@@ -58,7 +60,7 @@ function Step3() {
       const header = file[0]
       if (header.length !== 12) {
         alert("Please, verify if the headers are correct")
-        return
+        return option
       }
       for (let i=1; i < file.length-1; i++) {
         const row = file[i]
@@ -82,7 +84,7 @@ function Step3() {
       const header = file[0]
       if (header.length !== 10) {
         alert("Please, verify if the headers are correct")
-        return
+        return option
       }
       for (let i=1; i < file.length-1; i++) {
         const row = file[i]
@@ -102,8 +104,26 @@ function Step3() {
         })
       }
     }
-    console.log("AQUI" , ipfsArray)
+    option.abi = ipfsArray
+    console.log("AQUI" , option)
   }
+
+  const navigate = useNavigate();
+
+
+  const Web3Api = useMoralisWeb3Api();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if(option.length === 0){
+      alert("Please upload your .csv file correctly")
+    }
+    else {
+      const path = await Web3Api.storage.uploadFolder(option);
+      console.log(path)
+      navigate('/profile', {state: {final:option.abi}})
+    }
+  };
 
   const { isAuthenticated, account } = useMoralis();
   
@@ -121,7 +141,7 @@ function Step3() {
         <h1>Upload your CSV File</h1>
         <h3>Step 3</h3>
         <p>Before submit, verify if your information is correct! Once your nfts are created, will be forever online and cannot be modified.</p>
-        <form action="">
+        <form onSubmit={handleSubmit}>
           <div className="preview">
             <label htmlFor="file-ip-1" style={{"padding":"0"}}>Upload CSV</label>
             <input type="file" id="file-ip-1" accept=".csv,.xlsx,.xls" onChange={handleCSVUpload}/>

@@ -115,7 +115,7 @@ const App = ({ isServerInfo }) => {
   }, [isAuthenticated, isWeb3Enabled,]);
 
   return (
-    <Layout style={{ minHeight: "100vh", overflow: "auto" }}>
+    <Layout style={{ minHeight: "100vh", overflow: "auto", overflowX: "hidden" }}>
       <Router>
         <Header style={styles.header}>
           <Logo />

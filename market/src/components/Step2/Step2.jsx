@@ -77,7 +77,7 @@ function Step2() {
   const filename = collection+'_'+token+'_form.csv'
 
   const [uploadedFiles, setUploadedFiles] = useState([])
-  const [option, setOptions] = useState({abi:[]})
+  const option = {abi:[]}
 
   const handleUploadFiles = files => {
     const uploaded = [...uploadedFiles];

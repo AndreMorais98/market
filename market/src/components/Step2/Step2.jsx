@@ -77,7 +77,7 @@ function Step2() {
   const filename = collection+'_'+token+'_form.csv'
 
   const [uploadedFiles, setUploadedFiles] = useState([])
-  const option = {abi:[]}
+  const [option, setOptions] = useState({abi:[]})
 
   const handleUploadFiles = files => {
     const uploaded = [...uploadedFiles];
@@ -103,13 +103,11 @@ function Step2() {
     }
     Promise.all(promises).then(() => {
       option.abi = ipfsArray
-      console.log(option)
       setUploadedFiles(uploaded)
     })
   }
 
   const handleFileEvent = (e) => {
-    console.log(e)
     const chosenFiles = Array.prototype.slice.call(e.target.files)
     handleUploadFiles(chosenFiles);
   }
@@ -121,7 +119,7 @@ function Step2() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(option.abi)
+    console.log(option)
     if( option.abi.length === 0){
       alert("Please upload atleast 1 file")
     }

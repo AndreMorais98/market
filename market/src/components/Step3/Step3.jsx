@@ -13,15 +13,13 @@ function Step3() {
   const url = path[0].path
   const simple_url = url.slice(0, url.lastIndexOf('/'));
 
-  const option = {abi:[]}
+  const [option, setOptions] = useState({abi:[]})
 
   const handleCSVUpload = (e) => {
     const files = e.target.files;
     if (files) {
-      console.log(files[0]);
       Papa.parse(files[0], {
         complete: function(results) {
-          console.log("Finished:", results.data)
           handeCSVtoJson(results.data)
         }}
       )
@@ -105,7 +103,6 @@ function Step3() {
       }
     }
     option.abi = ipfsArray
-    console.log("AQUI" , option)
   }
 
   const navigate = useNavigate();

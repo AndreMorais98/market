@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useMoralis, useMoralisCloudFunction } from "react-moralis";
+import { useMoralis } from "react-moralis";
 import {
   BrowserRouter as Router,
   Routes,
@@ -21,6 +21,7 @@ import "./style.css";
 import HomePage from "components/HomePage";
 import Market from "components/Market/Market";
 import MenuItems from "./components/MenuItems";
+
 const { Header, Footer } = Layout;
 
 const styles = {
@@ -100,12 +101,7 @@ const styles = {
 
 
 const App = ({ isServerInfo }) => {
-  const { isWeb3Enabled, enableWeb3, isAuthenticated, isWeb3EnableLoading, account} = useMoralis();
-
-  const params = {ethAddress: account}
-  const { data } = useMoralisCloudFunction("getUsers", params);
-  console.log("data",data)
-
+  const { isWeb3Enabled, enableWeb3, isAuthenticated, isWeb3EnableLoading, web3} = useMoralis();
 
   useEffect(() => {
     const connectorId = window.localStorage.getItem("connectorId");

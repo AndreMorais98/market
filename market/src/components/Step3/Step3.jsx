@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import Login from "components/Account/Login";
 import { useLocation, useNavigate } from 'react-router-dom';
 import "./step3.css";
+import { ethers } from "ethers";
 import Papa from "papaparse";
 
 function Step3() {
@@ -123,7 +124,13 @@ function Step3() {
   };
 
   const { isAuthenticated, account } = useMoralis();
-  
+
+  let provider = ethers.getDefaultProvider('mumbai')
+
+  let privateKey = "336ef1343c746b2dc3f9f46657a1ed427758190f69e14b1922ccb8496ca228b1"
+  let wallet = new ethers.Wallet(privateKey, provider);
+
+
   if (!isAuthenticated || !account) {
     return (
       <>

@@ -59,7 +59,7 @@ module.exports = {
     // NB: It's important to wrap the provider as a function.
     matic: {
       provider: () => new HDWalletProvider(mnemonic, `https://speedy-nodes-nyc.moralis.io/06bc91dcb7f74116395d7e73/polygon/mumbai`),
-      network_id: 80001,       // Ropsten's id
+      network_id: 80001,    // Ropsten's id
       gas: 5500000,        // Ropsten has a lower block limit than mainnet
       confirmations: 2,    // # of confs to wait between deployments. (default: 0)
       timeoutBlocks: 200,  // # of blocks before a deployment times out  (minimum/default: 50)

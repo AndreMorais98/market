@@ -4,6 +4,8 @@ import Login from "components/Account/Login";
 import { useLocation, useNavigate } from 'react-router-dom';
 import "./step3.css";
 import Papa from "papaparse";
+import Smartcontract from '../../Truffle/build/contracts/LuxyToken.json'
+import { ethers } from "ethers";
 
 function Step3() {
   
@@ -117,8 +119,25 @@ function Step3() {
     }
     else {
       const path = await Web3Api.storage.uploadFolder(option);
-      console.log(path)
-      navigate('/profile', {state: {final:option.abi}})
+      
+      var re = /(.*)\/[0-9]+$/;
+      const url = re.exec(path[0].path)[0]
+      
+      console.log(path.length, collection, token, url[0])
+
+      const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+      const signer = provider.getSigner()
+      signer.getAddress().then((string) => console.log("Signer", string)) 
+    
+      const abi = Smartcontract.abi
+      const bytecode = Smartcontract.bytecode
+
+      console.log("abi", abi)
+      console.log("bytecode", bytecode)
+      
+    
+      let factory = new ethers.ContractFactory(abi, bytecode, signer);
+      let contract = factory.deploy(path.length, collection, token, url[0]).then(() => navigate('/profile', {state: {final:option.abi}}))
     }
   };
 

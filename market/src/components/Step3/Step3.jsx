@@ -121,9 +121,9 @@ function Step3() {
       const path = await Web3Api.storage.uploadFolder(option);
       
       var re = /(.*)\/[0-9]+$/;
-      const url = re.exec(path[0].path)[0]
+      const url = re.exec(path[0].path)[1] + '/'
       
-      console.log(path.length, collection, token, url[0])
+      console.log(path.length, collection, token, url)
 
       const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
       const signer = provider.getSigner()
@@ -137,7 +137,7 @@ function Step3() {
       
     
       let factory = new ethers.ContractFactory(abi, bytecode, signer);
-      factory.deploy(path.length, collection, token, url[0]).then(() => navigate('/profile', {state: {final:option.abi}}))
+      factory.deploy(path.length, collection, token, url).then(() => navigate('/profile', {state: {final:option.abi}}))
     }
   };
 

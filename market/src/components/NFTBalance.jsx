@@ -87,7 +87,7 @@ function NFTBalance() {
                       <FileSearchOutlined
                         onClick={() =>
                           window.open(
-                            `${getExplorer(chainId)}address/${
+                            `${getExplorer(chainId)}/address/${
                               nft.token_address
                             }`,
                             "_blank",

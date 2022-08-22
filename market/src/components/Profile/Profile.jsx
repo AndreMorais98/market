@@ -1,12 +1,18 @@
 import React from 'react';
-import { useMoralis } from "react-moralis";
+import { useMoralis, useNFTBalances } from "react-moralis";
 import Login from "components/Account/Login";
 import Market from "components/Market/Market";
+import { useVerifyMetadata } from "hooks/useVerifyMetadata";
+
 
 import "./profile.css";
 
 function Profile() {
-  
+  const { verifyMetadata } = useVerifyMetadata();
+  const { data: NFTBalances } = useNFTBalances();
+
+  console.log("NFTBalances", NFTBalances)
+
   const { isAuthenticated, account, user } = useMoralis();  
 
   if (!isAuthenticated || !account) {
@@ -18,6 +24,14 @@ function Profile() {
   }
   return (
   <>
+    {NFTBalances?.result &&
+      NFTBalances.result.map((nft, index) => {
+        //Verify Metadata
+        nft = verifyMetadata(nft);
+        return (
+          <div class=""></div>
+        );
+    })}
     <div className="container">
       <div className="main-body">
         <div className="row gutters-sm justify-content-center">

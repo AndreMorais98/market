@@ -1,8 +1,10 @@
 import React from 'react';
+import Blockie from "../Blockie";
 import { useMoralis, useNFTBalances } from "react-moralis";
-import Login from "components/Account/Login";
-import Market from "components/Market/Market";
 import { useVerifyMetadata } from "hooks/useVerifyMetadata";
+import { getExplorer } from "helpers/networks";
+import Login from "components/Account/Login";
+import Filter from "components/Filter/Filter";
 
 
 import "./profile.css";
@@ -13,7 +15,7 @@ function Profile() {
 
   console.log("NFTBalances", NFTBalances)
 
-  const { isAuthenticated, account, user } = useMoralis();  
+  const { isAuthenticated, account, user, chainId } = useMoralis();  
 
   if (!isAuthenticated || !account) {
     return (
@@ -22,16 +24,9 @@ function Profile() {
       </>
     )
   }
+
   return (
   <>
-    {NFTBalances?.result &&
-      NFTBalances.result.map((nft, index) => {
-        //Verify Metadata
-        nft = verifyMetadata(nft);
-        return (
-          <div class=""></div>
-        );
-    })}
     <div className="container">
       <div className="main-body">
         <div className="row gutters-sm justify-content-center">
@@ -42,7 +37,7 @@ function Profile() {
                   <i className="fa fa-pencil icon-edit"></i>
                 </a>
                 <div className="d-flex flex-column align-items-center text-center">
-                  <img className="img-account" src="https://imageio.forbes.com/specials-images/imageserve/5ce316de87fac400077d52a5/0x0.jpg?format=jpg&amp;crop=416,416,x0,y0,safe&amp;height=416&amp;width=416&amp;fit=bounds" alt="Admin" />
+                  <Blockie className="img-account" currentWallet scale={25} />                  
                   <div className="mt-3 links">
                     <div className="username-div">
                       <h4 className="username"> {user.attributes.username} </h4>
@@ -81,7 +76,61 @@ function Profile() {
         </div>
       </div>
     </div>
-    <Market />
+    <div className="market-container">
+      <div className="container">
+        <Filter />
+      </div>
+    </div>
+    <div className="row">
+      <div className="col-1"></div>
+      <div className="col-10 media-card">
+        <div className="card">
+          <div className="card-body">
+            <div className="row">
+              {NFTBalances?.result && NFTBalances.result.map((nft, index) => {
+                nft = verifyMetadata(nft);
+                return (
+                <div className="col-md-4 col-lg-3">
+                  <div className="card nft-card">
+                    <div className="card-body card-nft-body">
+                      <div className="price-tag">
+                        <h5 className="price-tag-text">40000</h5>
+                        <img src="polygon-matic-logo.png" alt="matic logo" />
+                      </div>
+
+                      <div className="nft-img-wrapper">
+                        <img className="img-nft" src={nft?.image || "error"} alt="Admin" />
+                      </div>
+
+                      <div className="nft-info">
+                        <div className="mt-3 links">
+                        <h4>{nft.metadata.title}</h4>
+                        <p className="text-muted font-size-sm">{nft.token_hash}</p>
+                        <p className="font-size-sm">Collection: <strong> {nft.name} </strong></p>
+                      </div>
+                    </div>
+                    <div className="row row-nft">
+                      <div className="col-6 nft-buttons">
+                        <a href={`/nft/${nft.token_address}/${index}`} target="_blank" rel="noreferrer">
+                          <i className="fa fa-cart-arrow-down"></i>
+                        </a>
+                      </div>
+                      <div className="col-6 nft-buttons">
+                        <a href={`${getExplorer(chainId)}address/${nft.token_address}?a=${index}`} target="_blank" rel="noreferrer"> 
+                          <img src="logo-polygonscan.svg" alt="ehterscan" style={{"marginTop":"7px"}}/>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              );})}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="col-1"></div>
+    </div>
   </>
   );
 }

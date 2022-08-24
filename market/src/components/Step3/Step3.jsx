@@ -51,7 +51,7 @@ function Step3() {
           
         }
         ipfsArray.push({
-          path: token + '/' + collection + '/metadata/' + i,
+          path: token + '/' + collection + '/metadata/' + (i-1),
           content: dicio
         })
       }
@@ -75,7 +75,7 @@ function Step3() {
           }
         }
         ipfsArray.push({
-          path: token + '/' + collection + '/metadata/' + i,
+          path: token + '/' + collection + '/metadata/' + (i-1),
           content: dicio
         })
       }
@@ -99,7 +99,7 @@ function Step3() {
           }
         }
         ipfsArray.push({
-          path: token + '/' + collection + '/metadata/' + i,
+          path: token + '/' + collection + '/metadata/' + (i-1),
           content: dicio
         })
       }

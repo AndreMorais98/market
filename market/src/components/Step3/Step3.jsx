@@ -137,7 +137,7 @@ function Step3() {
       
     
       let factory = new ethers.ContractFactory(abi, bytecode, signer);
-      factory.deploy(path.length, collection, token, url).then(() => navigate('/profile', {state: {final:option.abi}}))
+      factory.deploy(path.length, collection, token, url).then(() => navigate('/profile'))
     }
   };
 

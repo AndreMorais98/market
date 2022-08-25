@@ -177,12 +177,11 @@ body{
     margin-bottom: 0;   
 }
 
-.nft-card .card-nft-body .row-nft .nft-buttons a {
+.nft-card .card-nft-body .row-nft .nft-buttons button {
     color: #5b6464;
-    font-size: 20px;
 }
 
-.nft-card .card-nft-body .row-nft .nft-buttons a:hover {
+.nft-card .card-nft-body .row-nft .nft-buttons button:hover {
     color: #59a796;   
 }
 

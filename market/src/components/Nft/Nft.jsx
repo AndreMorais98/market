@@ -1,11 +1,32 @@
-import { useMoralis } from "react-moralis";
+import { useMoralis, useMoralisWeb3Api } from "react-moralis";
 import Login from "components/Account/Login";
+import { useParams } from "react-router-dom";
 import "./nft.css";
 
 function Nft() {
   const { isAuthenticated, account, user} =
   useMoralis();
 
+  const Web3Api = useMoralisWeb3Api()
+  let { address, id } = useParams();
+
+  const fetchBlock = async() => {
+    const result = await Web3Api.account.getNFTsForContract({
+      chain: "mumbai",
+      address: account,
+      token_address: address
+    })
+    console.log(result)
+  }
+
+  const result = Web3Api.token.getTokenIdMetadata({
+    chain: "mumbai",
+    address: address,
+    token_id: id
+  })
+ 
+
+  
   if (!isAuthenticated || !account) {
     return (
       <>
@@ -15,6 +36,8 @@ function Nft() {
   }
   return (
   <>
+  {
+    return ();}
     <div className="container">
       <div className="main-body">
         <h1 style={{"textAlign": "center", "marginTop": "50px"}}>Rolex Datejust (title)</h1>
@@ -35,11 +58,11 @@ function Nft() {
                         <div className="col-6 align-self-center">
                           <h6>Current price: </h6>
                           <span className="price" style={{"display": "flex"}}>
-                            <img src="./polygon-matic-logo.png" alt="polygon-icon" style={{"marginRight": "10px"}}/>450
+                            <img src="../../polygon-matic-logo.png" alt="polygon-icon" style={{"marginRight": "10px"}}/>450
                           </span>
                         </div>
                         <div className="col-6 button-col">
-                          <button className="btn btn-primary" type="button">Buy</button>
+                          <button className="btn btn-primary" onClick={nftMetadata} type="button">Buy</button>
                         </div>
                       </div>
                     </div>
@@ -138,7 +161,7 @@ function Nft() {
                 <i className="fas fa-tag">List</i>
               </th>
               <td style={{"display": "flex"}}> 
-                <img src="polygon-matic-logo.png" alt="polygon-icon" style={{"marginRight": "5px"}}/> 50
+                <img src="../../polygon-matic-logo.png" alt="polygon-icon" style={{"marginRight": "5px"}}/> 50
               </td>
               <td> 
                 <a href="/profile">Rolex</a>
@@ -153,7 +176,7 @@ function Nft() {
                 <i className="fas fa-handshake">Transfer</i>
               </th>
               <td style={{"display": "flex"}}> 
-                <img src="polygon-matic-logo.png" alt="polygon-icon" style={{"marginRight": "5px"}}/> 200
+                <img src="../../polygon-matic-logo.png" alt="polygon-icon" style={{"marginRight": "5px"}}/> 200
               </td>
               <td> 
                 <a href="/profile">Rolex</a>
@@ -170,7 +193,7 @@ function Nft() {
                 <i className="fas fa-handshake">Transfer</i>
               </th>
               <td style={{"display": "flex"}}> 
-                <img src="polygon-matic-logo.png" alt="polygon-icon" style={{"marginRight": "5px"}}/> 400
+                <img src="../../polygon-matic-logo.png" alt="polygon-icon" style={{"marginRight": "5px"}}/> 400
               </td>
               <td>Otto</td>
               <td>Larry the Bird</td>

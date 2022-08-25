@@ -3,10 +3,9 @@ import Blockie from "../Blockie";
 import { useMoralis, useNFTBalances } from "react-moralis";
 import { useVerifyMetadata } from "hooks/useVerifyMetadata";
 import { getExplorer } from "helpers/networks";
+import { useNavigate } from "react-router-dom";
 import Login from "components/Account/Login";
 import Filter from "components/Filter/Filter";
-
-
 import "./profile.css";
 
 function Profile() {
@@ -14,6 +13,8 @@ function Profile() {
   const { data: NFTBalances } = useNFTBalances();
 
   console.log("NFTBalances", NFTBalances)
+
+  let navigate = useNavigate();
 
   const { isAuthenticated, account, user, chainId } = useMoralis();  
 
@@ -88,6 +89,9 @@ function Profile() {
           <div className="card-body">
             <div className="row">
               {NFTBalances?.result && NFTBalances.result.map((nft, index) => {
+                function handleClick() {
+                  navigate(`/nft/${nft.token_address}/${index}`)
+                }
                 nft = verifyMetadata(nft);
                 return (
                 <div className="col-md-4 col-lg-3">
@@ -104,20 +108,20 @@ function Profile() {
 
                       <div className="nft-info">
                         <div className="mt-3 links">
-                        <h4>{nft.metadata.title}</h4>
-                        <p className="text-muted font-size-sm">{nft.token_hash}</p>
+                        <h4>{nft.metadata.title} #{index}</h4>
+                        <p className="text-muted font-size-sm text-capitalize">{nft.metadata.type}</p>
                         <p className="font-size-sm">Collection: <strong> {nft.name} </strong></p>
                       </div>
                     </div>
                     <div className="row row-nft">
                       <div className="col-6 nft-buttons">
-                        <a href={`/nft/${nft.token_address}/${index}`} target="_blank" rel="noreferrer">
+                        <button style={{padding: "0",border: "none", background: "none"}} onClick={handleClick}>
                           <i className="fa fa-cart-arrow-down"></i>
-                        </a>
+                        </button>
                       </div>
                       <div className="col-6 nft-buttons">
                         <a href={`${getExplorer(chainId)}address/${nft.token_address}?a=${index}`} target="_blank" rel="noreferrer"> 
-                          <img src="logo-polygonscan.svg" alt="ehterscan" style={{"marginTop":"7px"}}/>
+                          <img src="logo-polygonscan.svg" alt="ehterscan" style={{"marginTop":"5px"}}/>
                         </a>
                       </div>
                     </div>

@@ -127,7 +127,7 @@ const App = ({ isServerInfo }) => {
         <div style={styles.content}>
           <Routes>
             <Route exact path="/" element={<HomePage />} />
-            <Route path="/nft" element={<Nft />} />
+            <Route path="/nft/:address/:id" element={<Nft />} />
             <Route path="/create" element={<Nft />} />
             <Route path="/market" element={<Market />} />
             <Route path="/profile" element={<Profile />} />
@@ -175,7 +175,7 @@ const App = ({ isServerInfo }) => {
 export const Logo = () => (
   <div style={styles.imgWrap}>
     <a href="/" >
-      <img src="diamond.png" style={styles.imgLogo} alt="logo"/>
+      <img src="../../diamond.png" style={styles.imgLogo} alt="logo"/>
     </a>
   </div>
 );

@@ -1,15 +1,22 @@
 import { useMoralis, useMoralisWeb3Api } from "react-moralis";
 import Login from "components/Account/Login";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import "./nft.css";
 
 function Nft() {
-  const { isAuthenticated, account, user} =
+  const { isAuthenticated, account} =
   useMoralis();
 
   const Web3Api = useMoralisWeb3Api()
   let { address, id } = useParams();
 
+  const {state} = useLocation();
+  const { data } = state;
+  
+  const clean_data = JSON.parse(data?.metadata)
+  
+  console.log(data)
+  
   const fetchBlock = async() => {
     const result = await Web3Api.account.getNFTsForContract({
       chain: "mumbai",
@@ -18,15 +25,8 @@ function Nft() {
     })
     console.log(result)
   }
-
-  const result = Web3Api.token.getTokenIdMetadata({
-    chain: "mumbai",
-    address: address,
-    token_id: id
-  })
- 
-
   
+
   if (!isAuthenticated || !account) {
     return (
       <>
@@ -36,16 +36,14 @@ function Nft() {
   }
   return (
   <>
-  {
-    return ();}
     <div className="container">
       <div className="main-body">
-        <h1 style={{"textAlign": "center", "marginTop": "50px"}}>Rolex Datejust (title)</h1>
+        <h1 style={{"textAlign": "center", "marginTop": "50px"}}> {clean_data.title} #{data.token_id} </h1>
         <div className="row gutters-sm">
           <div className="col-6">
             <div className="row">
               <div className="col-12">
-                <div className="img-wrapper"><img className="nft-img" src="https://content.rolex.com/dam/new-watches-2020/homepage/roller/all-watches/watches_0000_m326238-0009-sky-dweller_portrait.jpg?imwidth=420" alt="Admin" /></div>
+                <div className="img-wrapper"><img className="nft-img" src={clean_data.image} alt="Admin" /></div>
               </div>
               <div className="col-12">
                 <div className="accordion-item">
@@ -62,7 +60,7 @@ function Nft() {
                           </span>
                         </div>
                         <div className="col-6 button-col">
-                          <button className="btn btn-primary" onClick={nftMetadata} type="button">Buy</button>
+                          <button className="btn btn-primary" onClick={fetchBlock} type="button">Buy</button>
                         </div>
                       </div>
                     </div>
@@ -76,16 +74,16 @@ function Nft() {
             <div className="row">
               <div className="col-12" style={{"marginBottom":"30px"}}>
                 <div className="card nft-description">
-                  <h5 className="created-by">Created by
-                  </h5>
-                  <h2 className="description-title">About</h2>
-                  <h4>small description</h4>
+                  <h2 className="description-title mt-0 mb-4">About</h2>
+                  {clean_data?.website &&
                   <p>Website:
-                    <a href="https://www.rolex.com/">www.rolex.com</a>
+                    <a href="https://www.rolex.com/">{clean_data.description}</a>
                   </p>
-                  <p>Token ID: </p>
-                  <p>Product ID: </p>
-                  <h5 className="created-by">Owned by: <a className="created-by-link" href="/profile">André Morais</a></h5>
+                  }
+                  <p>Type: <strong className="text-capitalize">{clean_data.type}</strong></p>
+                  <p>Collection: <strong>{data.name}</strong></p>
+                  <p>Product ID: <strong>{clean_data.product_id}</strong></p>
+                  <p>Owned by: <strong>{data.owner_of}</strong></p>
                 </div>
               </div>
               <div className="col-12">
@@ -96,12 +94,19 @@ function Nft() {
                     </h2>
                     <div className="accordion-collapse collapse show" id="panelsStayOpen-collapseOne" aria-labelledby="panelsStayOpen-headingOne">
                       <div className="accordion-body">
-                        <strong>Relógio cronógrafo de aço inxodável </strong>
-                        <p>Mostrador redondo, movimento a quartzo, pulseira ajustável em corrente, fecho de encaixe, ponteiros e coroa de rosca. Esta peça possui garantia padrão de dois anos da marca.</p>
+                        {clean_data?.description &&
+                          <p className="mb-2">{clean_data.description}</p>
+                        }
                         <ul>
-                          <li>Brand ID: 1791718</li>
-                          <li>Made In: Switzerland</li>
-                          <li>Color: Black and Gold</li>
+                          {clean_data?.brand_id &&
+                            <li><strong>Brand ID:</strong> {clean_data.brand_id}</li>
+                          }
+                          {clean_data?.made_in &&
+                            <li><strong>Made In:</strong> {clean_data.made_in}</li>
+                          }
+                          {clean_data?.color &&
+                            <li><strong>Color:</strong> {clean_data.color}</li>
+                          }
                         </ul>
                       </div>
                     </div>
@@ -112,10 +117,9 @@ function Nft() {
                     </h2>
                     <div className="accordion-collapse collapse" id="panelsStayOpen-collapseTwo" aria-labelledby="panelsStayOpen-headingTwo">
                       <div className="accordion-body">
-                        <ul>
-                          <li>Vidro: 100%</li>
-                          <li>Aço Inoxidável: 100%</li>
-                        </ul>
+                        {clean_data?.composition &&
+                          <p> {clean_data?.composition} </p>
+                        }
                       </div>
                     </div>
                   </div>
@@ -125,12 +129,56 @@ function Nft() {
                     </h2>
                     <div className="accordion-collapse collapse" id="panelsStayOpen-collapseThree" aria-labelledby="panelsStayOpen-headingThree">
                       <div className="accordion-body">
+                        {clean_data?.type === "watch" &&
                         <ul>
-                          <li>Circunferência: 21 cm</li>
-                          <li>Diâmetro: 4,6 cm</li>
-                          <li>Espessura: 1,2 cm</li>
-                          <li>Largura: 2,8 cm</li>
+                          {clean_data?.circumference &&
+                          <li><strong>Circumference:</strong> {clean_data?.circumference} cm</li>
+                          }
+                          {clean_data?.diameter &&
+                          <li><strong>Diameter:</strong> {clean_data?.diameter} cm</li>
+                          }
+                          {clean_data?.height &&
+                          <li><strong>Height:</strong> {clean_data?.height} cm</li>
+                          }
+                          {clean_data?.width &&
+                          <li><strong>Width:</strong> {clean_data?.width} cm</li>
+                          }
                         </ul>
+                        }
+                        {(clean_data?.type === "shirt" || "coat" || "trousers" || "shorts" || "shoes") &&
+                        <ul>
+                          <li><strong>Size:</strong> {clean_data?.size} cm</li>
+                        </ul>
+                        }
+                        {(clean_data?.type === "jewellery") &&
+                        <ul>
+                          {clean_data?.circumference &&
+                          <li><strong>Circumference:</strong> {clean_data?.circumference} cm</li>
+                          }
+                          {clean_data?.length &&
+                          <li><strong>Length:</strong> {clean_data?.length} cm</li>
+                          }
+                          {clean_data?.width &&
+                          <li><strong>Width:</strong> {clean_data?.width} cm</li>
+                          }
+                        </ul>
+                        }
+                        {(clean_data?.type === "bags") &&
+                        <ul>
+                          {clean_data?.depth &&
+                          <li><strong>Depth:</strong> {clean_data?.depth} cm</li>
+                          }
+                          {clean_data?.handle &&
+                          <li><strong>Handle:</strong> {clean_data?.handle} cm</li>
+                          }
+                          {clean_data?.height &&
+                          <li><strong>Height:</strong> {clean_data?.height} cm</li>
+                          }
+                          {clean_data?.width &&
+                          <li><strong>Width:</strong> {clean_data?.width} cm</li>
+                          }
+                        </ul>
+                        }
                       </div>
                     </div>
                   </div>
@@ -158,7 +206,7 @@ function Nft() {
           <tbody>
             <tr>
               <th>
-                <i className="fas fa-tag">List</i>
+                <i className="fas fa-tag"> List</i>
               </th>
               <td style={{"display": "flex"}}> 
                 <img src="../../polygon-matic-logo.png" alt="polygon-icon" style={{"marginRight": "5px"}}/> 50
@@ -173,7 +221,7 @@ function Nft() {
 
             <tr>
               <th> 
-                <i className="fas fa-handshake">Transfer</i>
+                <i className="fas fa-handshake"> Transfer</i>
               </th>
               <td style={{"display": "flex"}}> 
                 <img src="../../polygon-matic-logo.png" alt="polygon-icon" style={{"marginRight": "5px"}}/> 200
@@ -189,8 +237,8 @@ function Nft() {
             </tr>
 
             <tr>
-              <th> 
-                <i className="fas fa-handshake">Transfer</i>
+              <th>
+                <i className="fas fa-handshake"> Transfer</i>
               </th>
               <td style={{"display": "flex"}}> 
                 <img src="../../polygon-matic-logo.png" alt="polygon-icon" style={{"marginRight": "5px"}}/> 400

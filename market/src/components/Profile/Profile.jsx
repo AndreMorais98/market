@@ -1,6 +1,6 @@
 import React from 'react';
 import Blockie from "../Blockie";
-import { useMoralis, useNFTBalances } from "react-moralis";
+import { useMoralis, useNFTBalances, useMoralisWeb3Api } from "react-moralis";
 import { useVerifyMetadata } from "hooks/useVerifyMetadata";
 import { getExplorer } from "helpers/networks";
 import { useNavigate } from "react-router-dom";
@@ -10,10 +10,10 @@ import "./profile.css";
 
 function Profile() {
   const { verifyMetadata } = useVerifyMetadata();
+  const Web3Api = useMoralisWeb3Api()
   const { data: NFTBalances } = useNFTBalances();
 
-  console.log("NFTBalances", NFTBalances)
-
+  console.log(NFTBalances)
   let navigate = useNavigate();
 
   const { isAuthenticated, account, user, chainId } = useMoralis();  
@@ -88,9 +88,20 @@ function Profile() {
         <div className="card">
           <div className="card-body">
             <div className="row">
+            {NFTBalances?.result?.length === 0 &&
+              <h2 className="text-center" style={{margin: "100px"}}>
+                You don't own any NFT. Buy your first or craft a new Collection
+              </h2>
+            }
               {NFTBalances?.result && NFTBalances.result.map((nft, index) => {
-                function handleClick() {
-                  navigate(`/nft/${nft.token_address}/${index}`)
+                async function handleClick() {
+                  const result = await Web3Api.token.getTokenIdMetadata({
+                    chain: "mumbai",
+                    address: nft.token_address,
+                    token_id: nft.token_id
+                  })
+                  console.log(result)
+                  navigate(`/nft/${nft.token_address}/${index}`, {state: {data:result}})
                 }
                 nft = verifyMetadata(nft);
                 return (
@@ -114,7 +125,7 @@ function Profile() {
                       </div>
                     </div>
                     <div className="row row-nft">
-                      <div className="col-6 nft-buttons">
+                      <div className="col-6 nft-buttons d-flex align-content-center justify-content-center">
                         <button style={{padding: "0",border: "none", background: "none"}} onClick={handleClick}>
                           <i className="fa fa-cart-arrow-down"></i>
                         </button>

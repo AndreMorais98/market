@@ -132,7 +132,7 @@ function Profile() {
                       </div>
                       <div className="col-6 nft-buttons">
                         <a href={`${getExplorer(chainId)}address/${nft.token_address}?a=${index}`} target="_blank" rel="noreferrer"> 
-                          <img src="logo-polygonscan.svg" alt="ehterscan" style={{"marginTop":"5px"}}/>
+                          <img src="logo-polygonscan.svg" alt="ehterscan" style={{height: "20px"}}/>
                         </a>
                       </div>
                     </div>

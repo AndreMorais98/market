@@ -16,7 +16,7 @@ function Step2() {
     { label: "title", key: "title" },
     { label: "description", key: "description" },
     { label: "image", key: "image" },
-    { label: "brand_id", key: "brand_id" },
+    { label: "brand", key: "brand" },
     { label: "product_id", key: "product_id" },
     { label: "made_in", key: "made_in" },
     { label: "color", key: "color" },

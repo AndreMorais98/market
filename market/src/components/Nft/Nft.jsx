@@ -82,6 +82,9 @@ function Nft() {
                   }
                   <p>Type: <strong className="text-capitalize">{clean_data.type}</strong></p>
                   <p>Collection: <strong>{data.name}</strong></p>
+                  {clean_data?.brand &&
+                    <p>Brand :<strong> {clean_data.brand_id} </strong></p>
+                  }
                   <p>Product ID: <strong>{clean_data.product_id}</strong></p>
                   <p>Owned by: <strong>{data.owner_of}</strong></p>
                 </div>
@@ -98,9 +101,6 @@ function Nft() {
                           <p className="mb-2">{clean_data.description}</p>
                         }
                         <ul>
-                          {clean_data?.brand_id &&
-                            <li><strong>Brand ID:</strong> {clean_data.brand_id}</li>
-                          }
                           {clean_data?.made_in &&
                             <li><strong>Made In:</strong> {clean_data.made_in}</li>
                           }

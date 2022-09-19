@@ -11,11 +11,11 @@ function Nft() {
   let { address, id } = useParams();
 
   const {state} = useLocation();
-  const { data } = state;
+  const { data, transfer} = state;
   
   const clean_data = JSON.parse(data?.metadata)
   
-  console.log(data)
+  console.log(data, transfer)
   
   const fetchBlock = async() => {
     const result = await Web3Api.account.getNFTsForContract({

@@ -1,6 +1,6 @@
 import React from 'react';
 import Blockie from "../Blockie";
-import { useMoralis, useNFTBalances, useMoralisWeb3Api } from "react-moralis";
+import { useMoralis, useNFTBalances, useNFTTransfers, useMoralisWeb3Api } from "react-moralis";
 import { useVerifyMetadata } from "hooks/useVerifyMetadata";
 import { getExplorer } from "helpers/networks";
 import { useNavigate } from "react-router-dom";
@@ -12,8 +12,10 @@ function Profile() {
   const { verifyMetadata } = useVerifyMetadata();
   const Web3Api = useMoralisWeb3Api()
   const { data: NFTBalances } = useNFTBalances();
+  const { transfers: NFTransfers } = useNFTTransfers();
 
-  console.log(NFTBalances)
+
+  console.log(NFTransfers)
   let navigate = useNavigate();
 
   const { isAuthenticated, account, user, chainId } = useMoralis();  
@@ -100,8 +102,11 @@ function Profile() {
                     address: nft.token_address,
                     token_id: nft.token_id
                   })
-                  console.log(result)
-                  navigate(`/nft/${nft.token_address}/${index}`, {state: {data:result}})
+                  const transfer = await Web3Api.account.getNFTTransfers({
+                    chain: "mumbai",
+                    address: nft.token_address
+                  })
+                  navigate(`/nft/${nft.token_address}/${index}`, {state: {data:result, transfer:transfer}})
                 }
                 nft = verifyMetadata(nft);
                 return (

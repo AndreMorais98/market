@@ -1,6 +1,6 @@
 import { useMoralis, useMoralisWeb3Api } from "react-moralis";
 import Login from "components/Account/Login";
-import { useParams, useLocation } from "react-router-dom";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 import "./nft.css";
 
 function Nft() {
@@ -15,7 +15,7 @@ function Nft() {
   
   const clean_data = JSON.parse(data?.metadata)
   
-  console.log(data, transfer)
+  let navigate = useNavigate();
   
   const fetchBlock = async() => {
     const result = await Web3Api.account.getNFTsForContract({
@@ -24,6 +24,14 @@ function Nft() {
       token_address: address
     })
     console.log(result)
+  }
+
+  async function loadProfile() {
+    const result = await Web3Api.account.getNFTs({
+      chain: "mumbai",
+      address: data.owner_of
+    })
+    navigate(`/profile/${data.owner_of}/`, {state: {data:result}})
   }
   
 
@@ -86,7 +94,10 @@ function Nft() {
                     <p>Brand :<strong> {clean_data.brand_id} </strong></p>
                   }
                   <p>Product ID: <strong>{clean_data.product_id}</strong></p>
-                  <p>Owned by: <strong>{data.owner_of}</strong></p>
+                  <div className="d-flex">
+                  <p style={{marginBottom: "0px", marginRight: "5px"}}>Owned by: </p> <button className="profile-btn" onClick={loadProfile}> <strong>{data.owner_of}</strong> </button>
+
+                  </div>
                 </div>
               </div>
               <div className="col-12">
@@ -111,18 +122,18 @@ function Nft() {
                       </div>
                     </div>
                   </div>
-                  <div className="accordion-item">
-                    <h2 className="accordion-header" id="panelsStayOpen-headingTwo">
-                      <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo"> Composition </button>
-                    </h2>
-                    <div className="accordion-collapse collapse" id="panelsStayOpen-collapseTwo" aria-labelledby="panelsStayOpen-headingTwo">
-                      <div className="accordion-body">
-                        {clean_data?.composition &&
-                          <p> {clean_data?.composition} </p>
-                        }
+                  {clean_data?.composition &&
+                    <div className="accordion-item">
+                      <h2 className="accordion-header" id="panelsStayOpen-headingTwo">
+                        <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo"> Composition </button>
+                      </h2>
+                      <div className="accordion-collapse collapse" id="panelsStayOpen-collapseTwo" aria-labelledby="panelsStayOpen-headingTwo">
+                        <div className="accordion-body">
+                            <p> {clean_data?.composition} </p>
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  }
                   <div className="accordion-item">
                     <h2 className="accordion-header" id="panelsStayOpen-headingThree">
                       <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree"> Size </button>

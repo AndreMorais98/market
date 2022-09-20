@@ -1,15 +1,27 @@
-import { useMoralis } from "react-moralis";
+import React from 'react';
+import Blockies from "react-blockies";
+import { useMoralis, useNFTBalances, useNFTTransfers, useMoralisWeb3Api } from "react-moralis";
+import { useVerifyMetadata } from "hooks/useVerifyMetadata";
+import { getExplorer } from "helpers/networks";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
+
 import Login from "components/Account/Login";
-import Market from "components/Market/Market";
+import Filter from "components/Filter/Filter";
 import "./publicprofile.css";
 
 function PublicProfile() {
-  const { isAuthenticated, account, user } =
-  useMoralis();
+  const { verifyMetadata } = useVerifyMetadata();
+  const Web3Api = useMoralisWeb3Api()
 
-  const username = user.attributes["username"]
-  console.log(user)
-  
+  let { id } = useParams();
+
+  const {state} = useLocation();
+  const { data } = state;
+
+  let navigate = useNavigate();
+
+  const { isAuthenticated, account, user, chainId } = useMoralis();  
+
   if (!isAuthenticated || !account) {
     return (
       <>
@@ -17,6 +29,7 @@ function PublicProfile() {
       </>
     )
   }
+
   return (
   <>
     <div className="container">
@@ -26,13 +39,13 @@ function PublicProfile() {
             <div className="card">
               <div className="card-body">
                 <div className="d-flex flex-column align-items-center text-center">
-                  <img className="img-account" src="https://imageio.forbes.com/specials-images/imageserve/5ce316de87fac400077d52a5/0x0.jpg?format=jpg&amp;crop=416,416,x0,y0,safe&amp;height=416&amp;width=416&amp;fit=bounds" alt="Admin" />
+                  <Blockies className="img-account" seed={id} scale={25} />                  
                   <div className="mt-3 links">
                     <div className="username-div">
-                      <h4 className="username"> {username} </h4>
-                      <img className="img-verified" src="verified.png" alt="verified"/>
+                      <h4 className="username"> USERNAME </h4>
+                      <img className="img-verified" src="../../verified.png" alt="verified"/>
                     </div>
-                    <p className="text-muted font-size-sm" style={{marginBottom: "10px"}}> {account} </p>
+                    <p className="text-muted font-size-sm" style={{marginBottom: "10px"}}> {id} </p>
                     <a href="https://andremorais98.github.io/">
                       <svg className="feather feather-globe mr-2 icon-inline" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <circle cx="12" cy="12" r="10"></circle>
@@ -65,7 +78,79 @@ function PublicProfile() {
         </div>
       </div>
     </div>
-    <Market />
+    <div className="market-container">
+      <div className="container">
+        <Filter />
+      </div>
+    </div>
+    <div className="row">
+      <div className="col-1"></div>
+      <div className="col-10 media-card">
+        <div className="card">
+          <div className="card-body">
+            <div className="row">
+            {data?.result?.length === 0 &&
+              <h2 style={{margin: "100px", width: "100%", textAlign: "center"}}>
+                You don't own any NFT. Buy your first or craft a new Collection
+              </h2>
+            }
+              {data?.result && data.result.map((nft, index) => {
+                const clean_data = JSON.parse(nft?.metadata)
+                async function handleClick() {
+                  const result = await Web3Api.token.getTokenIdMetadata({
+                    chain: "mumbai",
+                    address: nft.token_address,
+                    token_id: nft.token_id
+                  })
+                  const transfer = await Web3Api.account.getNFTTransfers({
+                    chain: "mumbai",
+                    address: nft.token_address
+                  })
+                  navigate(`/nft/${nft.token_address}/${index}`, {state: {data:result, transfer:transfer}})
+                }
+                nft = verifyMetadata(nft);
+                return (
+                <div className="col-md-4 col-lg-3">
+                  <div className="card nft-card">
+                    <div className="card-body card-nft-body">
+                      <div className="price-tag">
+                        <h5 className="price-tag-text">40000</h5>
+                        <img src="../../polygon-matic-logo.png" alt="matic logo" />
+                      </div>
+
+                      <div className="nft-img-wrapper">
+                        <img className="img-nft" src={clean_data?.image || "error"} alt="Admin" />
+                      </div>
+
+                      <div className="nft-info">
+                        <div className="mt-3 links">
+                        <h4>{clean_data.title} #{index}</h4>
+                        <p className="text-muted font-size-sm text-capitalize">{clean_data.type}</p>
+                        <p className="font-size-sm">Collection: <strong> {nft.name} </strong></p>
+                      </div>
+                    </div>
+                    <div className="row row-nft">
+                      <div className="col-6 nft-buttons d-flex align-content-center justify-content-center">
+                        <button style={{padding: "0",border: "none", background: "none"}} onClick={handleClick}>
+                          <i className="fa fa-cart-arrow-down"></i>
+                        </button>
+                      </div>
+                      <div className="col-6 nft-buttons">
+                        <a href={`${getExplorer(chainId)}address/${nft.token_address}?a=${index}`} target="_blank" rel="noreferrer"> 
+                          <img src="../../logo-polygonscan.svg" alt="ehterscan" style={{height: "20px"}}/>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              );})}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="col-1"></div>
+    </div>
   </>
   );
 }

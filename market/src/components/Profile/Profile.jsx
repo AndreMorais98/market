@@ -14,8 +14,6 @@ function Profile() {
   const { data: NFTBalances } = useNFTBalances();
   const { transfers: NFTransfers } = useNFTTransfers();
 
-
-  console.log(NFTransfers)
   let navigate = useNavigate();
 
   const { isAuthenticated, account, user, chainId } = useMoralis();  
@@ -91,7 +89,7 @@ function Profile() {
           <div className="card-body">
             <div className="row">
             {NFTBalances?.result?.length === 0 &&
-              <h2 className="text-center" style={{margin: "100px"}}>
+              <h2 style={{margin: "100px", width: "100%", textAlign: "center"}}>
                 You don't own any NFT. Buy your first or craft a new Collection
               </h2>
             }

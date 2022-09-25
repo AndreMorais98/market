@@ -124,7 +124,7 @@ function Profile() {
                         <div className="mt-3 links">
                         <h4>{nft.metadata.title} #{index}</h4>
                         <p className="text-muted font-size-sm text-capitalize">{nft.metadata.type}</p>
-                        <p className="font-size-sm">Collection: <strong> {nft.name} </strong></p>
+                        <p className="font-size-sm mb-2">Collection: <strong> {nft.name} </strong></p>
                       </div>
                     </div>
                     <div className="row row-nft">

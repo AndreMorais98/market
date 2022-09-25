@@ -1,6 +1,6 @@
 import React from 'react';
 import Blockies from "react-blockies";
-import { useMoralis, useNFTBalances, useNFTTransfers, useMoralisWeb3Api } from "react-moralis";
+import { useMoralis, useMoralisWeb3Api } from "react-moralis";
 import { useVerifyMetadata } from "hooks/useVerifyMetadata";
 import { getExplorer } from "helpers/networks";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
@@ -12,14 +12,13 @@ import "./publicprofile.css";
 function PublicProfile() {
   const { verifyMetadata } = useVerifyMetadata();
   const Web3Api = useMoralisWeb3Api()
-
+  
+  let navigate = useNavigate();
+  
   let { id } = useParams();
-
+  
   const {state} = useLocation();
   const { data } = state;
-
-  let navigate = useNavigate();
-
   const { isAuthenticated, account, user, chainId } = useMoralis();  
 
   if (!isAuthenticated || !account) {
@@ -126,7 +125,7 @@ function PublicProfile() {
                         <div className="mt-3 links">
                         <h4>{clean_data.title} #{index}</h4>
                         <p className="text-muted font-size-sm text-capitalize">{clean_data.type}</p>
-                        <p className="font-size-sm">Collection: <strong> {nft.name} </strong></p>
+                        <p className="font-size-sm mb-2">Collection: <strong> {nft.name} </strong></p>
                       </div>
                     </div>
                     <div className="row row-nft">

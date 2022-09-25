@@ -10,31 +10,18 @@ import "./market.css";
 function Market() {
   const { verifyMetadata } = useVerifyMetadata();
   const Web3Api = useMoralisWeb3Api()
+  let navigate = useNavigate();
   
   const { getNFTBalances, data, error, isLoading, isFetching } = useNFTBalances({address:"0x88a5399e74895264c1dd65c91418bf81695703da"});
-  
-  let navigate = useNavigate();
+  const { isAuthenticated, account, user, chainId } = useMoralis();
 
+  console.log(data)
   
-  const { isAuthenticated, account, user, chainId } = useMoralis();  
-  
-  console.log(!data)
-
   if (!isAuthenticated || !account) {
     return (
       <>
         <Login />
       </>
-    )
-  }
-  if (!data) {
-    return (
-      <div className="container">
-      <h2 className="text-center" style={{margin: "100px"}}>
-        The page is loading...
-      </h2>
-      <div class="loader"></div>
-    </div>
     )
   }
   return (
@@ -44,7 +31,7 @@ function Market() {
           <Filter />
         </div>
       </div>
-
+      
       <div className="row">
         <div className="col-1"></div>
         <div className="col-10 media-card">
@@ -56,6 +43,11 @@ function Market() {
                   You don't own any NFT. Buy your first or craft a new Collection
                 </h2>
               }
+                {data === null &&
+                  <div class="d-flex justify-content-center">
+                    <button class="btn-primary refresh-btn" onClick={() => getNFTBalances({address:"0x88a5399e74895264c1dd65c91418bf81695703da"})}>Reload Market</button>
+                  </div>
+                }
                 {data?.result && data.result.map((nft, index) => {
                   async function handleClick() {
                     const result = await Web3Api.token.getTokenIdMetadata({

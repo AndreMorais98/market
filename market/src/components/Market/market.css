@@ -18,3 +18,24 @@
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+.refresh-btn {
+  background-color: #59a796;
+  border-color: #59a796;
+  width: 150px;
+}
+
+.refresh-btn:hover {
+  background-color: #2e7a6a;
+  border-color: #2e7a6a;
+
+}
+
+.refresh-btn:not(:disabled):not(.disabled):active:focus {
+  box-shadow: 0 0 0 0.2rem rgb(89 167 150 / 50%)!important;
+}
+
+.refresh-btn:not(:disabled):not(.disabled):active {
+  background-color: #3f5c56!important;
+  border-color: #3f5c56!important;
+}

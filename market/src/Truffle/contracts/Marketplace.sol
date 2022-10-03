@@ -1,38 +1,77 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import './IERC721.sol';
-import './IERC721Receiver.sol';
+import '@openzeppelin/contracts/token/ERC721/IERC721.sol';
+import '@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol';
+import '@openzeppelin/contracts/utils/Counters.sol';
+import '@openzeppelin/contracts/security/ReentrancyGuard.sol';
 
-contract NFTSale is IERC721 {
+contract Marketplace is IERC721, ReentrancyGuard {
+  using Counters for Counters.Counter;
+  Counters.Counter private _itemIds;
+  Counters.Counter private _itemsSold;
   string private _name; 
   string private _symbol;
 
-  mapping(uint256 => address) private _owners;
-  mapping(address => uint256) private _balances;
-  mapping(uint256 => address) private _approvedTokens;
-  mapping(address => mapping(address => bool)) _approvedOperators;
-  mapping(address => uint256) UserBalances;
+  constructor() {
+    // owner = payable(msg.sender);  
+  }
 
-  struct nft {
-    uint256 minPrice;
-    uint256 endTime;
-    uint256 bid;
+  mapping(uint256 => address) private _owner;
+  mapping(address => uint256) private _balance;
+
+
+  struct NftProduct {
+    uint256 id;
+    uint256 tokenId;
+    address payable owner;
+    address creator;
+    uint256 price;
+    bool sold;
+    address nft_contract;
+  }
+
+  struct MarketItem{
+    uint256 id;
+    address tokenAddress;
+    uint256 tokenId;
     address payable seller;
-    address payable bidder;
-    bool isOnSale;
+    uint256 royalty;
+    uint256 price;
+    bool sold;
   }
 
-  mapping(uint256 => nft) nfts; // stores details of nft on auction
+  MarketItem[] public items;
 
-  event OnSale(uint256 indexed tokenId, uint256 minPrice, uint256 endTime);
-  event Bid(uint256 indexed tokenId, address indexed bidder, uint256 price);
-  event SaleEnded(uint256 indexed tokenId, address indexed buyer, uint256 price);
+  // ----------- Events-----------
 
-  constructor(string memory name_, string memory symbol_) {
-    _name = name_;
-    _symbol = symbol_;
-  }
+  event ItemIsOnSale(
+    uint256 indexed nftId,
+    address indexed nftContractAddress,
+    address creator,
+    uint256 price,
+    address seller
+  );
+
+  event ItemsSold(
+    uint256 indexed nftId,
+    address indexed nftContractAddress,
+    uint256 price,
+    address buyer
+  );
+
+  event Buy(
+    uint256 indexed transactionId,
+    address indexed bidder,
+    uint256 indexed nftId,
+    uint256 price
+  );
+
+  event Approval(
+    address indexed owner, 
+    address indexed approved, 
+    uint256 indexed tokenId
+  );
 
   /**
   Get token contract name
@@ -54,38 +93,6 @@ contract NFTSale is IERC721 {
    */
   function _exists(uint256 tokenId) internal view returns (bool) {
     return _owners[tokenId] != address(0);
-  }
-
-  /**
-  Mint a token with id `tokenId`
-  @param tokenId - token id
-   */
-  function mint(uint256 tokenId) public {
-    require(!_exists(tokenId), 'tokenId already exist');
-    _safeMint(msg.sender, tokenId, "");
-  }
-
-  /**
-  Mint safely as this function checks whether the receiver has implemented onERC721Received if its a contract
-  @param to - to address
-  @param tokenId - token id
-  @param data - data
-   */
-  function _safeMint(address to, uint256 tokenId, bytes memory data) internal {
-    _mint(to, tokenId);
-    require(_checkOnERC721Received(address(0), to, tokenId, data), "receiver has not implemented ERC721Receiver");
-  }
-
-  /**
-  Internal function to mint a token `tokenId` to `to`
-  @param to - to address
-  @param tokenId - token id
-   */
-  function _mint(address to, uint256 tokenId) internal {
-    require(to != address(0), 'transfering to zero addres');
-    _balances[to] += 1;
-    _owners[tokenId] = to;
-    emit Transfer(address(0), to, tokenId);
   }
 
   /**
@@ -199,23 +206,6 @@ contract NFTSale is IERC721 {
     _transfer(from, to, tokenId);
   }
 
-    /**
-  Owner can put a token on auction.
-  @param tokenId - token id 
-  @param price - minimum price required
-  @param endTime - end time of auction
-   */
-  function putOnAuction(uint256 tokenId, uint256 price, uint256 endTime) public {
-    require(isOwnerOrApproved(msg.sender, tokenId), 'caller not an owner or approved');
-    require(nfts[tokenId].isOnSale == false, 'Already on sale');
-    nfts[tokenId].minPrice = price;
-    nfts[tokenId].endTime = endTime;
-    nfts[tokenId].seller = payable(msg.sender);
-    nfts[tokenId].bid = 0;
-    nfts[tokenId].isOnSale = true;
-    emit OnSale(tokenId, price, endTime);
-  }
-
   /**
   Bid for a token on sale. Bid amount has to be higher than current bid or minimum price.
   Accepts ether as the function is payable
@@ -318,3 +308,12 @@ contract NFTSale is IERC721 {
     return size > 0;
   }
 }
+
+
+// Transfer com o creator do NFT a ser o único a poder por o item à venda
+// Owner entrega na loja e passa NFT para o creator (Não precisa dos approvals)
+// Dar royalties ao creator (1%) uint royalty = (items[id].royalty * items[id].price)/100;
+
+
+
+// SM para o user??

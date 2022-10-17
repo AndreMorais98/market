@@ -12,11 +12,13 @@ contract LuxyToken is ERC721, Ownable {
     Counters.Counter private _tokenIdCounter;
 
     uint32 public size;
+    address public creator;
     string uri;
 
     constructor(uint32 _size, string memory _name, string memory _symbol, string memory _uri) ERC721(_name, _symbol) {
         uri = _uri;
         size = _size;
+        creator = msg.sender;
         for(uint32 i=0; i < size ; i++){
             _safeMint(msg.sender, i);
         }

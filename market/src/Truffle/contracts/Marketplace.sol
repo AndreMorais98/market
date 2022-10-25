@@ -9,21 +9,7 @@ import '@openzeppelin/contracts/access/Ownable.sol';
 import './LuxyToken.sol';
 
 contract Marketplace is Ownable {
-
-  constructor() {
-
-  }
-
-  mapping(uint256 => address) private _owners;
-  mapping(address => uint256) private _balances;
-  mapping(uint256 => address) private _approvedTokens;
-  mapping(address => mapping(address => bool)) _approvedOperators;
-
-  mapping(address => uint256) UserBalances; // balance of each bidder 
-
-  mapping(address => address[]) public nftsListed;
-
-  mapping(address => mapping(uint256 => NftTransfer)) public nftTransfer;
+  uint256 public LISTING_FEE = 0.0001 ether;
 
   mapping(address => mapping(uint256 => Nft)) public nfts; // stores details of nft on auction
 
@@ -37,36 +23,25 @@ contract Marketplace is Ownable {
     bool isOnSale;
   }
 
+  Nft[] nftsListed;
+
   // ----------- Events-----------
 
   event OnSale (
-    address indexed nftAddress,
     uint256 indexed tokenId,
+    address indexed nftAddress,
     address seller
   );
 
-  event CancelOnSale (
-    address indexed nftAddress,
-    uint256 indexed tokenId,
-    address seller,
-    address creator
-  );
-
   event Reserve (
-    address indexed nftAddress,
     uint256 indexed tokenId,
-    address reserver
-  );
-
-  event RemoveReserve (
     address indexed nftAddress,
-    uint256 indexed tokenId,
     address reserver
   );
 
   event FinishTransfer (
-    address indexed nftAddress,
     uint256 indexed tokenId,
+    address indexed nftAddress,
     address buyer
   );
 
@@ -85,15 +60,19 @@ contract Marketplace is Ownable {
     _;
   }
 
-  function putOnSale(address nftAddress, uint256 tokenId, address creator) public {
+  function putOnSale(address nftAddress, uint256 tokenId, address creator, uint256 _price) public payable {
+    require(_price > 0, "Price must be at least 1 wei");
+    require(msg.value == LISTING_FEE, "Not enough ether for listing fee");
     require(nfts[nftAddress][tokenId].isOnSale == false, 'Already on sale');
     nfts[nftAddress][tokenId].owner = msg.sender;
     nfts[nftAddress][tokenId].creator = creator;
     nfts[nftAddress][tokenId].isOnSale = true;
     nfts[nftAddress][tokenId].buyersList = [];
+    nftsListed[nfts[nftAddress][tokenId]].push;
     approve(nftAddress, tokenId, creator);
     emit OnSale(nftAddress, tokenId, msg.sender);
   }
+
 
   function firstTransfer(address nftAddress, uint256 tokenId, address buyer) public isCreator(nftAddress, tokenId, msg.sender) {
     require(nfts[nftAddress][tokenId].firstSale == true, 'This is not the first transfer');
@@ -123,12 +102,12 @@ contract Marketplace is Ownable {
     return false;
   }
 
-  function removeFromBuyersList(address nftAddress, uint256 tokenId) public isCreatorAndApproved(nftAddress, tokenId, msg.sender) {
+  function removeFromBuyersList(address nftAddress, uint256 tokenId) public isApproved(nftAddress, tokenId, msg.sender) {
     require(nfts[nftAddress][tokenId].buyersList[] == [], 'There is no buyers');
     nfts[nftAddress][tokenId].buyersList[0].pop();
   }
   
-  function finishTransfer(address nftAddress, uint256 tokenId, address buyer) public {
+  function finishTransfer(address nftAddress, uint256 tokenId, address buyer) public isApproved(nftAddress, tokenId, msg.sender) {
     require(isOnBuyersList(nfts[nftAddress][tokenId].buyersList[0] == buyer, 'This address is not the buyer'));
     require(nfts[nftAddress][tokenId].isOnSale == true, 'This NFT is not on sale');
     IERC721 luxy = IERC721(nftAddress);
@@ -137,11 +116,20 @@ contract Marketplace is Ownable {
     nfts[nftAddress][tokenId].buyersList = [];
     emit FinishTransfer(nftAddress, tokenId, buyer);
   }
-
-  function removeCancel(address nftAddress, uint256 tokenId) public {
-    require(nfts[nftAddress][tokenId].isOnSale == true, 'This NFT is not on sale');
-    nfts[nftAddress][tokenId].buyersList[msg.sender] = address(0);
-    nfts[nftAddress][tokenId].isOnSale = true;
-    emit RemoveBuy(tokenId);
+  
+  function getListingFee() public view returns (uint256) {
+    return LISTING_FEE;
   }
+
+  function checkIsOnSale(address nftAddress, uint256 tokenId) public view returns (bool) {
+    if (nfts[nftAddress][tokenId].isOnSale == true) {
+      return true;
+    }
+    return false;
+  }
+
+  function getAllNftOnSale() public view {
+    return nftsListed;
+  }
+
 }

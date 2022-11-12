@@ -4,10 +4,14 @@ import Login from "components/Account/Login";
 import { useLocation, useNavigate } from 'react-router-dom';
 import "./step3.css";
 import Papa from "papaparse";
-import Smartcontract from '../../Truffle/build/contracts/LuxyToken.json'
+// import Smartcontract from '../../Truffle/build/contracts/LuxyToken.json'
+import abi from '../../contracts/abi.json'
+import bytecode from '../../contracts/bytecode.json'
 import { ethers } from "ethers";
 
 function Step3() {
+
+  const marketAddress = "0x6f89D126d5025aE7c557741c459F00BE562949BE"
   
   const {state} = useLocation();
   const { collection, token, product, path} = state;
@@ -127,17 +131,22 @@ function Step3() {
 
       const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
       const signer = provider.getSigner()
-      signer.getAddress().then((string) => console.log("Signer", string)) 
     
-      const abi = Smartcontract.abi
-      const bytecode = Smartcontract.bytecode
+      console.log(abi)
+      console.log(bytecode.object)
 
-      console.log("abi", abi)
-      console.log("bytecode", bytecode)
+      // let factory = new ethers.ContractFactory(abi, bytecode.object, signer);
+      // factory.deploy().then((contract) => console.log(contract))
+
+      // console.log(provider.getCode())
       
+      let contract = new ethers.Contract(marketAddress, abi, signer);
     
-      let factory = new ethers.ContractFactory(abi, bytecode, signer);
-      factory.deploy(path.length, collection, token, url).then(() => navigate('/profile'))
+      const price = ethers.utils.parseUnits("0.0000001", 'ether');
+      let listingPrice = await contract.getListPrice();
+      listingPrice = listingPrice.toString();
+
+      let transaction = await contract.createToken(path.length, collection, token, url, price, {value: listingPrice}).then(() => navigate('/profile'));
     }
   };
 

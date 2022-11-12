@@ -2,6 +2,7 @@
 pragma solidity ^0.8.4;
 
 import '@openzeppelin/contracts/token/ERC721/IERC721.sol';
+import '@openzeppelin/contracts/token/ERC721/ERC721.sol';
 import '@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol';
 import '@openzeppelin/contracts/utils/Counters.sol';
 import '@openzeppelin/contracts/security/ReentrancyGuard.sol';
@@ -9,7 +10,7 @@ import '@openzeppelin/contracts/access/Ownable.sol';
 import './LuxyToken.sol';
 
 contract Marketplace is Ownable {
-  uint256 public LISTING_FEE = 0.0001 ether;
+  uint256 public LISTING_FEE = 0.000008 ether;
 
   mapping(address => mapping(uint256 => Nft)) public nfts; // stores details of nft on auction
 
@@ -67,9 +68,10 @@ contract Marketplace is Ownable {
     nfts[nftAddress][tokenId].owner = msg.sender;
     nfts[nftAddress][tokenId].creator = creator;
     nfts[nftAddress][tokenId].isOnSale = true;
-    nfts[nftAddress][tokenId].buyersList = [];
+    nfts[nftAddress][tokenId].buyersList=new address[](0);
     nftsListed[nfts[nftAddress][tokenId]].push;
-    approve(nftAddress, tokenId, creator);
+    IERC721 luxy = IERC721(nftAddress);
+    luxy._approve(creator, tokenId);
     emit OnSale(nftAddress, tokenId, msg.sender);
   }
 
@@ -93,9 +95,8 @@ contract Marketplace is Ownable {
   }
 
   function isOnBuyersList(address nftAddress, uint256 tokenId, address buyer) public {
-    list = nfts[nftAddress][tokenId].buyersList;
-    for (uint i=0; i < list.length; i++) {
-      if (buyer == list[i]) {
+    for (uint i=0; i < nfts[nftAddress][tokenId].buyersList.length; i++) {
+      if (buyer == nfts[nftAddress][tokenId].buyersList[i]) {
         return true;
       }
     }

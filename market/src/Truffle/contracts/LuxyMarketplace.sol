@@ -9,45 +9,52 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract LuxyMarketplace is ERC721URIStorage {
     using Counters for Counters.Counter;
-    //_tokenIds variable has the most recent minted tokenId
     Counters.Counter private _tokenIds;
-    //Keeps track of the number of items sold on the marketplace
     Counters.Counter private _itemsSold;
-    //owner is the contract address that created the smart contract
+    //smart contract owner
     address payable owner;
-    //The fee charged by the marketplace to be allowed to list an NFT ~ 0.01 matic
-    uint256 listPrice = 0.0000008 ether;
+    //The fee charged to list an NFT ~ 0.01 matic
+    uint256 feePrice = 0.0000008 ether;
 
     //The structure to store info about a listed token
     struct ListedToken {
         uint256 tokenId;
+        uint256 price;
         address payable owner;
         address payable seller;
-        uint256 price;
+        address [] buyers;
         bool currentlyListed;
     }
 
     //the event emitted when a token is successfully listed
     event TokenListedSuccess (
         uint256 indexed tokenId,
+        uint256 price,
         address owner,
         address seller,
-        uint256 price,
         bool currentlyListed
+    );
+
+    event TokenSold (
+        uint256 indexed tokenId,
+        uint256 price,
+        address seller,
+        address buyer
     );
 
     //This mapping maps tokenId to token info and is helpful when retrieving details about a tokenId
     mapping(uint256 => ListedToken) private idToListedToken;
+    mapping(uint256 => ListedToken) private idToAllToken;
 
     constructor() ERC721("LuxyMarketplace", "LUXYMP") {
         owner = payable(msg.sender);
     }
 
-    function getListPrice() public view returns (uint256) {
-        return listPrice;
+    function getFeePrice() public view returns (uint256) {
+        return feePrice;
     }
 
-     function getLatestIdToListedToken() public view returns (ListedToken memory) {
+    function getLatestIdToListedToken() public view returns (ListedToken memory) {
         uint256 currentTokenId = _tokenIds.current();
         return idToListedToken[currentTokenId];
     }
@@ -73,42 +80,103 @@ contract LuxyMarketplace is ERC721URIStorage {
 
     function createListedToken(uint256 tokenId, uint256 price) private {
         //Make sure the sender sent enough ETH to pay for listing
-        require(msg.value == listPrice, "Hopefully sending the correct price");
+        require(msg.value == feePrice, "Hopefully sending the correct price");
 
         //Update the mapping of tokenId's to Token details, useful for retrieval functions
         idToListedToken[tokenId] = ListedToken(
             tokenId,
+            price,
             payable(address(this)),
             payable(msg.sender),
-            price,
-            true
+            new address[](0),
+            false
         );
 
         _transfer(msg.sender, address(this), tokenId);
         //Emit the event for successful transfer. The frontend parses this message and updates the end user
         emit TokenListedSuccess(
             tokenId,
+            price,
             address(this),
             msg.sender,
-            price,
-            true
+            false
         );
     }
 
-    //This will return all the NFTs currently listed to be sold on the marketplace
-    function getAllNFTs() public view returns (ListedToken[] memory) {
+    function listNFT(uint256 tokenId) public {
+        require(msg.sender == idToListedToken[tokenId].seller, "You are not the owner of this NFT");
+        idToListedToken[tokenId].currentlyListed = true;
+
+    }
+
+    function removeListNFT(uint256 tokenId) public {
+        require(msg.sender == idToListedToken[tokenId].seller, "You are not the owner of this NFT");
+        idToListedToken[tokenId].currentlyListed = false;
+    }
+
+    function updatePriceNFT(uint256 tokenId, uint256 price) public {
+        require(msg.sender == idToListedToken[tokenId].seller, "You are not the owner of this NFT");
+        idToListedToken[tokenId].price = price;
+    }
+
+    function isTheOwner(uint256 tokenId, address seller) public returns (bool) {
+        if (idToListedToken[tokenId].seller == seller) {
+            return true;
+        }
+        return false;
+    }
+
+    function reserveNFT(uint256 tokenId) public {
+        require(msg.sender != idToListedToken[tokenId].seller, "Cannot buy your own NFT");
+        require(idToListedToken[tokenId].currentlyListed == true, "This NFT is not on sale");
+
+        uint buyersNumber = getBuyersLength(tokenId);
+        address[] memory newBuyersList = new address[](buyersNumber+1);
+
+
+        for(uint i=0;i<buyersNumber;i++){
+            newBuyersList[i] = idToListedToken[tokenId].buyers[i];
+        }
+
+        newBuyersList[buyersNumber] = msg.sender;
+        idToListedToken[tokenId].buyers = newBuyersList;
+    }
+
+    function getBuyersLength (uint256 tokenId) private returns (uint256) {
+        return idToListedToken[tokenId].buyers.length;
+    }
+
+    function removeBuyer (uint256 tokenId) public {
+        require(msg.sender == idToListedToken[tokenId].seller, "You are not the owner of the NFT");
+        require(idToListedToken[tokenId].currentlyListed == true, "This NFT is not on sale");
+        if (idToListedToken[tokenId].buyers.length != 0) {
+            uint buyersNumber = getBuyersLength(tokenId);
+            address[] memory newBuyersList = new address[](buyersNumber);
+
+            for (uint i = 0; i<newBuyersList.length-1; i++){
+                newBuyersList[i] = idToListedToken[tokenId].buyers[i+1];
+            }
+            delete newBuyersList[newBuyersList.length-1];
+            idToListedToken[tokenId].buyers = newBuyersList;
+        }
+    }
+
+    //This will return all the NFTs currently listed on the marketplace
+    function getMarketNFTs() public view returns (ListedToken[] memory) {
         uint nftCount = _tokenIds.current();
         ListedToken[] memory tokens = new ListedToken[](nftCount);
         uint currentIndex = 0;
         uint currentId;
-        //at the moment currentlyListed is true for all, if it becomes false in the future we will 
-        //filter out currentlyListed == false over here
+
         for(uint i=0;i<nftCount;i++)
         {
             currentId = i + 1;
-            ListedToken storage currentItem = idToListedToken[currentId];
-            tokens[currentIndex] = currentItem;
-            currentIndex += 1;
+            if(idToListedToken[currentId].currentlyListed == true)
+            {
+                ListedToken storage currentItem = idToListedToken[currentId];
+                tokens[currentIndex] = currentItem;
+                currentIndex += 1;
+            }
         }
         //the array 'tokens' has the list of all NFTs in the marketplace
         return tokens;
@@ -142,23 +210,28 @@ contract LuxyMarketplace is ERC721URIStorage {
     }
 
     function executeSale(uint256 tokenId) public payable {
-        uint price = idToListedToken[tokenId].price;
+        // uint price = idToListedToken[tokenId].price;
         address seller = idToListedToken[tokenId].seller;
-        require(msg.value == price, "Please submit the asking price in order to complete the purchase");
+        address buyer = idToListedToken[tokenId].buyers[0];
+        // require(msg.value == price, "Please submit the asking price in order to complete the purchase");
+        require(msg.sender == seller, "You are not the owner of the NFT");
+        require(idToListedToken[tokenId].currentlyListed == true, "This NFT is not on sale");
+
 
         //update the details of the token
-        idToListedToken[tokenId].currentlyListed = true;
-        idToListedToken[tokenId].seller = payable(msg.sender);
+        idToListedToken[tokenId].currentlyListed = false;
+        idToListedToken[tokenId].seller = payable(buyer);
+        idToListedToken[tokenId].buyers = new address[](0);
         _itemsSold.increment();
 
         //Actually transfer the token to the new owner
-        _transfer(address(this), msg.sender, tokenId);
+        _transfer(address(this), buyer, tokenId);
         //approve the marketplace to sell NFTs on your behalf
         approve(address(this), tokenId);
 
         //Transfer the listing fee to the marketplace creator
-        payable(owner).transfer(listPrice);
+        payable(owner).transfer(feePrice);
         //Transfer the proceeds from the sale to the seller of the NFT
-        payable(seller).transfer(msg.value);
+        // payable(seller).transfer(msg.value);
     }
 }

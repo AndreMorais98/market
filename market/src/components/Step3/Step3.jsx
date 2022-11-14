@@ -143,7 +143,7 @@ function Step3() {
       let contract = new ethers.Contract(marketAddress, abi, signer);
     
       const price = ethers.utils.parseUnits("0.0000001", 'ether');
-      let listingPrice = await contract.getListPrice();
+      let listingPrice = await contract.getFeePrice();
       listingPrice = listingPrice.toString();
 
       let transaction = await contract.createToken(path.length, collection, token, url, price, {value: listingPrice}).then(() => navigate('/profile'));

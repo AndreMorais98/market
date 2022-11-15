@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Blockie from "../Blockie";
 import { useMoralis, useNFTBalances, useNFTTransfers, useMoralisWeb3Api } from "react-moralis";
 import { useVerifyMetadata } from "hooks/useVerifyMetadata";
@@ -6,15 +6,67 @@ import { getExplorer } from "helpers/networks";
 import { useNavigate } from "react-router-dom";
 import Login from "components/Account/Login";
 import Filter from "components/Filter/Filter";
+import abi from '../../contracts/abi.json';
+import axios from "axios";
+import { ethers } from "ethers";
 import "./profile.css";
 
+
+
 function Profile() {
+  const marketAddress = "0xdaea1103Dd8689C993db685CDd1736FE44bb17f2"
+
   const { verifyMetadata } = useVerifyMetadata();
   const Web3Api = useMoralisWeb3Api()
   const { data: NFTBalances } = useNFTBalances();
-  const { transfers: NFTransfers } = useNFTTransfers();
+  console.log(NFTBalances)
+
+  const [dataFetched, updateFetched] = useState(false);
+  const [datas, updateDatas] = useState([]);
 
   let navigate = useNavigate();
+
+  const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+  const signer = provider.getSigner()
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const ipf_link = "https://ipfs.moralis.io:2053"
+    const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+    const signer = provider.getSigner()
+ 
+    let contract = new ethers.Contract(marketAddress, abi, signer);
+  
+    let listingPrice = await contract.getFeePrice();
+    listingPrice = listingPrice.toString();
+
+    const nfts = await contract.getMyNFTs();
+    console.log(nfts)
+
+    const items = await Promise.all(nfts.map(async i => {
+      const tokenURI = await contract.tokenURI(i.tokenId);
+      let meta = await axios.get(tokenURI);
+      const url = meta.headers["x-ipfs-path"].split(',')[0]
+      const meta_link = "https://ipfs.moralis.io:2053" + url + i.tokenId.toNumber();
+      console.log(meta_link)
+
+      let item = {
+          tokenId: i.tokenId.toNumber(),
+          seller: i.seller,
+          owner: i.owner,
+          image: meta.image,
+          name: meta.name,
+          description: meta.description,
+      }
+      return item;
+    }))
+    updateFetched(true);
+    updateDatas(items);
+
+    console.log(datas)
+
+  };
 
   const { isAuthenticated, account, user, chainId } = useMoralis();  
 
@@ -100,11 +152,8 @@ function Profile() {
                     address: nft.token_address,
                     token_id: nft.token_id
                   })
-                  const transfer = await Web3Api.account.getNFTTransfers({
-                    chain: "mumbai",
-                    address: nft.token_address
-                  })
-                  navigate(`/nft/${nft.token_address}/${index}`, {state: {data:result, transfer:transfer}})
+
+                  navigate(`/nft/${nft.token_address}/${index}`, {state: {data:result}})
                 }
                 nft = verifyMetadata(nft);
                 return (
@@ -129,7 +178,7 @@ function Profile() {
                     </div>
                     <div className="row row-nft">
                       <div className="col-6 nft-buttons d-flex align-content-center justify-content-center">
-                        <button style={{padding: "0",border: "none", background: "none"}} onClick={handleClick}>
+                        <button style={{padding: "0",border: "none", background: "none"}} onClick={handleSubmit}>
                           <i className="fa fa-cart-arrow-down"></i>
                         </button>
                       </div>

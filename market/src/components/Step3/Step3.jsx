@@ -11,7 +11,7 @@ import { ethers } from "ethers";
 
 function Step3() {
 
-  const marketAddress = "0x6f89D126d5025aE7c557741c459F00BE562949BE"
+  const marketAddress = "0xdaea1103Dd8689C993db685CDd1736FE44bb17f2"
   
   const {state} = useLocation();
   const { collection, token, product, path} = state;
@@ -138,15 +138,12 @@ function Step3() {
       // let factory = new ethers.ContractFactory(abi, bytecode.object, signer);
       // factory.deploy().then((contract) => console.log(contract))
 
-      // console.log(provider.getCode())
-      
       let contract = new ethers.Contract(marketAddress, abi, signer);
     
-      const price = ethers.utils.parseUnits("0.0000001", 'ether');
       let listingPrice = await contract.getFeePrice();
       listingPrice = listingPrice.toString();
 
-      let transaction = await contract.createToken(path.length, collection, token, url, price, {value: listingPrice}).then(() => navigate('/profile'));
+      await contract.createToken(path.length, url, {value: listingPrice}).then(() => navigate('/profile'));
     }
   };
 

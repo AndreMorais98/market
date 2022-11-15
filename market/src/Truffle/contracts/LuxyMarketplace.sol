@@ -19,7 +19,7 @@ contract LuxyMarketplace is ERC721URIStorage {
     //The structure to store info about a listed token
     struct ListedToken {
         uint256 tokenId;
-        uint256 price;
+        // uint256 price;
         address payable owner;
         address payable seller;
         address [] buyers;
@@ -29,7 +29,6 @@ contract LuxyMarketplace is ERC721URIStorage {
     //the event emitted when a token is successfully listed
     event TokenListedSuccess (
         uint256 indexed tokenId,
-        uint256 price,
         address owner,
         address seller,
         bool currentlyListed
@@ -37,7 +36,6 @@ contract LuxyMarketplace is ERC721URIStorage {
 
     event TokenSold (
         uint256 indexed tokenId,
-        uint256 price,
         address seller,
         address buyer
     );
@@ -67,25 +65,24 @@ contract LuxyMarketplace is ERC721URIStorage {
         return _tokenIds.current();
     }
 
-    function createToken(uint32 _size, string memory _name, string memory _symbol, string memory _uri, uint256 price) public payable {
-
+    function createToken(uint32 _size, string memory _uri) public payable {
         for(uint32 i=0; i < _size ; i++){
             _tokenIds.increment();
             uint256 newTokenId = _tokenIds.current();
             _safeMint(msg.sender, newTokenId);
             _setTokenURI(newTokenId, _uri);
-            createListedToken(newTokenId, price);
+            createListedToken(newTokenId);
         }
     }
 
-    function createListedToken(uint256 tokenId, uint256 price) private {
+    function createListedToken(uint256 tokenId) private {
         //Make sure the sender sent enough ETH to pay for listing
         require(msg.value == feePrice, "Hopefully sending the correct price");
 
         //Update the mapping of tokenId's to Token details, useful for retrieval functions
         idToListedToken[tokenId] = ListedToken(
             tokenId,
-            price,
+            // price,
             payable(address(this)),
             payable(msg.sender),
             new address[](0),
@@ -96,7 +93,6 @@ contract LuxyMarketplace is ERC721URIStorage {
         //Emit the event for successful transfer. The frontend parses this message and updates the end user
         emit TokenListedSuccess(
             tokenId,
-            price,
             address(this),
             msg.sender,
             false
@@ -114,10 +110,10 @@ contract LuxyMarketplace is ERC721URIStorage {
         idToListedToken[tokenId].currentlyListed = false;
     }
 
-    function updatePriceNFT(uint256 tokenId, uint256 price) public {
-        require(msg.sender == idToListedToken[tokenId].seller, "You are not the owner of this NFT");
-        idToListedToken[tokenId].price = price;
-    }
+    // function updatePriceNFT(uint256 tokenId, uint256 price) public {
+    //     require(msg.sender == idToListedToken[tokenId].seller, "You are not the owner of this NFT");
+    //     idToListedToken[tokenId].price = price;
+    // }
 
     function isTheOwner(uint256 tokenId, address seller) public returns (bool) {
         if (idToListedToken[tokenId].seller == seller) {
@@ -166,11 +162,10 @@ contract LuxyMarketplace is ERC721URIStorage {
         uint nftCount = _tokenIds.current();
         ListedToken[] memory tokens = new ListedToken[](nftCount);
         uint currentIndex = 0;
-        uint currentId;
 
         for(uint i=0;i<nftCount;i++)
         {
-            currentId = i + 1;
+            uint currentId = i + 1;
             if(idToListedToken[currentId].currentlyListed == true)
             {
                 ListedToken storage currentItem = idToListedToken[currentId];
@@ -233,5 +228,10 @@ contract LuxyMarketplace is ERC721URIStorage {
         payable(owner).transfer(feePrice);
         //Transfer the proceeds from the sale to the seller of the NFT
         // payable(seller).transfer(msg.value);
+        emit TokenSold(
+            tokenId,
+            address(this),
+            buyer
+        );
     }
 }

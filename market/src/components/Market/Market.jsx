@@ -1,13 +1,21 @@
-import React from 'react';
+import React, { useState }  from 'react';
 import Login from "components/Account/Login";
 import Filter from "components/Filter/Filter";
 import { useMoralis, useNFTBalances, useMoralisWeb3Api} from "react-moralis";
 import { getExplorer } from "helpers/networks";
 import { useNavigate } from "react-router-dom";
 import { useVerifyMetadata } from "hooks/useVerifyMetadata";
+import { ethers } from "ethers";
+import axios from "axios";
+import abi from '../../contracts/abi.json'
 import "./market.css";
 
 function Market() {
+  const marketAddress = "0xdaea1103Dd8689C993db685CDd1736FE44bb17f2"
+
+  const [dataFetched, updateFetched] = useState(false);
+  const [datas, updateDatas] = useState([]);
+
   const { verifyMetadata } = useVerifyMetadata();
   const Web3Api = useMoralisWeb3Api()
   let navigate = useNavigate();
@@ -15,8 +23,38 @@ function Market() {
   const { getNFTBalances, data, error, isLoading, isFetching } = useNFTBalances({address:"0x88a5399e74895264c1dd65c91418bf81695703da"});
   const { isAuthenticated, account, user, chainId } = useMoralis();
 
-  console.log(data)
-  
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+    const signer = provider.getSigner()
+ 
+    let contract = new ethers.Contract(marketAddress, abi, signer);
+    let transaction = await contract.getMyNFTs()
+    console.log(transaction)
+
+    const items = await Promise.all(transaction.map(async i => {
+      const tokenURI = await contract.tokenURI(i.tokenId);
+      let meta = await axios.get(tokenURI);
+      meta = meta.data;
+
+      let item = {
+          tokenId: i.tokenId.toNumber(),
+          seller: i.seller,
+          owner: i.owner,
+          image: meta.image,
+          name: meta.name,
+          description: meta.description,
+      }
+      return item;
+    }))
+
+    updateFetched(true);
+    updateDatas(items);
+
+    console.log(datas)
+  };
+    
   if (!isAuthenticated || !account) {
     return (
       <>
@@ -31,6 +69,8 @@ function Market() {
           <Filter />
         </div>
       </div>
+
+      <button onClick={handleSubmit}> clique aqui </button>
       
       <div className="row">
         <div className="col-1"></div>

@@ -175,18 +175,19 @@
 	{
 		"inputs": [
 			{
-				"internalType": "uint32",
-				"name": "_size",
-				"type": "uint32"
-			},
-			{
 				"internalType": "string",
 				"name": "_uri",
 				"type": "string"
 			}
 		],
 		"name": "createToken",
-		"outputs": [],
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
 		"stateMutability": "payable",
 		"type": "function"
 	},

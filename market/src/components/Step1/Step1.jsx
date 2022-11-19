@@ -1,7 +1,9 @@
-import { useMoralis } from "react-moralis";
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useMoralis, useMoralisWeb3Api} from "react-moralis";
+import { useLocation, useNavigate } from 'react-router-dom';
 import Login from "components/Account/Login";
+import { CSVLink } from "react-csv";
+
 import "./step1.css";
 
 function Step1() {
@@ -49,6 +51,10 @@ function Step1() {
     }
   });
 
+
+  const [uploadedFiles, setUploadedFiles] = useState([])
+  const [option, setOptions] = useState({abi:[]})
+
   const [collection, setCollection] = useState("");
   const [token, setToken] = useState("");
   const [product, setProduct] = useState("");
@@ -74,9 +80,44 @@ function Step1() {
     setUpper(e.target.value);
   };
 
-  const navigate = useNavigate();
+  const handleUploadFiles = files => {
+    const uploaded = [...uploadedFiles];
+    const promises = []
+    const ipfsArray = []
 
-  const handleSubmit = (e) => {
+    // eslint-disable-next-line array-callback-return
+    for (const fileIndex in files) {
+      const file = files[fileIndex]
+      promises.push(new Promise((res, rej) => {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          uploaded.push(file);
+          ipfsArray.push({
+            path: token + '/' + collection + '/images/' + file.name,
+            content: event.target.result
+          })
+          res();
+        };
+        reader.readAsDataURL(file);
+
+      }))
+    }
+    Promise.all(promises).then(() => {
+      option.abi = ipfsArray
+      setUploadedFiles(uploaded)
+    })
+  }
+  console.log(uploadedFiles)
+
+  const handleFileEvent = (e) => {
+    const chosenFiles = Array.prototype.slice.call(e.target.files)
+    handleUploadFiles(chosenFiles);
+  }
+
+  const navigate = useNavigate();
+  const Web3Api = useMoralisWeb3Api();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (product === ''){
       alert("Please choose the type of Product");
@@ -85,7 +126,13 @@ function Step1() {
       alert("Please fill all fields");
     }
     if ( (product === 'Clothes' && upper !== '') || (product !== '' && product !== 'Clothes' && upper === '')){
-      navigate('/step2', {state: {collection: collection, token:token, product:product, upper:upper}})
+      if( option.abi.length === 0){
+        alert("Please upload atleast 1 file")
+      }
+      else {
+        const path = await Web3Api.storage.uploadFolder(option);
+        navigate('/step2', {state: {collection:collection, token:token, product:product, upper:upper, path:path}})
+      }
     }
   };
 
@@ -140,10 +187,28 @@ function Step1() {
               </select>
             </div>
 
-            <div className="btn-upload">
-              <button className="btn btn-primary" type="submit">Continue</button>
+            <div className="upload-form-step2">
+              <h1>Upload Images</h1>
+              <p style={{"marginBottom": "10px"}}>Upload the photos that will represent your NFT. Your csv file will be already fill with the link of the image.</p>
+              <div>
+                <label htmlFor="fileUpload">
+                  <input id='fileUpload' type='file' multiple accept='image/*' onChange={handleFileEvent} />Upload Files
+                </label>
+              </div>
+
+              <div className="files">
+                <h2 style={{"marginTop": "0"}}>Files Selected</h2>
+                  {uploadedFiles.map(file => (
+                  <li key="{file.name}">
+                    {file.name}
+                  </li>
+                ))}
+              </div>
             </div>
 
+            <div className="btn-upload">
+              <button className="btn btn-primary" type="submit" >Continue</button>
+            </div>
           </form>
         </div>
       </div>

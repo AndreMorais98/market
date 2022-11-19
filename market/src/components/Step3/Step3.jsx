@@ -16,6 +16,7 @@ function Step3() {
   const {state} = useLocation();
   const { collection, token, product, path} = state;
 
+  console.log(path)
   const url = path[0].path
   const simple_url = url.slice(0, url.lastIndexOf('/'));
 

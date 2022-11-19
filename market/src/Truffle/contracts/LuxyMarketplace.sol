@@ -65,14 +65,13 @@ contract LuxyMarketplace is ERC721URIStorage {
         return _tokenIds.current();
     }
 
-    function createToken(uint32 _size, string memory _uri) public payable {
-        for(uint32 i=0; i < _size ; i++){
-            _tokenIds.increment();
-            uint256 newTokenId = _tokenIds.current();
-            _safeMint(msg.sender, newTokenId);
-            _setTokenURI(newTokenId, _uri);
-            createListedToken(newTokenId);
-        }
+    function createToken(string memory _uri) public payable returns (uint) {
+        _tokenIds.increment();
+        uint256 newTokenId = _tokenIds.current();
+        _safeMint(msg.sender, newTokenId);
+        _setTokenURI(newTokenId, _uri);
+        createListedToken(newTokenId);
+        return newTokenId;
     }
 
     function createListedToken(uint256 tokenId) private {

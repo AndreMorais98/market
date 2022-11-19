@@ -14,7 +14,7 @@ import "./profile.css";
 
 
 function Profile() {
-  const marketAddress = "0xdaea1103Dd8689C993db685CDd1736FE44bb17f2"
+  const marketAddress = "0xF2E809ad906279F0dde19D6050f961A98a11E2e6"
 
   const { verifyMetadata } = useVerifyMetadata();
   const Web3Api = useMoralisWeb3Api()
@@ -32,7 +32,6 @@ function Profile() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const ipf_link = "https://ipfs.moralis.io:2053"
     const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
     const signer = provider.getSigner()
  
@@ -42,30 +41,31 @@ function Profile() {
     listingPrice = listingPrice.toString();
 
     const nfts = await contract.getMyNFTs();
-    console.log(nfts)
 
     const items = await Promise.all(nfts.map(async i => {
       const tokenURI = await contract.tokenURI(i.tokenId);
       let meta = await axios.get(tokenURI);
-      const url = meta.headers["x-ipfs-path"].split(',')[0]
-      const meta_link = "https://ipfs.moralis.io:2053" + url + i.tokenId.toNumber();
-      console.log(meta_link)
+      meta = meta.data;
 
       let item = {
           tokenId: i.tokenId.toNumber(),
           seller: i.seller,
           owner: i.owner,
-          image: meta.image,
-          name: meta.name,
+          brand: meta.brand,
+          color: meta.color,
           description: meta.description,
+          image: meta.image,
+          made_in: meta.made_in,
+          product_id: meta.product_id,
+          size: meta.size,
+          title: meta.title,
+          type: meta.type,
+
       }
       return item;
     }))
     updateFetched(true);
     updateDatas(items);
-
-    console.log(datas)
-
   };
 
   const { isAuthenticated, account, user, chainId } = useMoralis();  

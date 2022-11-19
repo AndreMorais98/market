@@ -1,16 +1,28 @@
-import { useMoralis, useMoralisWeb3Api } from "react-moralis";
 import React, { useState } from 'react';
+import { useMoralis, useMoralisWeb3Api } from "react-moralis";
 import { useLocation, useNavigate } from 'react-router-dom';
 import Login from "components/Account/Login";
 import { CSVLink } from "react-csv";
-import "./step2.css";
+import Papa from "papaparse";
+import abi from '../../contracts/abi.json'
+import bytecode from '../../contracts/bytecode.json'
+import { uploadJSONToIPFS } from "../../helpers/uploadipfs";
+import { ethers } from "ethers";
 
+import "./step2.css";
+import "../Step3/step3.css";
 
 function Step2() {
 
+  const marketAddress = "0xF2E809ad906279F0dde19D6050f961A98a11E2e6"
+
   const {state} = useLocation();
-  const { collection, token, product, upper} = state;
+  const { collection, token, product, upper, path} = state;
   let data = []
+
+  console.log(path)
+
+  // DOWNLOAD CSV
 
   const headers = [
     { label: "title", key: "title" },
@@ -31,7 +43,9 @@ function Step2() {
       { label: "height", key: "height" },
       { label: "width", key: "width" },
     )
-    data.push({type: "watch"})
+    for(let i=0; i < path.length; i++) {
+      data.push({image: path[i].path, type: "watch"})
+    }
   }
   else if (product === "Jewellery"){
     headers.push(
@@ -39,30 +53,42 @@ function Step2() {
       { label: "length", key: "length" },
       { label: "width", key: "width" },
     )
-    data.push({type: "jewellery"})
+    for(let i=0; i < path.length; i++) {
+      data.push({image: path[i].path, type: "jewellery"})
+    }
   }
   else if (product === "Clothes"){
     headers.push(
       { label: "size", key: "size" },
     )
     if (upper === "Shirt") {
-      data.push({type: "shirt"})
+      for(let i=0; i < path.length; i++) {
+        data.push({image: path[i].path, type: "shirt"})
+      }
     }
     if (upper === "Coat") {
-      data.push({type: "coat"})
+      for(let i=0; i < path.length; i++) {
+        data.push({image: path[i].path, type: "coat"})
+      }
     }
     if (upper === "Trousers") {
-      data.push({type: "trousers"})
+      for(let i=0; i < path.length; i++) {
+        data.push({image: path[i].path, type: "trousers"})
+      }
     }
     if (upper === "Shorts") {
-      data.push({type: "shorts"})
+      for(let i=0; i < path.length; i++) {
+        data.push({image: path[i].path, type: "shorts"})
+      }
     }
   }
   else if (product === "Shoes"){
     headers.push(
       { label: "size", key: "size" },
     )
-    data.push({type: "shoes"})
+    for(let i=0; i < path.length; i++) {
+      data.push({image: path[i].path, type: "shoes"})
+    }
   }
   else if (product === "Bags"){
     headers.push(
@@ -71,65 +97,149 @@ function Step2() {
       { label: "height", key: "height" },
       { label: "width", key: "width" },
     )
-    data.push({type: "bags"})
+    for(let i=0; i < path.length; i++) {
+      data.push({image: path[i].path, type: "bags"})
+    }
   }
-  
   const filename = collection+'_'+token+'_form.csv'
 
-  const [uploadedFiles, setUploadedFiles] = useState([])
-  const [option, setOptions] = useState({abi:[]})
+  // UPLOAD CSV
 
-  const handleUploadFiles = files => {
-    const uploaded = [...uploadedFiles];
-    const promises = []
-    const ipfsArray = []
+  const [option, setOptions] = useState([])
 
-    // eslint-disable-next-line array-callback-return
-    for (const fileIndex in files) {
-      const file = files[fileIndex]
-      promises.push(new Promise((res, rej) => {
-        const reader = new FileReader();
-        reader.onload = function(event) {
-          uploaded.push(file);
-          ipfsArray.push({
-            path: token + '/' + collection + '/images/' + file.name,
-            content: event.target.result
-          })
-          res();
-        };
-        reader.readAsDataURL(file);
-
-      }))
+  const handleCSVUpload = (e) => {
+    const files = e.target.files;
+    if (files) {
+      Papa.parse(files[0], {
+        complete: function(results) {
+          handleCSVtoJson(results.data)
+        }}
+      )
     }
-    Promise.all(promises).then(() => {
-      option.abi = ipfsArray
-      setUploadedFiles(uploaded)
-    })
   }
 
-  const handleFileEvent = (e) => {
-    const chosenFiles = Array.prototype.slice.call(e.target.files)
-    handleUploadFiles(chosenFiles);
+  const handleCSVtoJson = file => {
+    const ipfsArray = []
+  
+    if (product==='Watch' || product==='Bags') {
+      const header = file[0]
+      if (header.length !== 13) {
+        alert("Please, verify if the headers are correct")
+        return option
+      }
+      for (let i=1; i < file.length-1; i++) {
+        const row = file[i]
+        let dicio = {} 
+        for(let j=0; j< header.length ; j++){
+          dicio[header[j]] = row[j]
+        }
+        ipfsArray.push({
+          content: dicio
+        })
+      }
+    }
+    else if (product==='Jewellery'){
+      const header = file[0]
+      if (header.length !== 12) {
+        alert("Please, verify if the headers are correct")
+        return option
+      }
+      for (let i=1; i < file.length-1; i++) {
+        const row = file[i]
+        let dicio = {} 
+        for(let j=0; j< header.length ; j++){
+          dicio[header[j]] = row[j]
+        }
+        ipfsArray.push({
+          content: dicio
+        })
+      }
+    }
+    else if (product==='Clothes' || product==='Shoes'){
+      const header = file[0]
+      if (header.length !== 10) {
+        alert("Please, verify if the headers are correct")
+        return option
+      }
+      for (let i=1; i < file.length-1; i++) {
+        const row = file[i]
+        let dicio = {} 
+        for(let j=0; j< header.length ; j++){
+          dicio[header[j]] = row[j]
+        }
+        ipfsArray.push({
+          content: dicio
+        })
+      }
+    }
+    setOptions(ipfsArray)
   }
 
   const navigate = useNavigate();
-
   const Web3Api = useMoralisWeb3Api();
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(option)
-    if( option.abi.length === 0){
-      alert("Please upload atleast 1 file")
+    if(option.length === 0){
+      alert("Please upload your .csv file correctly")
     }
     else {
-      const path = await Web3Api.storage.uploadFolder(option);
-      navigate('/step3', {state: {collection:collection, token:token, product:product, path:path}})
+      for (let i=0; i < option.length; i++) {
+        try{
+          console.log(option[i].content)
+          const metadataURL = await uploadMetadataToIPFS(option[i].content);
+          console.log(metadataURL)
+
+          const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+          const signer = provider.getSigner()
+    
+          let contract = new ethers.Contract(marketAddress, abi, signer);
+        
+          let listingPrice = await contract.getFeePrice();
+          listingPrice = listingPrice.toString();
+
+          console.log()
+    
+          await contract.createToken(metadataURL, { value: listingPrice })
+        }
+        catch(e) {
+          alert( "Upload error" + e)
+        }
+      }
     }
+    navigate('/profile')
   };
 
+  const uploadMetadataToIPFS = async (metadata) => {
+    try {
+      //upload the metadata JSON to IPFS
+      const response = await uploadJSONToIPFS(metadata);
+      if(response.success === true){
+          console.log("Uploaded JSON to Pinata: ", response)
+          return response.pinataURL;
+      }
+    }
+    catch(e) {
+        console.log("error uploading JSON metadata:", e)
+    }
+  }
 
+  const deployContract = async (e) => {
+    e.preventDefault();
+    try{
+      const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+      const signer = provider.getSigner()
+    
+      console.log(abi)
+      console.log(bytecode.object)
+
+      let factory = new ethers.ContractFactory(abi, bytecode.object, signer);
+      factory.deploy().then((contract) => console.log(contract))
+    }
+    catch(e) {
+      alert( "Upload error" + e)
+    }
+  };
 
   const { isAuthenticated, account } = useMoralis();
   
@@ -144,33 +254,25 @@ function Step2() {
   <>
     <div className="container">
       <div className="upload-form-step2">
-        <h1>Upload Images</h1>
+        <h1>Download your CSV File</h1>
         <h3>Step 2</h3>
-        <p style={{"marginBottom": "10px"}}> Firstly, click on the button to download the csv </p>
+        <p style={{"marginBottom": "10px"}}> Click on the button to download the csv </p>
         <CSVLink className="btn btn-primary download-btn" headers={headers} data={data} filename={filename}>Download me</CSVLink>
-        <p style={{"marginBottom": "5px"}}>Upload the photos that will represent your nft before filling out the .csv file, giving them numerical names to make them easier to handle, for example, 0.png. </p>
-        <p>After the upload of the images, you just have to choose which image correspond to each NFT, in the 'Image name' column on your csv.</p>
-        <form onSubmit={handleSubmit}>
-
-          <div>
-            <label htmlFor="fileUpload">
-              <input id='fileUpload' type='file' multiple accept='image/*' onChange={handleFileEvent} />Upload Files
-            </label>
-          </div>
-
-          <div className="files">
-            <h2 style={{"marginTop": "0"}}>Files Selected</h2>
-              {uploadedFiles.map(file => (
-              <li key="{file.name}">
-                {file.name}
-              </li>
-            ))}
-          </div>
-
-          <div className="btn-upload">
-            <button className="btn btn-primary" type="submit" >Continue</button>
-          </div>
-        </form>
+        <div className="upload-form-step3">
+          <h1>Upload your CSV File</h1>
+          <h3>Step 3</h3>
+          <p>Before submit, verify if your information is correct! Once your nfts are created, will be forever on the chain and cannot be modified.</p>
+          <form onSubmit={handleSubmit}>
+            <div className="preview">
+              <label htmlFor="file-ip-1" style={{"padding":"0"}}>Upload CSV</label>
+              <input type="file" id="file-ip-1" accept=".csv,.xlsx,.xls" onChange={handleCSVUpload}/>
+            </div>
+            <h3 className="mb-2">The beginning of your collection starts now!</h3>
+            <div className="btn-upload">
+              <input type="submit" value="Submit" name="create" id="submit" />
+            </div>
+          </form>
+        </div>
       </div>
   </div>
   </>

@@ -1,39 +1,36 @@
 import React, { useState }  from 'react';
-import Login from "components/Account/Login";
-import Filter from "components/Filter/Filter";
-import { useMoralis, useNFTBalances, useMoralisWeb3Api} from "react-moralis";
-import { getExplorer } from "helpers/networks";
 import { useNavigate } from "react-router-dom";
-import { useVerifyMetadata } from "hooks/useVerifyMetadata";
 import { ethers } from "ethers";
+
+import { useMoralis, useNFTBalances, useMoralisWeb3Api} from "react-moralis";
+import { useVerifyMetadata } from "hooks/useVerifyMetadata";
 import axios from "axios";
+
+import Filter from "components/Filter/Filter";
+import Login from "components/Account/Login";
+import { getExplorer } from "helpers/networks";
 import abi from '../../contracts/abi.json'
 import "./market.css";
 
 function Market() {
-  const marketAddress = "0xdaea1103Dd8689C993db685CDd1736FE44bb17f2"
+  const marketAddress = "0xF2E809ad906279F0dde19D6050f961A98a11E2e6"
 
   const [dataFetched, updateFetched] = useState(false);
-  const [datas, updateDatas] = useState([]);
-
-  const { verifyMetadata } = useVerifyMetadata();
-  const Web3Api = useMoralisWeb3Api()
+  const [nfts, updateNfts] = useState([]);
+  
   let navigate = useNavigate();
   
-  const { getNFTBalances, data, error, isLoading, isFetching } = useNFTBalances({address:"0x88a5399e74895264c1dd65c91418bf81695703da"});
   const { isAuthenticated, account, user, chainId } = useMoralis();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
+  async function getMarketNFTs () {
     const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
     const signer = provider.getSigner()
  
     let contract = new ethers.Contract(marketAddress, abi, signer);
-    let transaction = await contract.getMyNFTs()
-    console.log(transaction)
 
-    const items = await Promise.all(transaction.map(async i => {
+    const nfts = await contract.getMarketNFTs();
+
+    const items = await Promise.all(nfts.map(async i => {
       const tokenURI = await contract.tokenURI(i.tokenId);
       let meta = await axios.get(tokenURI);
       meta = meta.data;
@@ -42,18 +39,27 @@ function Market() {
           tokenId: i.tokenId.toNumber(),
           seller: i.seller,
           owner: i.owner,
-          image: meta.image,
-          name: meta.name,
+          brand: meta.brand,
+          color: meta.color,
           description: meta.description,
+          image: meta.image,
+          made_in: meta.made_in,
+          product_id: meta.product_id,
+          size: meta.size,
+          title: meta.title,
+          type: meta.type,
+
       }
       return item;
     }))
-
     updateFetched(true);
-    updateDatas(items);
-
-    console.log(datas)
+    updateNfts(items);
+    return items
   };
+
+  if (!dataFetched) {
+    getMarketNFTs()
+  }
     
   if (!isAuthenticated || !account) {
     return (
@@ -70,43 +76,28 @@ function Market() {
         </div>
       </div>
 
-      <button onClick={handleSubmit}> clique aqui </button>
-      
       <div className="row">
         <div className="col-1"></div>
         <div className="col-10 media-card">
           <div className="card">
             <div className="card-body">
               <div className="row">
-              {data?.result?.length === 0 &&
-                <h2 className="text-center" style={{margin: "100px"}}>
-                  You don't own any NFT. Buy your first or craft a new Collection
-                </h2>
-              }
-                {data === null &&
-                  <div class="d-flex justify-content-center">
-                    <button class="btn-primary refresh-btn" onClick={() => getNFTBalances({address:"0x88a5399e74895264c1dd65c91418bf81695703da"})}>Reload Market</button>
-                  </div>
+                {nfts.length === 0 &&
+                  <h2 style={{margin: "100px", width: "100%", textAlign: "center"}}>
+                    There is no NFTs on the market
+                  </h2>
                 }
-                {data?.result && data.result.map((nft, index) => {
-                  async function handleClick() {
-                    const result = await Web3Api.token.getTokenIdMetadata({
-                      chain: "mumbai",
-                      address: nft.token_address,
-                      token_id: nft.token_id
-                    })
-                    const transfer = await Web3Api.account.getNFTTransfers({
-                      chain: "mumbai",
-                      address: nft.token_address
-                    })
-                    navigate(`/nft/${nft.token_address}/${index}`, {state: {data:result, transfer:transfer}})
+                {dataFetched === true && nfts.map((nft, index) => {
+                  const handleClick = () => {
+                    navigate(`/nft/${nft.owner}/${nft.tokenId}`)
                   }
-                  nft = verifyMetadata(nft);
+
                   return (
                   <div className="col-md-4 col-lg-3">
                     <div className="card nft-card">
                       <div className="card-body card-nft-body">
                         <div className="price-tag">
+                          {/* Enviar no excel o price do produto*/}
                           <h5 className="price-tag-text">40000</h5>
                           <img src="polygon-matic-logo.png" alt="matic logo" />
                         </div>
@@ -117,9 +108,9 @@ function Market() {
 
                         <div className="nft-info">
                           <div className="mt-3 links">
-                          <h4>{nft.metadata.title} #{index}</h4>
-                          <p className="text-muted font-size-sm text-capitalize">{nft.metadata.type}</p>
-                          <p className="font-size-sm">Collection: <strong> {nft.name} </strong></p>
+                          <h4>{nft.title} #{nft.tokenId}</h4>
+                          <p className="text-muted font-size-sm text-capitalize">{nft.type}</p>
+                          <p className="font-size-sm">Brand: <strong> {nft.brand} </strong></p>
                         </div>
                       </div>
                       <div className="row row-nft">
@@ -129,7 +120,8 @@ function Market() {
                           </button>
                         </div>
                         <div className="col-6 nft-buttons">
-                          <a href={`${getExplorer(chainId)}address/${nft.token_address}?a=${index}`} target="_blank" rel="noreferrer"> 
+                          {/* VERIFICAR O NFT OWNER OU SE É nft.MARKETPLACE */}
+                          <a href={`${getExplorer(chainId)}token/${nft.owner}?a=${nft.tokenId}`} target="_blank" rel="noreferrer"> 
                             <img src="logo-polygonscan.svg" alt="ehterscan" style={{height: "20px"}}/>
                           </a>
                         </div>

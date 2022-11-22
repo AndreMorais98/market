@@ -1,37 +1,194 @@
-import { useMoralis, useMoralisWeb3Api } from "react-moralis";
+import React, { useState } from 'react';
+import { useParams } from "react-router-dom";
+import axios from "axios";
+
+import { useMoralis } from "react-moralis";
+import { ethers } from "ethers";
+
 import Login from "components/Account/Login";
-import { useParams, useLocation, useNavigate } from "react-router-dom";
+import abi from '../../contracts/abi.json';
 import "./nft.css";
 
 function Nft() {
-  const { isAuthenticated, account} =
-  useMoralis();
-
-  const Web3Api = useMoralisWeb3Api()
+  const marketAddress = "0xF2E809ad906279F0dde19D6050f961A98a11E2e6"
+  
+  const { isAuthenticated, account} = useMoralis();
+  
   let { address, id } = useParams();
 
-  const {state} = useLocation();
-  const { data, transfer} = state;
+  const [dataFetched, updateFetched] = useState(false);
+  const [isOwner, updateIsOwner] = useState(false);
+  const [buyersLength, updateBuyersLength] = useState(0);
+  const [buyersLengthUpdated, updateBuyersLengthUpdated] = useState(false);
+  const [nft, updateNft] = useState({});
+
+
+  async function loafNFTMetadata(tokenId) {
+    const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+    const signer = provider.getSigner()
+ 
+    let contract = new ethers.Contract(marketAddress, abi, signer);
   
-  const clean_data = JSON.parse(data?.metadata)
-  
-  let navigate = useNavigate();
-  
-  const fetchBlock = async() => {
-    const result = await Web3Api.account.getNFTsForContract({
-      chain: "mumbai",
-      address: account,
-      token_address: address
-    })
-    console.log(result)
+    let listingPrice = await contract.getFeePrice();
+    listingPrice = listingPrice.toString();
+
+    const tokenURI = await contract.tokenURI(tokenId);
+    const listedToken = await contract.getListedTokenForId(tokenId);
+
+    let meta = await axios.get(tokenURI);
+    meta = meta.data;
+    
+    let item = {
+        tokenId: tokenId,
+        seller: listedToken.seller,
+        owner: listedToken.owner,
+        brand: meta.brand,
+        color: meta.color,
+        description: meta.description,
+        composition: meta.composition,
+        image: meta.image,
+        made_in: meta.made_in,
+        product_id: meta.product_id,
+        size: meta.size,
+        title: meta.title,
+        type: meta.type,
+    }
+    let complete_item = {}
+
+    if (meta.type === ("shoes" || "shirt" || "coat" || "trousers" || "shorts")) {
+      complete_item = {
+        ...item,
+        size: meta.size
+      }
+    }
+
+    if (meta.type === "bags") {
+      complete_item = {
+        ...item,
+        depth: meta.depth,
+        handle: meta.handle,
+        height: meta.height,
+        width: meta.width,
+      }
+    }
+
+    if (meta.type === "jewellery") {
+      complete_item = {
+        ...item,
+        circumference: meta.circumference,
+        length: meta.length,
+        width: meta.width,
+      }
+    }
+
+    if (meta.type === "watch") {
+      complete_item = {
+        ...item,
+        circumference: meta.circumference,
+        diameter: meta.diameter,
+        height: meta.height,
+        width: meta.width,
+      }
+    }
+
+    updateFetched(true);
+    updateNft(complete_item);
+    console.log(complete_item)
+  };
+
+  const reserveNFT = async (e) => {
+    e.preventDefault();
+    try {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+
+        let contract = new ethers.Contract(marketAddress, abi, signer);
+
+        let transaction = await contract.reserveNFT(id);
+        await transaction.wait();
+
+        alert('You have been placed in the reserve queue for the purchase of this NFT. Stay tuned until the owner of this NFT contacts you');
+    }
+    catch(e) {
+        alert("Upload Error"+e)
+    }
   }
 
-  async function loadProfile() {
-    const result = await Web3Api.account.getNFTs({
-      chain: "mumbai",
-      address: data.owner_of
-    })
-    navigate(`/profile/${data.owner_of}/`, {state: {data:result}})
+  const removeBuyer = async (e) => {
+    e.preventDefault();
+    try {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+
+        let contract = new ethers.Contract(marketAddress, abi, signer);
+
+        let firstBuyer = await contract.getFirstBuyer(id);
+        await firstBuyer.wait();
+
+        let removeBuyer = await contract.removeBuyer(id);
+        await removeBuyer.wait();
+
+        alert('You have removed' + firstBuyer + 'from the list');
+    }
+    catch(e) {
+        alert("Upload Error"+e)
+    }
+  }
+
+  async function getBuyersLength() {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+
+    let contract = new ethers.Contract(marketAddress, abi, signer);
+
+    let buyersLength = await contract.getBuyersLength(id);
+
+    updateBuyersLength(buyersLength)
+    updateBuyersLengthUpdated(true)
+  }
+
+
+  const executeSale = async (e) => {
+    e.preventDefault();
+    try {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+
+        let contract = new ethers.Contract(marketAddress, abi, signer);
+
+        let transaction = await contract.executeSale(id);
+        await transaction.wait();
+
+        alert('You have been placed in the reserve queue for the purchase of this NFT. Stay tuned until the owner of this NFT contacts you');
+    }
+    catch(e) {
+        alert("Upload Error"+e)
+    }
+  }
+
+  if (buyersLengthUpdated) {
+    getBuyersLength()
+  }
+  
+  if (!dataFetched) {
+    loafNFTMetadata(id)
+  }
+
+  if (account === (nft.seller || nft.owner)){
+    updateIsOwner(true)
+  }
+  
+
+  if (nft === {}){
+    return (
+      <>
+        <div className="container">
+          <div className="main-body">
+            <h1> There is no NFT with that address and tokenID </h1>
+          </div>
+        </div>
+      </>
+    )
   }
   
 
@@ -46,12 +203,12 @@ function Nft() {
   <>
     <div className="container">
       <div className="main-body">
-        <h1 style={{"textAlign": "center", "marginTop": "50px"}}> {clean_data.title} #{data.token_id} </h1>
+        <h1 style={{"textAlign": "center", "marginTop": "50px"}}> {nft.title} #{nft.tokenId} </h1>
         <div className="row gutters-sm">
           <div className="col-6">
             <div className="row">
               <div className="col-12">
-                <div className="img-wrapper"><img className="nft-img" src={clean_data.image} alt="Admin" /></div>
+                <div className="img-wrapper"><img className="nft-img" src={nft.image} alt="Admin" /></div>
               </div>
               <div className="col-12">
                 <div className="accordion-item">
@@ -61,14 +218,29 @@ function Nft() {
                   <div className="accordion-collapse collapse show" id="panelsStayOpen-collapseFour" aria-labelledby="panelsStayOpen-headingFour">
                     <div className="accordion-body accordion-buy">
                       <div className="row">
-                        <div className="col-6 align-self-center">
+                        <div className="col-4 align-self-center">
                           <h6>Current price: </h6>
                           <span className="price" style={{"display": "flex"}}>
                             <img src="../../polygon-matic-logo.png" alt="polygon-icon" style={{"marginRight": "10px"}}/>450
                           </span>
                         </div>
-                        <div className="col-6 button-col">
-                          <button className="btn btn-primary" onClick={fetchBlock} type="button">Buy</button>
+                        <div className="col-4 text button-col text-align-center">
+                          There is {buyersLength} buyers in queue right now!
+                        </div>
+                        {isOwner &&
+                            <div className="col-2 button-col">
+                              <button className="btn btn-primary" onClick={removeBuyer} type="button">Remove Buyer</button>
+                            </div>
+                        }
+                        {isOwner &&
+                            <div className="col-2 button-col">
+                              <button style={{height: "62px"}} className="btn btn-primary" onClick={executeSale} type="button">Transfer</button>
+                            </div>
+                        }
+                        <div className="col-4 button-col">
+                          {!isOwner &&
+                            <button className="btn btn-primary" onClick={reserveNFT} type="button">Reserve</button>
+                          }
                         </div>
                       </div>
                     </div>
@@ -83,20 +255,29 @@ function Nft() {
               <div className="col-12" style={{"marginBottom":"30px"}}>
                 <div className="card nft-description">
                   <h2 className="description-title mt-0 mb-4">About</h2>
-                  {clean_data?.website &&
+                  {nft?.website &&
                   <p>Website:
-                    <a href="https://www.rolex.com/">{clean_data.description}</a>
+                    <a href="https://www.rolex.com/">{nft.description}</a>
                   </p>
                   }
-                  <p>Type: <strong className="text-capitalize">{clean_data.type}</strong></p>
-                  <p>Collection: <strong>{data.name}</strong></p>
-                  {clean_data?.brand &&
-                    <p>Brand :<strong> {clean_data.brand_id} </strong></p>
+                  <p>Type: <strong className="text-capitalize">{nft.type}</strong></p>
+                  {nft?.brand &&
+                    <p>Brand :<strong> {nft.brand} </strong></p>
                   }
-                  <p>Product ID: <strong>{clean_data.product_id}</strong></p>
+                  <p>Product ID: <strong>{nft.product_id}</strong></p>
                   <div className="d-flex">
-                  <p style={{marginBottom: "0px", marginRight: "5px"}}>Owned by: </p> <button className="profile-btn" onClick={loadProfile}> <strong>{data.owner_of}</strong> </button>
-
+                    <div className='row'>
+                      <p style={{marginBottom: "10px", marginRight: "5px"}}>Owned by: 
+                        <a className="profile-btn" href={`../../profile/${nft.seller}`}> 
+                          <strong> {nft.seller}</strong> 
+                        </a>
+                      </p>
+                      <p style={{marginBottom: "0px", marginRight: "5px"}}>Created by: 
+                        <a className="profile-btn" href={`../../profile/${nft.owner}`}> 
+                          <strong> {nft.owner}</strong> 
+                        </a>
+                      </p> 
+                    </div>
                   </div>
                 </div>
               </div>
@@ -108,28 +289,28 @@ function Nft() {
                     </h2>
                     <div className="accordion-collapse collapse show" id="panelsStayOpen-collapseOne" aria-labelledby="panelsStayOpen-headingOne">
                       <div className="accordion-body">
-                        {clean_data?.description &&
-                          <p className="mb-2">{clean_data.description}</p>
+                        {nft?.description &&
+                          <p className="mb-2">{nft.description}</p>
                         }
                         <ul>
-                          {clean_data?.made_in &&
-                            <li><strong>Made In:</strong> {clean_data.made_in}</li>
+                          {nft?.made_in &&
+                            <li><strong>Made In:</strong> {nft.made_in}</li>
                           }
-                          {clean_data?.color &&
-                            <li><strong>Color:</strong> {clean_data.color}</li>
+                          {nft?.color &&
+                            <li><strong>Color:</strong> {nft.color}</li>
                           }
                         </ul>
                       </div>
                     </div>
                   </div>
-                  {clean_data?.composition &&
+                  {nft?.composition &&
                     <div className="accordion-item">
                       <h2 className="accordion-header" id="panelsStayOpen-headingTwo">
                         <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo"> Composition </button>
                       </h2>
                       <div className="accordion-collapse collapse" id="panelsStayOpen-collapseTwo" aria-labelledby="panelsStayOpen-headingTwo">
                         <div className="accordion-body">
-                            <p> {clean_data?.composition} </p>
+                            <p> {nft?.composition} </p>
                         </div>
                       </div>
                     </div>
@@ -140,53 +321,53 @@ function Nft() {
                     </h2>
                     <div className="accordion-collapse collapse" id="panelsStayOpen-collapseThree" aria-labelledby="panelsStayOpen-headingThree">
                       <div className="accordion-body">
-                        {clean_data?.type === "watch" &&
+                        {nft?.type === "watch" &&
                         <ul>
-                          {clean_data?.circumference &&
-                          <li><strong>Circumference:</strong> {clean_data?.circumference} cm</li>
+                          {nft?.circumference &&
+                          <li><strong>Circumference:</strong> {nft?.circumference} cm</li>
                           }
-                          {clean_data?.diameter &&
-                          <li><strong>Diameter:</strong> {clean_data?.diameter} cm</li>
+                          {nft?.diameter &&
+                          <li><strong>Diameter:</strong> {nft?.diameter} cm</li>
                           }
-                          {clean_data?.height &&
-                          <li><strong>Height:</strong> {clean_data?.height} cm</li>
+                          {nft?.height &&
+                          <li><strong>Height:</strong> {nft?.height} cm</li>
                           }
-                          {clean_data?.width &&
-                          <li><strong>Width:</strong> {clean_data?.width} cm</li>
+                          {nft?.width &&
+                          <li><strong>Width:</strong> {nft?.width} cm</li>
                           }
                         </ul>
                         }
-                        {(clean_data?.type === "shirt" || "coat" || "trousers" || "shorts" || "shoes") &&
+                        {(nft?.type === "shirt" || "coat" || "trousers" || "shorts" || "shoes") &&
                         <ul>
-                          <li><strong>Size:</strong> {clean_data?.size} cm</li>
+                          <li><strong>Size:</strong> {nft?.size}</li>
                         </ul>
                         }
-                        {(clean_data?.type === "jewellery") &&
+                        {(nft?.type === "jewellery") &&
                         <ul>
-                          {clean_data?.circumference &&
-                          <li><strong>Circumference:</strong> {clean_data?.circumference} cm</li>
+                          {nft?.circumference &&
+                          <li><strong>Circumference:</strong> {nft?.circumference} cm</li>
                           }
-                          {clean_data?.length &&
-                          <li><strong>Length:</strong> {clean_data?.length} cm</li>
+                          {nft?.length &&
+                          <li><strong>Length:</strong> {nft?.length} cm</li>
                           }
-                          {clean_data?.width &&
-                          <li><strong>Width:</strong> {clean_data?.width} cm</li>
+                          {nft?.width &&
+                          <li><strong>Width:</strong> {nft?.width} cm</li>
                           }
                         </ul>
                         }
-                        {(clean_data?.type === "bags") &&
+                        {(nft?.type === "bags") &&
                         <ul>
-                          {clean_data?.depth &&
-                          <li><strong>Depth:</strong> {clean_data?.depth} cm</li>
+                          {nft?.depth &&
+                          <li><strong>Depth:</strong> {nft?.depth} cm</li>
                           }
-                          {clean_data?.handle &&
-                          <li><strong>Handle:</strong> {clean_data?.handle} cm</li>
+                          {nft?.handle &&
+                          <li><strong>Handle:</strong> {nft?.handle} cm</li>
                           }
-                          {clean_data?.height &&
-                          <li><strong>Height:</strong> {clean_data?.height} cm</li>
+                          {nft?.height &&
+                          <li><strong>Height:</strong> {nft?.height} cm</li>
                           }
-                          {clean_data?.width &&
-                          <li><strong>Width:</strong> {clean_data?.width} cm</li>
+                          {nft?.width &&
+                          <li><strong>Width:</strong> {nft?.width} cm</li>
                           }
                         </ul>
                         }

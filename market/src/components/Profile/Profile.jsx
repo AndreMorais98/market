@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 import Blockie from "../Blockie";
-import { useMoralis, useNFTBalances, useNFTTransfers, useMoralisWeb3Api } from "react-moralis";
-import { useVerifyMetadata } from "hooks/useVerifyMetadata";
+import { useMoralis} from "react-moralis";
 import { getExplorer } from "helpers/networks";
 import { useNavigate } from "react-router-dom";
 import Login from "components/Account/Login";
-import Filter from "components/Filter/Filter";
 import abi from '../../contracts/abi.json';
 import axios from "axios";
 import { ethers } from "ethers";
@@ -16,29 +14,20 @@ import "./profile.css";
 function Profile() {
   const marketAddress = "0xF2E809ad906279F0dde19D6050f961A98a11E2e6"
 
-  const { verifyMetadata } = useVerifyMetadata();
-  const Web3Api = useMoralisWeb3Api()
-  const { data: NFTBalances } = useNFTBalances();
-  console.log(NFTBalances)
-
   const [dataFetched, updateFetched] = useState(false);
-  const [datas, updateDatas] = useState([]);
+  const [nfts, updateNfts] = useState([]);
 
   let navigate = useNavigate();
 
-  const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
-  const signer = provider.getSigner()
+  const upadteNfts = () => {
+    updateFetched(false);
+  }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
+  async function getMyNFTs () {
     const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
     const signer = provider.getSigner()
  
     let contract = new ethers.Contract(marketAddress, abi, signer);
-  
-    let listingPrice = await contract.getFeePrice();
-    listingPrice = listingPrice.toString();
 
     const nfts = await contract.getMyNFTs();
 
@@ -65,8 +54,14 @@ function Profile() {
       return item;
     }))
     updateFetched(true);
-    updateDatas(items);
+    updateNfts(items);
+    return items
   };
+
+  if (!dataFetched) {
+    getMyNFTs()
+  }
+
 
   const { isAuthenticated, account, user, chainId } = useMoralis();  
 
@@ -131,7 +126,13 @@ function Profile() {
     </div>
     <div className="market-container">
       <div className="container">
-        <Filter />
+        <div className="search-bar">
+          <input type="text" placeholder="Search.." name="search" />
+          <button className="btn" type="submit">
+            <i style={{ marginRight: "140px" }}  className="fa fa-search"></i>
+          </button>
+          <button className="btn btn-primary" onClick={upadteNfts}> Refresh </button>
+        </div>
       </div>
     </div>
     <div className="row">
@@ -140,22 +141,16 @@ function Profile() {
         <div className="card">
           <div className="card-body">
             <div className="row">
-            {NFTBalances?.result?.length === 0 &&
+            {nfts.length === 0 &&
               <h2 style={{margin: "100px", width: "100%", textAlign: "center"}}>
                 You don't own any NFT. Buy your first or craft a new Collection
               </h2>
             }
-              {NFTBalances?.result && NFTBalances.result.map((nft, index) => {
-                async function handleClick() {
-                  const result = await Web3Api.token.getTokenIdMetadata({
-                    chain: "mumbai",
-                    address: nft.token_address,
-                    token_id: nft.token_id
-                  })
-
-                  navigate(`/nft/${nft.token_address}/${index}`, {state: {data:result}})
+              {dataFetched === true && nfts.map((nft, index) => {
+                const handleClick = () => {
+                  navigate(`/nft/${nft.owner}/${nft.tokenId}`)
                 }
-                nft = verifyMetadata(nft);
+
                 return (
                 <div className="col-md-4 col-lg-3">
                   <div className="card nft-card">
@@ -171,19 +166,19 @@ function Profile() {
 
                       <div className="nft-info">
                         <div className="mt-3 links">
-                        <h4>{nft.metadata.title} #{index}</h4>
-                        <p className="text-muted font-size-sm text-capitalize">{nft.metadata.type}</p>
-                        <p className="font-size-sm mb-2">Collection: <strong> {nft.name} </strong></p>
+                        <h4>{nft.title} #{nft.tokenId}</h4>
+                        <p className="text-muted font-size-sm text-capitalize">{nft.type}</p>
+                        <p className="font-size-sm mb-2">Brand: <strong> {nft.brand} </strong></p>
                       </div>
                     </div>
                     <div className="row row-nft">
                       <div className="col-6 nft-buttons d-flex align-content-center justify-content-center">
-                        <button style={{padding: "0",border: "none", background: "none"}} onClick={handleSubmit}>
+                        <button style={{padding: "0",border: "none", background: "none"}} onClick={handleClick}>
                           <i className="fa fa-cart-arrow-down"></i>
                         </button>
                       </div>
                       <div className="col-6 nft-buttons">
-                        <a href={`${getExplorer(chainId)}address/${nft.token_address}?a=${index}`} target="_blank" rel="noreferrer"> 
+                        <a href={`${getExplorer(chainId)}token/${nft.owner}?a=${nft.tokenId}`} target="_blank" rel="noreferrer"> 
                           <img src="logo-polygonscan.svg" alt="ehterscan" style={{height: "20px"}}/>
                         </a>
                       </div>

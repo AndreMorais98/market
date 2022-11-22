@@ -12,7 +12,7 @@ contract LuxyMarketplace is ERC721URIStorage {
     Counters.Counter private _tokenIds;
     Counters.Counter private _itemsSold;
     //smart contract owner
-    address payable owner;
+    address payable marketAddress;
     //The fee charged to list an NFT ~ 0.01 matic
     uint256 feePrice = 0.0000008 ether;
 
@@ -20,6 +20,7 @@ contract LuxyMarketplace is ERC721URIStorage {
     struct ListedToken {
         uint256 tokenId;
         // uint256 price;
+        address payable marketAddress;
         address payable owner;
         address payable seller;
         address [] buyers;
@@ -29,6 +30,7 @@ contract LuxyMarketplace is ERC721URIStorage {
     //the event emitted when a token is successfully listed
     event TokenListedSuccess (
         uint256 indexed tokenId,
+        address marketAddress,
         address owner,
         address seller,
         bool currentlyListed
@@ -45,7 +47,7 @@ contract LuxyMarketplace is ERC721URIStorage {
     mapping(uint256 => ListedToken) private idToAllToken;
 
     constructor() ERC721("LuxyMarketplace", "LUXYMP") {
-        owner = payable(msg.sender);
+        marketAddress = payable(msg.sender);
     }
 
     function getFeePrice() public view returns (uint256) {
@@ -84,6 +86,7 @@ contract LuxyMarketplace is ERC721URIStorage {
             // price,
             payable(address(this)),
             payable(msg.sender),
+            payable(msg.sender),
             new address[](0),
             false
         );
@@ -93,6 +96,7 @@ contract LuxyMarketplace is ERC721URIStorage {
         emit TokenListedSuccess(
             tokenId,
             address(this),
+            msg.sender,
             msg.sender,
             false
         );
@@ -137,8 +141,12 @@ contract LuxyMarketplace is ERC721URIStorage {
         idToListedToken[tokenId].buyers = newBuyersList;
     }
 
-    function getBuyersLength (uint256 tokenId) private returns (uint256) {
+    function getBuyersLength (uint256 tokenId) public returns (uint256) {
         return idToListedToken[tokenId].buyers.length;
+    }
+
+    function getFirstBuyer (uint256 tokenId) public returns (address) {
+        return idToListedToken[tokenId].buyers[0];
     }
 
     function removeBuyer (uint256 tokenId) public {
@@ -185,7 +193,7 @@ contract LuxyMarketplace is ERC721URIStorage {
         //Important to get a count of all the NFTs that belong to the user before we can make an array for them
         for(uint i=0; i < totalItemCount; i++)
         {
-            if(idToListedToken[i+1].owner == msg.sender || idToListedToken[i+1].seller == msg.sender){
+            if(idToListedToken[i+1].seller == msg.sender){
                 itemCount += 1;
             }
         }
@@ -193,7 +201,7 @@ contract LuxyMarketplace is ERC721URIStorage {
         //Once you have the count of relevant NFTs, create an array then store all the NFTs in it
         ListedToken[] memory items = new ListedToken[](itemCount);
         for(uint i=0; i < totalItemCount; i++) {
-            if(idToListedToken[i+1].owner == msg.sender || idToListedToken[i+1].seller == msg.sender) {
+            if(idToListedToken[i+1].seller == msg.sender) {
                 currentId = i+1;
                 ListedToken storage currentItem = idToListedToken[currentId];
                 items[currentIndex] = currentItem;

@@ -94,44 +94,48 @@ function Market() {
                     navigate(`/nft/${nft.owner}/${nft.tokenId}`)
                   }
 
-                  return (
-                  <div className="col-md-4 col-lg-3">
-                    <div className="card nft-card">
-                      <div className="card-body card-nft-body">
-                        <div className="price-tag">
-                          {/* Enviar no excel o price do produto*/}
-                          <h5 className="price-tag-text">40000</h5>
-                          <img src="polygon-matic-logo.png" alt="matic logo" />
-                        </div>
-
-                        <div className="nft-img-wrapper">
-                          <img className="img-nft" src={nft?.image || "error"} alt="Admin" />
-                        </div>
-
-                        <div className="nft-info">
-                          <div className="mt-3 links">
-                          <h4>{nft.title} #{nft.tokenId}</h4>
-                          <p className="text-muted font-size-sm text-capitalize">{nft.type}</p>
-                          <p className="font-size-sm">Brand: <strong> {nft.brand} </strong></p>
-                        </div>
-                      </div>
-                      <div className="row row-nft">
-                        <div className="col-6 nft-buttons d-flex align-content-center justify-content-center">
-                          <button style={{padding: "0",border: "none", background: "none"}} onClick={handleClick}>
-                            <i className="fa fa-cart-arrow-down"></i>
-                          </button>
-                        </div>
-                        <div className="col-6 nft-buttons">
-                          {/* VERIFICAR O NFT OWNER OU SE É nft.MARKETPLACE */}
-                          <a href={`${getExplorer(chainId)}token/${nft.owner}?a=${nft.tokenId}`} target="_blank" rel="noreferrer"> 
-                            <img src="logo-polygonscan.svg" alt="ehterscan" style={{height: "20px"}}/>
-                          </a>
+                  if (nft.currentlyListed) {
+                    return (
+                    <div className="col-md-4 col-lg-3">
+                      <div className="card nft-card">
+                        <div className="card-body card-nft-body">
+                          
+                          <div className="price-tag">
+                            <h5 className="price-tag-text">{nft.price} €</h5>
+                            <img src="polygon-matic-logo.png" alt="matic logo" />
+                          </div>
+  
+                          <div className="nft-img-wrapper">
+                            <img className="img-nft" src={nft?.image || "error"} alt="Admin" />
+                          </div>
+  
+                          <div className="nft-info">
+                            <div className="mt-3 links">
+                              <h4>{nft.title} #{nft.tokenId}</h4>
+                              <p className="text-muted font-size-sm text-capitalize">{nft.type}</p>
+                              <p className="font-size-sm">Brand: <strong> {nft.brand} </strong></p>
+                            </div>
+                          </div>
+  
+                          <div className="row row-nft">
+                            <div className="col-6 nft-buttons d-flex align-content-center justify-content-center">
+                              <button style={{padding: "0",border: "none", background: "none"}} onClick={handleClick}>
+                                <i className="fa fa-cart-arrow-down"></i>
+                              </button>
+                            </div>
+                            <div className="col-6 nft-buttons">
+                              {/* VERIFICAR O NFT OWNER OU SE É nft.MARKETPLACE */}
+                              <a href={`${getExplorer(chainId)}token/${nft.owner}?a=${nft.tokenId}`} target="_blank" rel="noreferrer"> 
+                                <img src="logo-polygonscan.svg" alt="ehterscan" style={{height: "20px"}}/>
+                              </a>
+                            </div>
+                          </div>
+  
                         </div>
                       </div>
                     </div>
-                  </div>
-                </div>
-                );})}
+                  )}
+                })}
               </div>
             </div>
           </div>

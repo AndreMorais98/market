@@ -10,7 +10,7 @@ import { uploadJSONToIPFS } from "../../helpers/uploadipfs";
 import { ethers } from "ethers";
 
 import "./step2.css";
-import "../Step3/step3.css";
+import "./step3.css";
 
 function Step2() {
 
@@ -28,6 +28,7 @@ function Step2() {
     { label: "title", key: "title" },
     { label: "description", key: "description" },
     { label: "image", key: "image" },
+    { label: "price", key: "price" },
     { label: "brand", key: "brand" },
     { label: "product_id", key: "product_id" },
     { label: "made_in", key: "made_in" },
@@ -123,7 +124,7 @@ function Step2() {
   
     if (product==='Watch' || product==='Bags') {
       const header = file[0]
-      if (header.length !== 13) {
+      if (header.length !== 14) {
         alert("Please, verify if the headers are correct")
         return option
       }
@@ -140,7 +141,7 @@ function Step2() {
     }
     else if (product==='Jewellery'){
       const header = file[0]
-      if (header.length !== 12) {
+      if (header.length !== 13) {
         alert("Please, verify if the headers are correct")
         return option
       }
@@ -157,7 +158,7 @@ function Step2() {
     }
     else if (product==='Clothes' || product==='Shoes'){
       const header = file[0]
-      if (header.length !== 10) {
+      if (header.length !== 11) {
         alert("Please, verify if the headers are correct")
         return option
       }
@@ -188,6 +189,8 @@ function Step2() {
         try{
           console.log(option[i].content)
           const metadataURL = await uploadMetadataToIPFS(option[i].content);
+          const initialPrice =  Number(option[i].content[3]) * 0.000001;
+
           console.log(metadataURL)
 
           const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
@@ -200,7 +203,7 @@ function Step2() {
 
           console.log()
     
-          await contract.createToken(metadataURL, { value: listingPrice })
+          await contract.createToken(metadataURL, initialPrice, { value: listingPrice})
         }
         catch(e) {
           alert( "Upload error" + e)

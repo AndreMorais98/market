@@ -1,23 +1,24 @@
 import { useEffect } from "react";
-import { useMoralis } from "react-moralis";
 import {
   BrowserRouter as Router,
   Routes,
   Route,
 } from "react-router-dom";
+import "antd/dist/antd.min.css";
+import { Layout } from "antd";
+
+import { useMoralis } from "react-moralis";
+
+import "./style.css";
 import Account from "components/Account/Account";
 import Chains from "components/Chains";
 import ERC20Balance from "components/ERC20Balance";
-import Profile from "components/Profile/Profile";
-import Step1 from "components/Step1/Step1";
+import NativeBalance from "components/NativeBalance";
 import Step2 from "components/Step2/Step2";
-import Step3 from "components/Step3/Step3";
+import Profile from "components/Profile/Profile";
 import PublicProfile from "components/PublicProfile/PublicProfile";
 import Nft from "components/Nft/Nft";
-import { Layout } from "antd";
-import "antd/dist/antd.min.css";
-import NativeBalance from "components/NativeBalance";
-import "./style.css";
+import Step1 from "components/Step1/Step1";
 import HomePage from "components/HomePage";
 import Market from "components/Market/Market";
 import MenuItems from "./components/MenuItems";
@@ -135,7 +136,6 @@ const App = ({ isServerInfo }) => {
             <Route path="/profile/:id" element={<PublicProfile />} />
             <Route path="/step1" element={<Step1 />} /> 
             <Route path="/step2" element={<Step2 />} />
-            <Route path="/step3" element={<Step3 />} />
           </Routes>
         </div>
       </Router>

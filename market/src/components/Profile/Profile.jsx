@@ -38,6 +38,8 @@ function Profile() {
 
       let item = {
           tokenId: i.tokenId.toNumber(),
+          price: i.price * 1000000,
+          currentlyListed: i.currentlyListed,
           seller: i.seller,
           owner: i.owner,
           brand: meta.brand,
@@ -156,8 +158,7 @@ function Profile() {
                   <div className="card nft-card">
                     <div className="card-body card-nft-body">
                       <div className="price-tag">
-                        <h5 className="price-tag-text">40000</h5>
-                        <img src="polygon-matic-logo.png" alt="matic logo" />
+                        <h5 className="price-tag-text">{nft.price} € </h5>
                       </div>
 
                       <div className="nft-img-wrapper">

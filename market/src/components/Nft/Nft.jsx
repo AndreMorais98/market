@@ -21,6 +21,8 @@ function Nft() {
   const [buyersLength, updateBuyersLength] = useState(0);
   const [buyersLengthUpdated, updateBuyersLengthUpdated] = useState(false);
   const [nft, updateNft] = useState({});
+  const [formParams, updateFormParams] = useState({ price: ''});
+
 
 
   async function loafNFTMetadata(tokenId) {
@@ -40,6 +42,8 @@ function Nft() {
     
     let item = {
         tokenId: tokenId,
+        currentlyListed: listedToken.currentlyListed,
+        price: listedToken.price,
         seller: listedToken.seller,
         owner: listedToken.owner,
         brand: meta.brand,
@@ -165,6 +169,52 @@ function Nft() {
         alert("Upload Error"+e)
     }
   }
+  
+  const updatePrice = async (e) => {
+    const {price} = formParams;
+
+    if( !price ) {
+      return;
+    }
+    
+    let convertedPrice = Number(price) * 0.000001
+
+    e.preventDefault();
+    try {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+
+        let contract = new ethers.Contract(marketAddress, abi, signer);
+
+
+        let firstBuyer = await contract.updatePriceNFT(id, convertedPrice);
+        await firstBuyer.wait();
+        updateFormParams({ price: ''});
+        alert('Price updated');
+    }
+    catch(e) {
+        alert("Upload Error"+e)
+    }
+  }
+
+
+  const listNFT = async (e) => {
+    e.preventDefault();
+    try {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+
+        let contract = new ethers.Contract(marketAddress, abi, signer);
+
+        let listNFT = await contract.listNFT(id);
+        await listNFT.wait();
+
+        alert('You NFT is available on the Marketplace');
+    }
+    catch(e) {
+        alert("Upload Error"+e)
+    }
+  }
 
   if (buyersLengthUpdated) {
     getBuyersLength()
@@ -221,28 +271,43 @@ function Nft() {
                         <div className="col-4 align-self-center">
                           <h6>Current price: </h6>
                           <span className="price" style={{"display": "flex"}}>
-                            <img src="../../polygon-matic-logo.png" alt="polygon-icon" style={{"marginRight": "10px"}}/>450
+                            <img src="../../polygon-matic-logo.png" alt="polygon-icon" style={{"marginRight": "10px"}}/> {nft.price}
                           </span>
                         </div>
                         <div className="col-4 text button-col text-align-center">
                           There is {buyersLength} buyers in queue right now!
                         </div>
-                        {isOwner &&
-                            <div className="col-2 button-col">
-                              <button className="btn btn-primary" onClick={removeBuyer} type="button">Remove Buyer</button>
-                            </div>
+                        {isOwner && !nft.currentlyListed &&
+                          <div className="col-4 button-col">
+                            <button className="btn btn-primary" onClick={listNFT} type="button">List NFT</button>
+                          </div>
                         }
-                        {isOwner &&
-                            <div className="col-2 button-col">
-                              <button style={{height: "62px"}} className="btn btn-primary" onClick={executeSale} type="button">Transfer</button>
-                            </div>
+                        {isOwner && nft.currentlyListed &&
+                          <div className="col-2 button-col">
+                            <button className="btn btn-primary" onClick={removeBuyer} type="button">Remove Buyer</button>
+                          </div>
                         }
-                        <div className="col-4 button-col">
-                          {!isOwner &&
+                        {isOwner && nft.currentlyListed &&
+                          <div className="col-2 button-col">
+                            <button style={{height: "62px"}} className="btn btn-primary" onClick={executeSale} type="button">Transfer</button>
+                          </div>
+                        }
+                        {!isOwner && nft.currentlyListed &&
+                          <div className="col-4 button-col">
                             <button className="btn btn-primary" onClick={reserveNFT} type="button">Reserve</button>
-                          }
-                        </div>
+                          </div>
+                        }
                       </div>
+                      {isOwner && !nft.currentlyListed &&
+                        <div className="row">
+                          <div className="col-4 button-col">
+                            <label className="block text-sm font-bold mb-2" htmlFor="price">Price (in €)</label>
+                            <input type="number" placeholder="Price to update" value={formParams.price} onChange={e => updateFormParams({...formParams, price: e.target.value})}></input>
+                            <small id="passwordHelpBlock" class="form-text text-muted">We apply our special conversion. Remember: 10€ = 0.00001 MATIC</small>
+                          </div>
+                          <button className="btn btn-primary" onClick={updatePrice} type="button">Remove Buyer</button>
+                        </div>
+                      }
                     </div>
                   </div>
                 </div>

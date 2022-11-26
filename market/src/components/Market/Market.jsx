@@ -37,6 +37,8 @@ function Market() {
 
       let item = {
           tokenId: i.tokenId.toNumber(),
+          price: i.price * 1000000,
+          currentlyListed: i.currentlyListed,
           seller: i.seller,
           owner: i.owner,
           brand: meta.brand,

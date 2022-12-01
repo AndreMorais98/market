@@ -14,7 +14,7 @@ import "./step3.css";
 
 function Step2() {
 
-  const marketAddress = "0xF2E809ad906279F0dde19D6050f961A98a11E2e6"
+  const marketAddress = "0x5053140143Bb64901109Bb9422D3e0c4315e33cB"
 
   const {state} = useLocation();
   const { collection, token, product, upper, path} = state;
@@ -177,7 +177,6 @@ function Step2() {
   }
 
   const navigate = useNavigate();
-  const Web3Api = useMoralisWeb3Api();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -187,23 +186,19 @@ function Step2() {
     else {
       for (let i=0; i < option.length; i++) {
         try{
-          console.log(option[i].content)
+          console.log(option[i].content) 
           const metadataURL = await uploadMetadataToIPFS(option[i].content);
-          const initialPrice =  Number(option[i].content[3]) * 0.000001;
-
-          console.log(metadataURL)
 
           const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
           const signer = provider.getSigner()
-    
+          
           let contract = new ethers.Contract(marketAddress, abi, signer);
-        
-          let listingPrice = await contract.getFeePrice();
-          listingPrice = listingPrice.toString();
-
-          console.log()
+          
+          const price = ethers.utils.parseUnits("0.00001", 'ether')
+          let listingPrice = await contract.getFeePrice()
+          listingPrice = listingPrice.toString()
     
-          await contract.createToken(metadataURL, initialPrice, { value: listingPrice})
+          await contract.createToken(metadataURL, price, { value: listingPrice})
         }
         catch(e) {
           alert( "Upload error" + e)
@@ -267,7 +262,7 @@ function Step2() {
           <p>Before submit, verify if your information is correct! Once your nfts are created, will be forever on the chain and cannot be modified.</p>
           <form onSubmit={handleSubmit}>
             <div className="preview">
-              <label htmlFor="file-ip-1" style={{"padding":"0"}}>Upload CSV</label>
+              <label htmlFor="file-ip-1" style={{"padding":"0", "marginLeft": "0"}}>Upload CSV</label>
               <input type="file" id="file-ip-1" accept=".csv,.xlsx,.xls" onChange={handleCSVUpload}/>
             </div>
             <h3 className="mb-2">The beginning of your collection starts now!</h3>

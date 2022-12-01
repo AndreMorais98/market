@@ -12,7 +12,7 @@ import "./profile.css";
 
 
 function Profile() {
-  const marketAddress = "0xF2E809ad906279F0dde19D6050f961A98a11E2e6"
+  const marketAddress = "0x5053140143Bb64901109Bb9422D3e0c4315e33cB"
 
   const [dataFetched, updateFetched] = useState(false);
   const [nfts, updateNfts] = useState([]);
@@ -38,7 +38,7 @@ function Profile() {
 
       let item = {
           tokenId: i.tokenId.toNumber(),
-          price: i.price * 1000000,
+          price: meta.price,
           currentlyListed: i.currentlyListed,
           seller: i.seller,
           owner: i.owner,

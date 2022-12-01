@@ -30,6 +30,7 @@ contract LuxyMarketplace is ERC721URIStorage {
     //the event emitted when a token is successfully listed
     event TokenListedSuccess (
         uint256 indexed tokenId,
+        uint256 price,
         address marketAddress,
         address owner,
         address seller,
@@ -153,36 +154,15 @@ contract LuxyMarketplace is ERC721URIStorage {
     function removeBuyer (uint256 tokenId) public {
         require(msg.sender == idToListedToken[tokenId].seller, "You are not the owner of the NFT");
         require(idToListedToken[tokenId].currentlyListed == true, "This NFT is not on sale");
-        if (idToListedToken[tokenId].buyers.length != 0) {
-            uint buyersNumber = getBuyersLength(tokenId);
-            address[] memory newBuyersList = new address[](buyersNumber);
+        require(idToListedToken[tokenId].buyers.length != 0, "This NFT is not on sale");
 
-            for (uint i = 0; i<newBuyersList.length-1; i++){
-                newBuyersList[i] = idToListedToken[tokenId].buyers[i+1];
-            }
-            delete newBuyersList[newBuyersList.length-1];
-            idToListedToken[tokenId].buyers = newBuyersList;
+        uint buyersNumber = idToListedToken[tokenId].buyers.length;
+        address[] memory newBuyersList = new address[](buyersNumber-1);
+        for (uint i = 0; i<newBuyersList.length; i++){
+            newBuyersList[i] = idToListedToken[tokenId].buyers[i+1];
         }
+        idToListedToken[tokenId].buyers = newBuyersList;
     }
-
-    // //This will return all the NFTs currently listed on the marketplace
-    // function getMarketNFTs() public view returns (ListedToken[] memory) {
-    //     uint nftCount = _tokenIds.current();
-    //     ListedToken[] memory tokens = new ListedToken[](nftCount);
-    //     uint currentIndex = 0;
-    //     for(uint i=0;i<nftCount;i++)
-    //     {
-    //         uint currentId = i + 1;
-    //         if(idToListedToken[currentId].currentlyListed == true)
-    //         {
-    //             ListedToken storage currentItem = idToListedToken[currentId];
-    //             tokens[currentIndex] = currentItem;
-    //             currentIndex += 1;
-    //         }
-    //     }
-    //     return tokens;
-    // }
-
 
     function getMarketNFTs() public view returns (ListedToken[] memory) {
         uint nftCount = _tokenIds.current();
@@ -229,6 +209,7 @@ contract LuxyMarketplace is ERC721URIStorage {
     function executeSale(uint256 tokenId) public payable {
         uint price = idToListedToken[tokenId].price;
         address seller = idToListedToken[tokenId].seller;
+        address owner = idToListedToken[tokenId].owner;
         address buyer = idToListedToken[tokenId].buyers[0];
         require(msg.value == price, "Please submit the asking price in order to complete the purchase");
         require(msg.sender == seller, "You are not the owner of the NFT");

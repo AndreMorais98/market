@@ -13,7 +13,7 @@ import abi from '../../contracts/abi.json'
 import "./market.css";
 
 function Market() {
-  const marketAddress = "0xF2E809ad906279F0dde19D6050f961A98a11E2e6"
+  const marketAddress = "0x5053140143Bb64901109Bb9422D3e0c4315e33cB"
 
   const [dataFetched, updateFetched] = useState(false);
   const [nfts, updateNfts] = useState([]);
@@ -37,7 +37,7 @@ function Market() {
 
       let item = {
           tokenId: i.tokenId.toNumber(),
-          price: i.price * 1000000,
+          price: meta.price,
           currentlyListed: i.currentlyListed,
           seller: i.seller,
           owner: i.owner,
@@ -102,7 +102,6 @@ function Market() {
                           
                           <div className="price-tag">
                             <h5 className="price-tag-text">{nft.price} €</h5>
-                            <img src="polygon-matic-logo.png" alt="matic logo" />
                           </div>
   
                           <div className="nft-img-wrapper">

@@ -10,7 +10,7 @@ import abi from '../../contracts/abi.json';
 import "./nft.css";
 
 function Nft() {
-  const marketAddress = "0xF2E809ad906279F0dde19D6050f961A98a11E2e6"
+  const marketAddress = "0x5053140143Bb64901109Bb9422D3e0c4315e33cB"
   
   const { isAuthenticated, account} = useMoralis();
   
@@ -18,8 +18,7 @@ function Nft() {
 
   const [dataFetched, updateFetched] = useState(false);
   const [isOwner, updateIsOwner] = useState(false);
-  const [buyersLength, updateBuyersLength] = useState(0);
-  const [buyersLengthUpdated, updateBuyersLengthUpdated] = useState(false);
+  const [notGetIn, updateNotGetIn] = useState(true);
   const [nft, updateNft] = useState({});
   const [formParams, updateFormParams] = useState({ price: ''});
 
@@ -31,11 +30,9 @@ function Nft() {
  
     let contract = new ethers.Contract(marketAddress, abi, signer);
   
-    let listingPrice = await contract.getFeePrice();
-    listingPrice = listingPrice.toString();
-
     const tokenURI = await contract.tokenURI(tokenId);
     const listedToken = await contract.getListedTokenForId(tokenId);
+
 
     let meta = await axios.get(tokenURI);
     meta = meta.data;
@@ -43,7 +40,9 @@ function Nft() {
     let item = {
         tokenId: tokenId,
         currentlyListed: listedToken.currentlyListed,
-        price: listedToken.price,
+        price: meta.price,
+        buyers_list: listedToken.buyers,
+        buyers_list_size: listedToken.buyers.length,
         seller: listedToken.seller,
         owner: listedToken.owner,
         brand: meta.brand,
@@ -58,11 +57,18 @@ function Nft() {
         type: meta.type,
     }
     let complete_item = {}
+    const lower = [];
+
+
+    item.buyers_list.forEach(element => {
+      lower.push(element.toLowerCase());
+    });
 
     if (meta.type === ("shoes" || "shirt" || "coat" || "trousers" || "shorts")) {
       complete_item = {
         ...item,
-        size: meta.size
+        size: meta.size,
+        lower: lower
       }
     }
 
@@ -73,6 +79,7 @@ function Nft() {
         handle: meta.handle,
         height: meta.height,
         width: meta.width,
+        lower: lower
       }
     }
 
@@ -82,6 +89,7 @@ function Nft() {
         circumference: meta.circumference,
         length: meta.length,
         width: meta.width,
+        lower: lower
       }
     }
 
@@ -92,12 +100,12 @@ function Nft() {
         diameter: meta.diameter,
         height: meta.height,
         width: meta.width,
+        lower: lower
       }
     }
-
+    console.log(complete_item)
     updateFetched(true);
     updateNft(complete_item);
-    console.log(complete_item)
   };
 
   const reserveNFT = async (e) => {
@@ -139,19 +147,6 @@ function Nft() {
     }
   }
 
-  async function getBuyersLength() {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner();
-
-    let contract = new ethers.Contract(marketAddress, abi, signer);
-
-    let buyersLength = await contract.getBuyersLength(id);
-
-    updateBuyersLength(buyersLength)
-    updateBuyersLengthUpdated(true)
-  }
-
-
   const executeSale = async (e) => {
     e.preventDefault();
     try {
@@ -177,8 +172,6 @@ function Nft() {
       return;
     }
     
-    let convertedPrice = Number(price) * 0.000001
-
     e.preventDefault();
     try {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -187,7 +180,7 @@ function Nft() {
         let contract = new ethers.Contract(marketAddress, abi, signer);
 
 
-        let firstBuyer = await contract.updatePriceNFT(id, convertedPrice);
+        let firstBuyer = await contract.updatePriceNFT(id, price);
         await firstBuyer.wait();
         updateFormParams({ price: ''});
         alert('Price updated');
@@ -215,17 +208,15 @@ function Nft() {
         alert("Upload Error"+e)
     }
   }
-
-  if (buyersLengthUpdated) {
-    getBuyersLength()
-  }
   
   if (!dataFetched) {
     loafNFTMetadata(id)
   }
 
-  if (account === (nft.seller || nft.owner)){
+  if ((account === ((nft.seller)?.toLowerCase() || (nft.owner)?.toLowerCase())) && notGetIn){
     updateIsOwner(true)
+    updateNotGetIn(false)
+    console.log("is owner?", isOwner)
   }
   
 
@@ -268,46 +259,46 @@ function Nft() {
                   <div className="accordion-collapse collapse show" id="panelsStayOpen-collapseFour" aria-labelledby="panelsStayOpen-headingFour">
                     <div className="accordion-body accordion-buy">
                       <div className="row">
-                        <div className="col-4 align-self-center">
+                        <div className="col-3 align-self-center">
                           <h6>Current price: </h6>
-                          <span className="price" style={{"display": "flex"}}>
-                            <img src="../../polygon-matic-logo.png" alt="polygon-icon" style={{"marginRight": "10px"}}/> {nft.price}
-                          </span>
+                          <span className="price" style={{"display": "flex"}}> {nft.price} € </span>
                         </div>
-                        <div className="col-4 text button-col text-align-center">
-                          There is {buyersLength} buyers in queue right now!
+                        <div style={{paddingTop: "10px", textAlign: "center",  alignItems: "center"}} className="col-5">
+                          <span> There is {nft.buyers_list_size} buyers in queue right now! </span>
                         </div>
                         {isOwner && !nft.currentlyListed &&
                           <div className="col-4 button-col">
                             <button className="btn btn-primary" onClick={listNFT} type="button">List NFT</button>
                           </div>
                         }
-                        {isOwner && nft.currentlyListed &&
+                        {isOwner && nft.currentlyListed && nft.buyers_list_size !== 0 &&
                           <div className="col-2 button-col">
                             <button className="btn btn-primary" onClick={removeBuyer} type="button">Remove Buyer</button>
                           </div>
                         }
-                        {isOwner && nft.currentlyListed &&
+                        {isOwner && nft.currentlyListed && nft.buyers_list_size !== 0 &&
                           <div className="col-2 button-col">
                             <button style={{height: "62px"}} className="btn btn-primary" onClick={executeSale} type="button">Transfer</button>
                           </div>
                         }
-                        {!isOwner && nft.currentlyListed &&
+                        {!isOwner && nft.currentlyListed && !nft.lower?.includes(account) &&
                           <div className="col-4 button-col">
                             <button className="btn btn-primary" onClick={reserveNFT} type="button">Reserve</button>
                           </div>
                         }
-                      </div>
-                      {isOwner && !nft.currentlyListed &&
-                        <div className="row">
-                          <div className="col-4 button-col">
-                            <label className="block text-sm font-bold mb-2" htmlFor="price">Price (in €)</label>
-                            <input type="number" placeholder="Price to update" value={formParams.price} onChange={e => updateFormParams({...formParams, price: e.target.value})}></input>
-                            <small id="passwordHelpBlock" class="form-text text-muted">We apply our special conversion. Remember: 10€ = 0.00001 MATIC</small>
+                        {!isOwner && nft.currentlyListed && nft.lower?.includes(account) &&
+                          <div className="col-4" style={{paddingTop: "10px", textAlign: "center",  alignItems: "center"}}>
+                            <b> You already are in the waiting queue </b>
                           </div>
-                          <button className="btn btn-primary" onClick={updatePrice} type="button">Remove Buyer</button>
-                        </div>
-                      }
+                        }
+                      </div>
+                      {isOwner && nft.currentlyListed && nft.buyers_list_size !== 0 &&
+                          <div className='row'> 
+                            <div className="col-12" style={{padding: "25px 0 0", textAlign: "center"}}>
+                              <p>Next buyer is {nft.buyers_list[0]}</p>
+                            </div>
+                          </div>
+                        }
                     </div>
                   </div>
                 </div>
@@ -446,7 +437,7 @@ function Nft() {
         </div>
       </div>
 
-      <div className="nft-history">
+      {/* <div className="nft-history">
         <h2>NFT History</h2>
         <table className="table">
           <thead>
@@ -509,7 +500,7 @@ function Nft() {
             </tr>
           </tbody>
         </table>
-      </div>
+      </div> */}
     </div>
   </>
   );

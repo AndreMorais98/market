@@ -2,8 +2,7 @@ import React, { useState }  from 'react';
 import { useNavigate } from "react-router-dom";
 import { ethers } from "ethers";
 
-import { useMoralis, useNFTBalances, useMoralisWeb3Api} from "react-moralis";
-import { useVerifyMetadata } from "hooks/useVerifyMetadata";
+import { useMoralis} from "react-moralis";
 import axios from "axios";
 
 import Filter from "components/Filter/Filter";
@@ -13,14 +12,14 @@ import abi from '../../contracts/abi.json'
 import "./market.css";
 
 function Market() {
-  const marketAddress = "0x5053140143Bb64901109Bb9422D3e0c4315e33cB"
+  const marketAddress = "0xC0932dfa5B28f316e87828c1385E20b2Bad6B601"
 
   const [dataFetched, updateFetched] = useState(false);
   const [nfts, updateNfts] = useState([]);
   
   let navigate = useNavigate();
   
-  const { isAuthenticated, account, user, chainId } = useMoralis();
+  const { isAuthenticated, account, chainId } = useMoralis();
 
   async function getMarketNFTs () {
     const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
@@ -38,6 +37,7 @@ function Market() {
       let item = {
           tokenId: i.tokenId.toNumber(),
           price: meta.price,
+          real_price: Math.round((ethers.utils.formatEther( i.price ) / 0.000728 / 0.00001)),
           currentlyListed: i.currentlyListed,
           seller: i.seller,
           owner: i.owner,
@@ -101,7 +101,7 @@ function Market() {
                         <div className="card-body card-nft-body">
                           
                           <div className="price-tag">
-                            <h5 className="price-tag-text">{nft.price} €</h5>
+                            <h5 className="price-tag-text">{nft.real_price} €</h5>
                           </div>
   
                           <div className="nft-img-wrapper">
@@ -123,8 +123,7 @@ function Market() {
                               </button>
                             </div>
                             <div className="col-6 nft-buttons">
-                              {/* VERIFICAR O NFT OWNER OU SE É nft.MARKETPLACE */}
-                              <a href={`${getExplorer(chainId)}token/${nft.owner}?a=${nft.tokenId}`} target="_blank" rel="noreferrer"> 
+                              <a href={`${getExplorer(chainId)}token/${marketAddress}?a=${nft.tokenId}`} target="_blank" rel="noreferrer"> 
                                 <img src="logo-polygonscan.svg" alt="ehterscan" style={{height: "20px"}}/>
                               </a>
                             </div>

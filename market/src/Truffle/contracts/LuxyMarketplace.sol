@@ -11,12 +11,11 @@ contract LuxyMarketplace is ERC721URIStorage {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
     Counters.Counter private _itemsSold;
-    //smart contract owner
     address payable marketAddress;
-    //The fee charged to list an NFT 
-    uint256 feePrice = 0.000002022 ether;
+    // 1000€ -> 0.01 matic = 0.000007274 ether = 0.088€
+    // 1 matic = 0.000727 ether = 0.88€
+    uint256 feePrice = 0.00001 ether;
 
-    //The structure to store info about a listed token
     struct ListedToken {
         uint256 tokenId;
         uint256 price;
@@ -27,7 +26,6 @@ contract LuxyMarketplace is ERC721URIStorage {
         bool currentlyListed;
     }
 
-    //the event emitted when a token is successfully listed
     event TokenListedSuccess (
         uint256 indexed tokenId,
         uint256 price,
@@ -44,7 +42,6 @@ contract LuxyMarketplace is ERC721URIStorage {
         address buyer
     );
 
-    //This mapping maps tokenId to token info and is helpful when retrieving details about a tokenId
     mapping(uint256 => ListedToken) private idToListedToken;
     mapping(uint256 => ListedToken) private idToAllToken;
 
@@ -79,10 +76,8 @@ contract LuxyMarketplace is ERC721URIStorage {
     }
 
     function createListedToken(uint256 tokenId, uint256 price) private {
-        //Make sure the sender sent enough ETH to pay for listing
         require(msg.value == feePrice, "Hopefully sending the correct price");
 
-        //Update the mapping of tokenId's to Token details, useful for retrieval functions
         idToListedToken[tokenId] = ListedToken(
             tokenId,
             price,
@@ -94,7 +89,6 @@ contract LuxyMarketplace is ERC721URIStorage {
         );
 
         _transfer(msg.sender, address(this), tokenId);
-        //Emit the event for successful transfer. The frontend parses this message and updates the end user
         emit TokenListedSuccess(
             tokenId,
             price,
@@ -179,13 +173,11 @@ contract LuxyMarketplace is ERC721URIStorage {
         return tokens;
     }
     
-    //Returns all the NFTs that the current user is owner or seller in
-    function getMyNFTs() public view returns (ListedToken[] memory) {
+    function getNFTs() public view returns (ListedToken[] memory) {
         uint totalItemCount = _tokenIds.current();
         uint itemCount = 0;
         uint currentIndex = 0;
         uint currentId;
-        //Important to get a count of all the NFTs that belong to the user before we can make an array for them
         for(uint i=0; i < totalItemCount; i++)
         {
             if(idToListedToken[i+1].seller == msg.sender){
@@ -193,10 +185,33 @@ contract LuxyMarketplace is ERC721URIStorage {
             }
         }
 
-        //Once you have the count of relevant NFTs, create an array then store all the NFTs in it
         ListedToken[] memory items = new ListedToken[](itemCount);
         for(uint i=0; i < totalItemCount; i++) {
             if(idToListedToken[i+1].seller == msg.sender) {
+                currentId = i+1;
+                ListedToken storage currentItem = idToListedToken[currentId];
+                items[currentIndex] = currentItem;
+                currentIndex += 1;
+            }
+        }
+        return items;
+    }
+
+    function geNFTsbyAddress(address user) public view returns (ListedToken[] memory) {
+        uint totalItemCount = _tokenIds.current();
+        uint itemCount = 0;
+        uint currentIndex = 0;
+        uint currentId;
+        for(uint i=0; i < totalItemCount; i++)
+        {
+            if(idToListedToken[i+1].seller == user){
+                itemCount += 1;
+            }
+        }
+
+        ListedToken[] memory items = new ListedToken[](itemCount);
+        for(uint i=0; i < totalItemCount; i++) {
+            if(idToListedToken[i+1].seller == user) {
                 currentId = i+1;
                 ListedToken storage currentItem = idToListedToken[currentId];
                 items[currentIndex] = currentItem;
@@ -215,21 +230,15 @@ contract LuxyMarketplace is ERC721URIStorage {
         require(msg.sender == seller, "You are not the owner of the NFT");
         require(idToListedToken[tokenId].currentlyListed == true, "This NFT is not on sale");
 
-
-        //update the details of the token
         idToListedToken[tokenId].currentlyListed = false;
         idToListedToken[tokenId].seller = payable(buyer);
         idToListedToken[tokenId].buyers = new address[](0);
         _itemsSold.increment();
 
-        //Actually transfer the token to the new owner
         _transfer(address(this), buyer, tokenId);
-        //approve the marketplace to sell NFTs on your behalf
         approve(address(this), tokenId);
 
-        //Transfer the listing fee to the marketplace creator
         payable(owner).transfer(feePrice);
-        //Transfer the proceeds from the sale to the seller of the NFT
         payable(seller).transfer(msg.value);
         emit TokenSold(
             tokenId,

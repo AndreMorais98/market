@@ -10,11 +10,11 @@ import abi from '../../contracts/abi.json';
 import "./nft.css";
 
 function Nft() {
-  const marketAddress = "0x5053140143Bb64901109Bb9422D3e0c4315e33cB"
+  const marketAddress = "0xC0932dfa5B28f316e87828c1385E20b2Bad6B601"
   
   const { isAuthenticated, account} = useMoralis();
   
-  let { address, id } = useParams();
+  let { id } = useParams();
 
   const [dataFetched, updateFetched] = useState(false);
   const [isOwner, updateIsOwner] = useState(false);
@@ -40,7 +40,9 @@ function Nft() {
     let item = {
         tokenId: tokenId,
         currentlyListed: listedToken.currentlyListed,
-        price: meta.price,
+        real_price: Math.round((ethers.utils.formatEther( listedToken.price ) / 0.000728 / 0.00001)),
+        matic_price: (ethers.utils.formatEther( listedToken.price ) / 0.000728),
+        initial_price: meta.price,
         buyers_list: listedToken.buyers,
         buyers_list_size: listedToken.buyers.length,
         seller: listedToken.seller,
@@ -122,7 +124,7 @@ function Nft() {
         alert('You have been placed in the reserve queue for the purchase of this NFT. Stay tuned until the owner of this NFT contacts you');
     }
     catch(e) {
-        alert("Upload Error"+e)
+        alert("Reserve Error: "+e)
     }
   }
 
@@ -134,16 +136,13 @@ function Nft() {
 
         let contract = new ethers.Contract(marketAddress, abi, signer);
 
-        let firstBuyer = await contract.getFirstBuyer(id);
-        await firstBuyer.wait();
-
         let removeBuyer = await contract.removeBuyer(id);
         await removeBuyer.wait();
 
-        alert('You have removed' + firstBuyer + 'from the list');
+        alert('You have removed ' + nft.buyers_list[0] + ' from the list');
     }
     catch(e) {
-        alert("Upload Error"+e)
+        alert("Remove Error: "+e)
     }
   }
 
@@ -158,10 +157,10 @@ function Nft() {
         let transaction = await contract.executeSale(id);
         await transaction.wait();
 
-        alert('You have been placed in the reserve queue for the purchase of this NFT. Stay tuned until the owner of this NFT contacts you');
+        alert('You have transfered the NFT to ' + nft.buyers_list[0] + ' with success');
     }
     catch(e) {
-        alert("Upload Error"+e)
+        alert("Transfer Error: "+e)
     }
   }
   
@@ -171,22 +170,25 @@ function Nft() {
     if( !price ) {
       return;
     }
-    
+
+    const initial_price = price * 0.00001
+    const converted_price = initial_price * 0.000728
+    const treat_price = (converted_price.toFixed(10)).replace(/0+$/, '')
+    const final_price = ethers.utils.parseUnits(treat_price, 'ether')
+
     e.preventDefault();
     try {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
 
         let contract = new ethers.Contract(marketAddress, abi, signer);
-
-
-        let firstBuyer = await contract.updatePriceNFT(id, price);
-        await firstBuyer.wait();
+        let priceUpdate = await contract.updatePriceNFT(id, final_price);
+        await priceUpdate.wait();
         updateFormParams({ price: ''});
         alert('Price updated');
     }
     catch(e) {
-        alert("Upload Error"+e)
+        alert("Update Error"+e)
     }
   }
 
@@ -205,7 +207,7 @@ function Nft() {
         alert('You NFT is available on the Marketplace');
     }
     catch(e) {
-        alert("Upload Error"+e)
+        alert("List Error: "+e)
     }
   }
   
@@ -261,9 +263,13 @@ function Nft() {
                       <div className="row">
                         <div className="col-3 align-self-center">
                           <h6>Current price: </h6>
-                          <span className="price" style={{"display": "flex"}}> {nft.price} € </span>
+                          <span className="price" style={{display: "flex"}}> {nft.real_price} € </span>
+                          <span className="price" style={{display: "flex"}}> ------- </span>
+                          <span className="price" style={{display: "flex"}}> {nft.matic_price} 
+                            <img src="../../polygon-matic-logo.png" alt="polygon-icon" style={{"marginLeft": "10px"}}/>
+                          </span>
                         </div>
-                        <div style={{paddingTop: "10px", textAlign: "center",  alignItems: "center"}} className="col-5">
+                        <div style={{paddingTop: "10px", textAlign: "center",  alignSelf: "center"}} className="col-5">
                           <span> There is {nft.buyers_list_size} buyers in queue right now! </span>
                         </div>
                         {isOwner && !nft.currentlyListed &&
@@ -286,22 +292,56 @@ function Nft() {
                             <button className="btn btn-primary" onClick={reserveNFT} type="button">Reserve</button>
                           </div>
                         }
-                        {!isOwner && nft.currentlyListed && nft.lower?.includes(account) &&
-                          <div className="col-4" style={{paddingTop: "10px", textAlign: "center",  alignItems: "center"}}>
+                        {!isOwner && nft.currentlyListed && nft.lower?.includes(account) && !nft.lower[0]?.includes(account) &&
+                          <div className="col-4" style={{paddingTop: "10px", textAlign: "center",  alignItems: "center", alignSelf: "center"}}>
                             <b> You already are in the waiting queue </b>
+                          </div>
+                        }
+
+                        {!isOwner && nft.currentlyListed && nft.lower[0]?.includes(account) &&
+                          <div className="col-4" style={{paddingTop: "10px", textAlign: "center",  alignItems: "center", alignSelf: "center"}}>
+                            <b> You are the first in the queue, get in touch with the owner, sending your wallet address and NFT id</b>
                           </div>
                         }
                       </div>
                       {isOwner && nft.currentlyListed && nft.buyers_list_size !== 0 &&
-                          <div className='row'> 
-                            <div className="col-12" style={{padding: "25px 0 0", textAlign: "center"}}>
-                              <p>Next buyer is {nft.buyers_list[0]}</p>
-                            </div>
+                        <div className='row'> 
+                          <div className="col-12" style={{padding: "25px 0 0", textAlign: "center"}}>
+                            <p>Next buyer is {nft.buyers_list[0]}</p>
                           </div>
-                        }
+                        </div>
+                      }
                     </div>
                   </div>
+                
                 </div>
+                {isOwner && !nft.currentlyListed &&
+                  <div className="accordion-item">
+                    <h2 className="accordion-header" id="panelsStayOpen-headingFive">
+                      <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFive" aria-expanded="false" aria-controls="panelsStayOpen-collapseFive"> Update Price </button>
+                    </h2>
+                    <div className="accordion-collapse collapse" id="panelsStayOpen-collapseFive" aria-labelledby="panelsStayOpen-headingFive">
+                      <div className="accordion-body">
+                        <div style={{display: "grid"}}>
+                          <div className='row'>
+                            <div className='col-7'>
+                              <label className="block text-purple-500 text-sm font-bold mb-0" htmlFor="price"><b>Price in €.</b></label>
+                              <label className="block text-purple-500 text-sm font-bold mb-2" htmlFor="price">1000€ = 0.01 Matic = 0.00000726 ETH = 0.01€</label>
+                            </div>
+                            <div className="col-5 button-col" style={{textAlign: "right", margin: "auto"}}>
+                              <button style={{backgroundColor: "#59a796", borderColor: "#59a796", textAlign: "right", margin: "auto"}} className="btn btn-primary" onClick={updatePrice} type="button">Update Price</button>
+                            </div>
+                          </div>
+                          <div className='row'>
+                            <div className='col-12'>
+                              <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="number" value={formParams.price} onChange={e => updateFormParams({...formParams, price: e.target.value})}></input>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                }
               </div>
             </div>
           </div>

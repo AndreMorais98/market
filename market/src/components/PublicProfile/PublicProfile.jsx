@@ -1,24 +1,75 @@
-import React from 'react';
-import Blockies from "react-blockies";
-import { useMoralis, useMoralisWeb3Api } from "react-moralis";
-import { useVerifyMetadata } from "hooks/useVerifyMetadata";
-import { getExplorer } from "helpers/networks";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
+import React, { useState } from 'react';
+import { useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
 
+import { useMoralis} from "react-moralis";
+import { ethers } from "ethers";
+
+
+import { getExplorer } from "helpers/networks";
+import Blockie from "../Blockie";
 import Login from "components/Account/Login";
-import Filter from "components/Filter/Filter";
+import abi from '../../contracts/abi.json';
 import "./publicprofile.css";
 
-function PublicProfile() {
-  const { verifyMetadata } = useVerifyMetadata();
-  const Web3Api = useMoralisWeb3Api()
-  
+function Profile() {
+  const marketAddress = "0xC0932dfa5B28f316e87828c1385E20b2Bad6B601"
+
+  let { address } = useParams();
+
+  const [dataFetched, updateFetched] = useState(false);
+  const [nfts, updateNfts] = useState([]);
+
   let navigate = useNavigate();
-  
-  let { id } = useParams();
-  
-  const {state} = useLocation();
-  const { data } = state;
+
+  const upadteNfts = () => {
+    updateFetched(false);
+  }
+
+  async function getMyNFTs () {
+    const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+    const signer = provider.getSigner()
+ 
+    let contract = new ethers.Contract(marketAddress, abi, signer);
+
+    const nfts = await contract.geNFTsbyAddress(address);
+
+    const items = await Promise.all(nfts.map(async i => {
+      const tokenURI = await contract.tokenURI(i.tokenId);
+      let meta = await axios.get(tokenURI);
+      meta = meta.data;
+
+      let item = {
+          tokenId: i.tokenId.toNumber(),
+          price: meta.price,
+          real_price: Math.round((ethers.utils.formatEther( i.price ) / 0.000728 / 0.00001)),
+          currentlyListed: i.currentlyListed,
+          seller: i.seller,
+          owner: i.owner,
+          brand: meta.brand,
+          color: meta.color,
+          description: meta.description,
+          image: meta.image,
+          made_in: meta.made_in,
+          product_id: meta.product_id,
+          size: meta.size,
+          title: meta.title,
+          type: meta.type,
+
+      }
+      return item;
+    }))
+    updateFetched(true);
+    updateNfts(items);
+    console.log(items)
+    return items
+  };
+
+  if (!dataFetched) {
+    getMyNFTs()
+  }
+
+
   const { isAuthenticated, account, user, chainId } = useMoralis();  
 
   if (!isAuthenticated || !account) {
@@ -38,13 +89,13 @@ function PublicProfile() {
             <div className="card">
               <div className="card-body">
                 <div className="d-flex flex-column align-items-center text-center">
-                  <Blockies className="img-account" seed={id} scale={25} />                  
+                  <Blockie className="img-account" currentWallet scale={25} />                  
                   <div className="mt-3 links">
                     <div className="username-div">
-                      <h4 className="username"> USERNAME </h4>
-                      <img className="img-verified" src="../../verified.png" alt="verified"/>
+                      <h4 className="username"> {user.attributes.username} </h4>
+                      <img className="img-verified" src="verified.png" alt="verified"/>
                     </div>
-                    <p className="text-muted font-size-sm" style={{marginBottom: "10px"}}> {id} </p>
+                    <p className="text-muted font-size-sm" style={{marginBottom: "10px"}}> {account} </p>
                     <a href="https://andremorais98.github.io/">
                       <svg className="feather feather-globe mr-2 icon-inline" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <circle cx="12" cy="12" r="10"></circle>
@@ -79,7 +130,13 @@ function PublicProfile() {
     </div>
     <div className="market-container">
       <div className="container">
-        <Filter />
+        <div className="search-bar">
+          <input type="text" placeholder="Search.." name="search" />
+          <button className="btn" type="submit">
+            <i style={{ marginRight: "140px" }}  className="fa fa-search"></i>
+          </button>
+          <button className="btn btn-primary" onClick={upadteNfts}> Refresh </button>
+        </div>
       </div>
     </div>
     <div className="row">
@@ -88,44 +145,33 @@ function PublicProfile() {
         <div className="card">
           <div className="card-body">
             <div className="row">
-            {data?.result?.length === 0 &&
+            {nfts.length === 0 &&
               <h2 style={{margin: "100px", width: "100%", textAlign: "center"}}>
                 You don't own any NFT. Buy your first or craft a new Collection
               </h2>
             }
-              {data?.result && data.result.map((nft, index) => {
-                const clean_data = JSON.parse(nft?.metadata)
-                async function handleClick() {
-                  const result = await Web3Api.token.getTokenIdMetadata({
-                    chain: "mumbai",
-                    address: nft.token_address,
-                    token_id: nft.token_id
-                  })
-                  const transfer = await Web3Api.account.getNFTTransfers({
-                    chain: "mumbai",
-                    address: nft.token_address
-                  })
-                  navigate(`/nft/${nft.token_address}/${index}`, {state: {data:result, transfer:transfer}})
+              {dataFetched === true && nfts.map((nft, index) => {
+                const handleClick = () => {
+                  navigate(`/nft/${nft.owner}/${nft.tokenId}`)
                 }
-                nft = verifyMetadata(nft);
+
                 return (
                 <div className="col-md-4 col-lg-3">
                   <div className="card nft-card">
                     <div className="card-body card-nft-body">
                       <div className="price-tag">
-                        <h5 className="price-tag-text">40000</h5>
-                        <img src="../../polygon-matic-logo.png" alt="matic logo" />
+                        <h5 className="price-tag-text">{nft.real_price} € </h5>
                       </div>
 
                       <div className="nft-img-wrapper">
-                        <img className="img-nft" src={clean_data?.image || "error"} alt="Admin" />
+                        <img className="img-nft" src={nft?.image || "error"} alt="Admin" />
                       </div>
 
                       <div className="nft-info">
                         <div className="mt-3 links">
-                        <h4>{clean_data.title} #{index}</h4>
-                        <p className="text-muted font-size-sm text-capitalize">{clean_data.type}</p>
-                        <p className="font-size-sm mb-2">Collection: <strong> {nft.name} </strong></p>
+                        <h4>{nft.title} #{nft.tokenId}</h4>
+                        <p className="text-muted font-size-sm text-capitalize">{nft.type}</p>
+                        <p className="font-size-sm mb-2">Brand: <strong> {nft.brand} </strong></p>
                       </div>
                     </div>
                     <div className="row row-nft">
@@ -135,8 +181,8 @@ function PublicProfile() {
                         </button>
                       </div>
                       <div className="col-6 nft-buttons">
-                        <a href={`${getExplorer(chainId)}address/${nft.token_address}?a=${index}`} target="_blank" rel="noreferrer"> 
-                          <img src="../../logo-polygonscan.svg" alt="ehterscan" style={{height: "20px"}}/>
+                        <a href={`${getExplorer(chainId)}token/${marketAddress}?a=${nft.tokenId}`} target="_blank" rel="noreferrer"> 
+                          <img src="logo-polygonscan.svg" alt="ehterscan" style={{height: "20px"}}/>
                         </a>
                       </div>
                     </div>
@@ -154,4 +200,4 @@ function PublicProfile() {
   );
 }
 
-export default PublicProfile;
+export default Profile;

@@ -12,7 +12,7 @@ import "./profile.css";
 
 
 function Profile() {
-  const marketAddress = "0x5053140143Bb64901109Bb9422D3e0c4315e33cB"
+  const marketAddress = "0xC0932dfa5B28f316e87828c1385E20b2Bad6B601"
 
   const [dataFetched, updateFetched] = useState(false);
   const [nfts, updateNfts] = useState([]);
@@ -29,7 +29,7 @@ function Profile() {
  
     let contract = new ethers.Contract(marketAddress, abi, signer);
 
-    const nfts = await contract.getMyNFTs();
+    const nfts = await contract.getNFTs();
 
     const items = await Promise.all(nfts.map(async i => {
       const tokenURI = await contract.tokenURI(i.tokenId);
@@ -39,6 +39,7 @@ function Profile() {
       let item = {
           tokenId: i.tokenId.toNumber(),
           price: meta.price,
+          real_price: Math.round((ethers.utils.formatEther( i.price ) / 0.000728 / 0.00001)),
           currentlyListed: i.currentlyListed,
           seller: i.seller,
           owner: i.owner,
@@ -57,6 +58,7 @@ function Profile() {
     }))
     updateFetched(true);
     updateNfts(items);
+    console.log(items)
     return items
   };
 
@@ -158,7 +160,7 @@ function Profile() {
                   <div className="card nft-card">
                     <div className="card-body card-nft-body">
                       <div className="price-tag">
-                        <h5 className="price-tag-text">{nft.price} € </h5>
+                        <h5 className="price-tag-text">{nft.real_price} € </h5>
                       </div>
 
                       <div className="nft-img-wrapper">
@@ -179,7 +181,7 @@ function Profile() {
                         </button>
                       </div>
                       <div className="col-6 nft-buttons">
-                        <a href={`${getExplorer(chainId)}token/${nft.owner}?a=${nft.tokenId}`} target="_blank" rel="noreferrer"> 
+                        <a href={`${getExplorer(chainId)}token/${marketAddress}?a=${nft.tokenId}`} target="_blank" rel="noreferrer"> 
                           <img src="logo-polygonscan.svg" alt="ehterscan" style={{height: "20px"}}/>
                         </a>
                       </div>

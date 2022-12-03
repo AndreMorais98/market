@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useMoralis, useMoralisWeb3Api } from "react-moralis";
+import { useMoralis } from "react-moralis";
 import { useLocation, useNavigate } from 'react-router-dom';
 import Login from "components/Account/Login";
 import { CSVLink } from "react-csv";
@@ -14,7 +14,7 @@ import "./step3.css";
 
 function Step2() {
 
-  const marketAddress = "0x5053140143Bb64901109Bb9422D3e0c4315e33cB"
+  const marketAddress = "0xC0932dfa5B28f316e87828c1385E20b2Bad6B601"
 
   const {state} = useLocation();
   const { collection, token, product, upper, path} = state;
@@ -188,13 +188,18 @@ function Step2() {
         try{
           console.log(option[i].content) 
           const metadataURL = await uploadMetadataToIPFS(option[i].content);
+          
+          // 1000€ -> 0.01 matic = 0.000007274 ether = 0.088€
+          const initial_price = option[i].content["price"] * 0.00001
+          const converted_price = initial_price * 0.000728
+          const treat_price = (converted_price.toFixed(10)).replace(/0+$/, '')
 
           const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
           const signer = provider.getSigner()
           
           let contract = new ethers.Contract(marketAddress, abi, signer);
           
-          const price = ethers.utils.parseUnits("0.00001", 'ether')
+          const price = ethers.utils.parseUnits(treat_price, 'ether')
           let listingPrice = await contract.getFeePrice()
           listingPrice = listingPrice.toString()
     

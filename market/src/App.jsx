@@ -12,7 +12,6 @@ import { useMoralis } from "react-moralis";
 import "./style.css";
 import Account from "components/Account/Account";
 import Chains from "components/Chains";
-import ERC20Balance from "components/ERC20Balance";
 import NativeBalance from "components/NativeBalance";
 import Step2 from "components/Step2/Step2";
 import Profile from "components/Profile/Profile";
@@ -102,7 +101,7 @@ const styles = {
 
 
 const App = ({ isServerInfo }) => {
-  const { isWeb3Enabled, enableWeb3, isAuthenticated, isWeb3EnableLoading, web3} = useMoralis();
+  const { isWeb3Enabled, enableWeb3, isAuthenticated, isWeb3EnableLoading} = useMoralis();
 
   useEffect(() => {
     const connectorId = window.localStorage.getItem("connectorId");
@@ -132,8 +131,7 @@ const App = ({ isServerInfo }) => {
             <Route path="/create" element={<Nft />} />
             <Route path="/market" element={<Market />} />
             <Route path="/profile" element={<Profile />} />
-            <Route path="/edit" element={<ERC20Balance />} />
-            <Route path="/profile/:id" element={<PublicProfile />} />
+            <Route path="/profile/:address" element={<PublicProfile />} />
             <Route path="/step1" element={<Step1 />} /> 
             <Route path="/step2" element={<Step2 />} />
           </Routes>

@@ -8,6 +8,8 @@ import { SelectOutlined } from "@ant-design/icons";
 import { getExplorer } from "helpers/networks";
 import Text from "antd/lib/typography/Text";
 import { connectors } from "./config";
+import Moralis from 'moralis-v1';
+
 const styles = {
   account: {
     height: "42px",
@@ -44,10 +46,46 @@ const styles = {
 };
 
 function Account() {
-  const { authenticate, isAuthenticated, account, chainId, logout } =
-    useMoralis();
+  const { authenticate, enableWeb3, isAuthenticated, account, chainId, logout } = useMoralis();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isAuthModalVisible, setIsAuthModalVisible] = useState(false);
+
+  const [authError, setAuthError] = useState(null);
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
+
+  const handleAuth = async (provider) => {
+    try {
+      setAuthError(null);
+      setIsAuthenticating(true);
+
+      await enableWeb3({ throwOnError: true, provider });
+      const { account, chainId } = Moralis;
+
+      if (!account) {
+        throw new Error('Connecting to chain failed, as no connected account was found');
+      }
+      if (!chainId) {
+        throw new Error('Connecting to chain failed, as no connected chain was found');
+      }
+
+      const { message } = await Moralis.Cloud.run('requestMessage', {
+        address: account,
+        chain: parseInt(chainId, 16),
+        network: 'evm',
+      });
+
+      await authenticate({
+        signingMessage: message,
+        throwOnError: true,
+      });
+      window.localStorage.setItem("connectorId", "injected");
+      setIsAuthModalVisible(false);
+    } catch (error) {
+      setAuthError(error);
+    } finally {
+      setIsAuthenticating(false);
+    }
+  };
 
   if (!isAuthenticated || !account) {
     return (
@@ -83,15 +121,7 @@ function Account() {
               <div
                 style={styles.connector}
                 key={key}
-                onClick={async () => {
-                  try {
-                    await authenticate({ provider: connectorId });
-                    window.localStorage.setItem("connectorId", connectorId);
-                    setIsAuthModalVisible(false);
-                  } catch (e) {
-                    console.error(e);
-                  }
-                }}
+                onClick={() => handleAuth("metamask")}
               >
                 <img src={icon} alt={title} style={styles.icon} />
                 <Text style={{ fontSize: "14px" }}>{title}</Text>
@@ -105,22 +135,6 @@ function Account() {
 
   return (
     <>
-      {/* <button
-        onClick={async () => {
-          try {
-            console.log("change")
-            await web3._provider.request({
-              method: "wallet_switchEthereumChain",
-              params: [{ chainId: "0x38" }],
-            });
-            console.log("changed")
-          } catch (e) {
-            console.error(e);
-          }
-        }}
-      >
-        Hi
-      </button> */}
       <div style={styles.account} onClick={() => setIsModalVisible(true)}>
         <p style={{ marginRight: "5px", ...styles.text }}>
           {getEllipsisTxt(account, 6)}

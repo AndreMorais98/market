@@ -92,6 +92,12 @@
 				"internalType": "bool",
 				"name": "currentlyListed",
 				"type": "bool"
+			},
+			{
+				"indexed": false,
+				"internalType": "bool",
+				"name": "isOnStore",
+				"type": "bool"
 			}
 		],
 		"name": "TokenListedSuccess",
@@ -247,25 +253,6 @@
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "tokenId",
-				"type": "uint256"
-			}
-		],
-		"name": "getBuyersLength",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"inputs": [],
 		"name": "getCurrentToken",
 		"outputs": [
@@ -350,6 +337,11 @@
 						"internalType": "bool",
 						"name": "currentlyListed",
 						"type": "bool"
+					},
+					{
+						"internalType": "bool",
+						"name": "isOnStore",
+						"type": "bool"
 					}
 				],
 				"internalType": "struct LuxyMarketplace.ListedToken",
@@ -406,6 +398,11 @@
 						"internalType": "bool",
 						"name": "currentlyListed",
 						"type": "bool"
+					},
+					{
+						"internalType": "bool",
+						"name": "isOnStore",
+						"type": "bool"
 					}
 				],
 				"internalType": "struct LuxyMarketplace.ListedToken",
@@ -456,6 +453,11 @@
 						"internalType": "bool",
 						"name": "currentlyListed",
 						"type": "bool"
+					},
+					{
+						"internalType": "bool",
+						"name": "isOnStore",
+						"type": "bool"
 					}
 				],
 				"internalType": "struct LuxyMarketplace.ListedToken[]",
@@ -468,7 +470,7 @@
 	},
 	{
 		"inputs": [],
-		"name": "getMyNFTs",
+		"name": "getNFTs",
 		"outputs": [
 			{
 				"components": [
@@ -506,6 +508,11 @@
 						"internalType": "bool",
 						"name": "currentlyListed",
 						"type": "bool"
+					},
+					{
+						"internalType": "bool",
+						"name": "isOnStore",
+						"type": "bool"
 					}
 				],
 				"internalType": "struct LuxyMarketplace.ListedToken[]",
@@ -538,6 +545,19 @@
 			}
 		],
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "tokenId",
+				"type": "uint256"
+			}
+		],
+		"name": "isOnStore",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -618,6 +638,19 @@
 			}
 		],
 		"name": "removeBuyer",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "tokenId",
+				"type": "uint256"
+			}
+		],
+		"name": "removeFromStore",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"

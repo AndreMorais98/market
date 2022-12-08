@@ -132,7 +132,7 @@ body{
     right: 15px;
     top: 50px;
     position: absolute;
-    background-color: rgb(89,167,150, 0.9);
+    background-color: rgb(89,167,150, 0.7);
     z-index: 2;
     border-top-left-radius: 30px 30px;
     border-bottom-left-radius: 30px 30px;
@@ -145,6 +145,49 @@ body{
     margin-bottom: 0;
     margin-right: 5px;
 }
+
+.nft-card .card-nft-body .ready-tag {
+    background-color: rgba(34, 194, 56, 0.7);
+    text-align: center;
+    justify-content: center;
+    border-radius: 30px 30px;
+}
+
+.nft-card .card-nft-body .ready-tag .ready-tag-text {
+    font-family: 'Poppins';
+    margin-bottom: 0;
+    margin-right: 5px;
+    font-size: 16px;
+}
+
+.nft-card .card-nft-body .waiting-tag {
+    background-color: rgba(221, 116, 17, 0.7);
+    text-align: center;
+    justify-content: center;
+    border-radius: 30px 30px;
+}
+
+.nft-card .card-nft-body .waiting-tag .waiting-tag-text {
+    font-family: 'Poppins';
+    margin-bottom: 0;
+    margin-right: 5px;
+    font-size: 16px;
+}
+
+.nft-card .card-nft-body .not-ready-tag {
+    background-color: rgba(219, 27, 13, 0.7);
+    text-align: center;
+    justify-content: center;
+    border-radius: 30px 30px;
+}
+
+.nft-card .card-nft-body .not-ready-tag .not-ready-tag-text {
+    font-family: 'Poppins';
+    margin-bottom: 0;
+    margin-right: 5px;
+    font-size: 16px;
+}
+
 
 .nft-card .card-nft-body .price-tag img {
     height: 20px;

@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useMoralis, useMoralisWeb3Api} from "react-moralis";
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Login from "components/Account/Login";
-import { CSVLink } from "react-csv";
+import { uploadJSONToIPFS } from "../../helpers/uploadipfs";
+import Moralis from 'moralis';
+
 
 import "./step1.css";
 
@@ -107,8 +109,6 @@ function Step1() {
       setUploadedFiles(uploaded)
     })
   }
-  console.log(uploadedFiles)
-
   const handleFileEvent = (e) => {
     const chosenFiles = Array.prototype.slice.call(e.target.files)
     handleUploadFiles(chosenFiles);
@@ -130,11 +130,20 @@ function Step1() {
         alert("Please upload atleast 1 file")
       }
       else {
-        const path = await Web3Api.storage.uploadFolder(option);
-        navigate('/step2', {state: {collection:collection, token:token, product:product, upper:upper, path:path}})
+        console.log(option)
+        await Moralis.start({
+          apiKey: process.env.REACT_APP_MORALIS_API_KEY,
+        }).then(async () => {
+          const path = await Moralis.EvmApi.ipfs.uploadFolder(option);
+          console.log(path?.toJSON());
+          navigate('/step2', {state: {collection:collection, token:token, product:product, upper:upper, path:path?.toJSON()}})
+        })
+      
+        
       }
     }
   };
+
 
   const { isAuthenticated, account } = useMoralis();
   

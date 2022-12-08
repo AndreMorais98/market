@@ -1,14 +1,16 @@
-import { useMoralis } from "react-moralis";
-import { getEllipsisTxt } from "helpers/formatters";
-import Blockie from "../Blockie";
 import { Button, Card, Modal } from "antd";
 import { useState } from "react";
-import Address from "../Address/Address";
 import { SelectOutlined } from "@ant-design/icons";
+
+import { useMoralis } from "react-moralis";
+import Moralis from 'moralis-v1';
+
+import Address from "../Address/Address";
+import Blockie from "../Blockie";
+import { connectors } from "./config";
+import { getEllipsisTxt } from "helpers/formatters";
 import { getExplorer } from "helpers/networks";
 import Text from "antd/lib/typography/Text";
-import { connectors } from "./config";
-import Moralis from 'moralis-v1';
 
 const styles = {
   account: {
@@ -121,7 +123,7 @@ function Account() {
               <div
                 style={styles.connector}
                 key={key}
-                onClick={() => handleAuth("metamask")}
+                onClick={() => handleAuth(connectorId)}
               >
                 <img src={icon} alt={title} style={styles.icon} />
                 <Text style={{ fontSize: "14px" }}>{title}</Text>

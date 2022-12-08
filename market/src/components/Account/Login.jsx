@@ -1,5 +1,10 @@
+import { useState } from "react";
+
 import { useMoralis } from "react-moralis";
+import Moralis from 'moralis-v1';
+
 import { connectors } from "./config";
+
 const styles = {
   account: {
     height: "42px",
@@ -52,8 +57,45 @@ const styles = {
 };
 
 function Login() {
-  const { authenticate } =
-    useMoralis();
+  const { authenticate, enableWeb3 } = useMoralis();
+  const [isAuthModalVisible, setIsAuthModalVisible] = useState(false);
+
+  const [authError, setAuthError] = useState(null);
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
+
+  const handleAuth = async (provider) => {
+    try {
+      setAuthError(null);
+      setIsAuthenticating(true);
+
+      await enableWeb3({ throwOnError: true, provider });
+      const { account, chainId } = Moralis;
+
+      if (!account) {
+        throw new Error('Connecting to chain failed, as no connected account was found');
+      }
+      if (!chainId) {
+        throw new Error('Connecting to chain failed, as no connected chain was found');
+      }
+
+      const { message } = await Moralis.Cloud.run('requestMessage', {
+        address: account,
+        chain: parseInt(chainId, 16),
+        network: 'evm',
+      });
+
+      await authenticate({
+        signingMessage: message,
+        throwOnError: true,
+      });
+      window.localStorage.setItem("connectorId", "injected");
+      setIsAuthModalVisible(false);
+    } catch (error) {
+      setAuthError(error);
+    } finally {
+      setIsAuthenticating(false);
+    }
+  };
 
   return (
     <>
@@ -66,14 +108,7 @@ function Login() {
             <div
               style={styles.connector}
               key={key}
-              onClick={async () => {
-                try {
-                  await authenticate({ provider: connectorId });
-                  window.localStorage.setItem("connectorId", connectorId);
-                } catch (e) {
-                  console.error(e);
-                }
-              }}
+              onClick={() => handleAuth(connectorId)}
             >
               <img src={icon} alt={title} style={styles.icon} />
               <p style={{ fontSize: "14px" }}>{title}</p>

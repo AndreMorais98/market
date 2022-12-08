@@ -14,13 +14,11 @@ import "./step3.css";
 
 function Step2() {
 
-  const marketAddress = "0xC0932dfa5B28f316e87828c1385E20b2Bad6B601"
+  const marketAddress = "0x17C171d47F53e61E09818ebdA56702C75A88c0CC"
 
   const {state} = useLocation();
   const { collection, token, product, upper, path} = state;
   let data = []
-
-  console.log(path)
 
   // DOWNLOAD CSV
 
@@ -186,7 +184,6 @@ function Step2() {
     else {
       for (let i=0; i < option.length; i++) {
         try{
-          console.log(option[i].content) 
           const metadataURL = await uploadMetadataToIPFS(option[i].content);
           
           // 1000€ -> 0.01 matic = 0.000007274 ether = 0.088€
@@ -232,9 +229,6 @@ function Step2() {
     try{
       const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
       const signer = provider.getSigner()
-    
-      console.log(abi)
-      console.log(bytecode.object)
 
       let factory = new ethers.ContractFactory(abi, bytecode.object, signer);
       factory.deploy().then((contract) => console.log(contract))

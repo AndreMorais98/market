@@ -114,6 +114,16 @@
     border-color: #59a796;
 }
 
+.accordion-buy .transfer-col {
+    text-align: center;
+    align-self: center;
+}
+
+.accordion-buy .transfer-col .btn-primary {
+    background-color: #59a796;
+    border-color: #59a796;
+}
+
 .accordion-button:not(.collapsed)::after {
     background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%2359a796'><path fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/></svg>")!important;
 }
@@ -169,4 +179,47 @@
 	font: inherit;
 	cursor: pointer;
 	outline: inherit;
+}
+
+.ready-tag {
+    background-color: rgba(34, 194, 56, 0.7);
+    text-align: center;
+    justify-content: center;
+    border-radius: 30px 30px;
+}
+
+.ready-tag .ready-tag-text {
+    font-family: 'Poppins';
+    margin-bottom: 0;
+    margin-right: 5px;
+    font-size: 16px;
+}
+
+.waiting-tag {
+    background-color: rgba(221, 116, 17, 0.7);
+    text-align: center;
+    justify-content: center;
+    border-radius: 30px 30px;
+}
+
+.waiting-tag .waiting-tag-text {
+    font-family: 'Poppins';
+    margin-bottom: 0;
+    margin-right: 5px;
+    font-size: 16px;
+}
+
+
+.not-ready-tag {
+    background-color: rgba(219, 27, 13, 0.7);
+    text-align: center;
+    justify-content: center;
+    border-radius: 30px 30px;
+}
+
+.not-ready-tag .not-ready-tag-text {
+    font-family: 'Poppins';
+    margin-bottom: 0;
+    margin-right: 5px;
+    font-size: 16px;
 }

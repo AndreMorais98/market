@@ -12,7 +12,7 @@ import "./profile.css";
 
 
 function Profile() {
-  const marketAddress = "0xC0932dfa5B28f316e87828c1385E20b2Bad6B601"
+  const marketAddress = "0x17C171d47F53e61E09818ebdA56702C75A88c0CC"
 
   const [dataFetched, updateFetched] = useState(false);
   const [nfts, updateNfts] = useState([]);
@@ -41,6 +41,7 @@ function Profile() {
           price: meta.price,
           real_price: Math.round((ethers.utils.formatEther( i.price ) / 0.000728 / 0.00001)),
           currentlyListed: i.currentlyListed,
+          isOnStore: i.isOnStore,
           seller: i.seller,
           owner: i.owner,
           brand: meta.brand,
@@ -144,12 +145,12 @@ function Profile() {
       <div className="col-10 media-card">
         <div className="card">
           <div className="card-body">
-            <div className="row">
             {nfts.length === 0 &&
-              <h2 style={{margin: "100px", width: "100%", textAlign: "center"}}>
+              <h2 style={{margin: "100px", textAlign: "center"}}>
                 You don't own any NFT. Buy your first or craft a new Collection
               </h2>
             }
+            <div className="row">
               {dataFetched === true && nfts.map((nft, index) => {
                 const handleClick = () => {
                   navigate(`/nft/${nft.owner}/${nft.tokenId}`)
@@ -168,10 +169,35 @@ function Profile() {
                       </div>
 
                       <div className="nft-info">
-                        <div className="mt-3 links">
-                        <h4>{nft.title} #{nft.tokenId}</h4>
-                        <p className="text-muted font-size-sm text-capitalize">{nft.type}</p>
-                        <p className="font-size-sm mb-2">Brand: <strong> {nft.brand} </strong></p>
+                        <div className="row">
+                          <div className='col-7'>
+                            <div className="mt-3 links">
+                              <h4>{nft.title} #{nft.tokenId}</h4>
+                              <p className="text-muted font-size-sm text-capitalize">{nft.type}</p>
+                              <p className="font-size-sm mb-2">Brand: <strong> {nft.brand} </strong></p>
+                            </div>
+                          </div>
+                          <div className='col-5'>
+                            <div className="mt-3 links">
+                            {nft.isOnStore && nft.currentlyListed &&
+                              <div className="ready-tag">
+                                <h5 className="ready-tag-text"> On sale</h5>
+                              </div>
+                            }
+
+                            {!nft.isOnStore && nft.currentlyListed &&
+                              <div className="waiting-tag">
+                                <h5 className="waiting-tag-text"> On sale soon</h5>
+                              </div>
+                            }
+
+                            {!nft.currentlyListed &&
+                              <div className="not-ready-tag">
+                                <h5 className="not-ready-tag-text"> Not on sale</h5>
+                              </div>
+                            }
+                          </div>
+                        </div>
                       </div>
                     </div>
                     <div className="row row-nft">

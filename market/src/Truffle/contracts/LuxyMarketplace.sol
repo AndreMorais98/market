@@ -24,6 +24,7 @@ contract LuxyMarketplace is ERC721URIStorage {
         address payable seller;
         address [] buyers;
         bool currentlyListed;
+        bool isOnStore;
     }
 
     event TokenListedSuccess (
@@ -32,7 +33,8 @@ contract LuxyMarketplace is ERC721URIStorage {
         address marketAddress,
         address owner,
         address seller,
-        bool currentlyListed
+        bool currentlyListed,
+        bool isOnStore
     );
 
     event TokenSold (
@@ -85,6 +87,7 @@ contract LuxyMarketplace is ERC721URIStorage {
             payable(msg.sender),
             payable(msg.sender),
             new address[](0),
+            false,
             false
         );
 
@@ -95,8 +98,14 @@ contract LuxyMarketplace is ERC721URIStorage {
             address(this),
             msg.sender,
             msg.sender,
+            false,
             false
         );
+    }
+
+    function isOnStore(uint256 tokenId) public {
+        require(msg.sender == idToListedToken[tokenId].seller, "You are not the owner of this NFT");
+        idToListedToken[tokenId].isOnStore = true;
     }
 
     function listNFT(uint256 tokenId) public {
@@ -104,9 +113,18 @@ contract LuxyMarketplace is ERC721URIStorage {
         idToListedToken[tokenId].currentlyListed = true;
     }
 
+    function masterListNFT(uint256 tokenId) public {
+        require(msg.sender == idToListedToken[tokenId].seller, "You are not the seller of this NFT");
+        require(msg.sender == idToListedToken[tokenId].owner, "You are not the creator of this NFT");
+        idToListedToken[tokenId].currentlyListed = true;
+        idToListedToken[tokenId].isOnStore = true;
+    }
+
     function removeListNFT(uint256 tokenId) public {
         require(msg.sender == idToListedToken[tokenId].seller, "You are not the owner of this NFT");
+        idToListedToken[tokenId].isOnStore = false;
         idToListedToken[tokenId].currentlyListed = false;
+        idToListedToken[tokenId].buyers = new address[](0);
     }
 
     function updatePriceNFT(uint256 tokenId, uint256 price) public {
@@ -125,7 +143,7 @@ contract LuxyMarketplace is ERC721URIStorage {
         require(msg.sender != idToListedToken[tokenId].seller, "Cannot buy your own NFT");
         require(idToListedToken[tokenId].currentlyListed == true, "This NFT is not on sale");
 
-        uint buyersNumber = getBuyersLength(tokenId);
+        uint buyersNumber = idToListedToken[tokenId].buyers.length;
         address[] memory newBuyersList = new address[](buyersNumber+1);
 
 
@@ -135,10 +153,6 @@ contract LuxyMarketplace is ERC721URIStorage {
 
         newBuyersList[buyersNumber] = msg.sender;
         idToListedToken[tokenId].buyers = newBuyersList;
-    }
-
-    function getBuyersLength (uint256 tokenId) public returns (uint256) {
-        return idToListedToken[tokenId].buyers.length;
     }
 
     function getFirstBuyer (uint256 tokenId) public returns (address) {
@@ -197,53 +211,35 @@ contract LuxyMarketplace is ERC721URIStorage {
         return items;
     }
 
-    function geNFTsbyAddress(address user) public view returns (ListedToken[] memory) {
-        uint totalItemCount = _tokenIds.current();
-        uint itemCount = 0;
-        uint currentIndex = 0;
-        uint currentId;
-        for(uint i=0; i < totalItemCount; i++)
-        {
-            if(idToListedToken[i+1].seller == user){
-                itemCount += 1;
-            }
-        }
-
-        ListedToken[] memory items = new ListedToken[](itemCount);
-        for(uint i=0; i < totalItemCount; i++) {
-            if(idToListedToken[i+1].seller == user) {
-                currentId = i+1;
-                ListedToken storage currentItem = idToListedToken[currentId];
-                items[currentIndex] = currentItem;
-                currentIndex += 1;
-            }
-        }
-        return items;
-    }
-
-    function executeSale(uint256 tokenId) public payable {
+    function executeSale(uint256 tokenId, bool firstTrade) public payable {
         uint price = idToListedToken[tokenId].price;
         address seller = idToListedToken[tokenId].seller;
         address owner = idToListedToken[tokenId].owner;
         address buyer = idToListedToken[tokenId].buyers[0];
+        if (firstTrade) {
+            require(msg.sender == owner, "You are not the creator of the NFT");
+        }
         require(msg.value == price, "Please submit the asking price in order to complete the purchase");
         require(msg.sender == seller, "You are not the owner of the NFT");
         require(idToListedToken[tokenId].currentlyListed == true, "This NFT is not on sale");
+        require(idToListedToken[tokenId].isOnStore == true, "The asset is not on store");
 
         idToListedToken[tokenId].currentlyListed = false;
+        idToListedToken[tokenId].isOnStore = false;
         idToListedToken[tokenId].seller = payable(buyer);
         idToListedToken[tokenId].buyers = new address[](0);
         _itemsSold.increment();
 
         _transfer(address(this), buyer, tokenId);
         approve(address(this), tokenId);
+        approve(owner, tokenId);
 
         payable(owner).transfer(feePrice);
         payable(seller).transfer(msg.value);
         emit TokenSold(
             tokenId,
             price,
-            address(this),
+            seller,
             buyer
         );
     }

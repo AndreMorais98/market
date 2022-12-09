@@ -14,7 +14,7 @@ import "./step3.css";
 
 function Step2() {
 
-  const marketAddress = "0x17C171d47F53e61E09818ebdA56702C75A88c0CC"
+  const marketAddress = process.env.REACT_APP_MARKET_ADDRESS
 
   const {state} = useLocation();
   const { collection, token, product, upper, path} = state;
@@ -180,6 +180,7 @@ function Step2() {
     e.preventDefault();
     if(option.length === 0){
       alert("Please upload your .csv file correctly")
+      return;
     }
     else {
       for (let i=0; i < option.length; i++) {
@@ -215,7 +216,6 @@ function Step2() {
       //upload the metadata JSON to IPFS
       const response = await uploadJSONToIPFS(metadata);
       if(response.success === true){
-          console.log("Uploaded JSON to Pinata: ", response)
           return response.pinataURL;
       }
     }

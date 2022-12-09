@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { useMoralis, useMoralisWeb3Api} from "react-moralis";
+import { useMoralis } from "react-moralis";
 import { useNavigate } from 'react-router-dom';
 import Login from "components/Account/Login";
-import { uploadJSONToIPFS } from "../../helpers/uploadipfs";
 import Moralis from 'moralis';
 
 
@@ -115,7 +114,6 @@ function Step1() {
   }
 
   const navigate = useNavigate();
-  const Web3Api = useMoralisWeb3Api();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -130,12 +128,10 @@ function Step1() {
         alert("Please upload atleast 1 file")
       }
       else {
-        console.log(option)
         await Moralis.start({
           apiKey: process.env.REACT_APP_MORALIS_API_KEY,
         }).then(async () => {
           const path = await Moralis.EvmApi.ipfs.uploadFolder(option);
-          console.log(path?.toJSON());
           navigate('/step2', {state: {collection:collection, token:token, product:product, upper:upper, path:path?.toJSON()}})
         })
       

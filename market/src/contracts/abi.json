@@ -71,9 +71,9 @@
 			},
 			{
 				"indexed": false,
-				"internalType": "address",
-				"name": "marketAddress",
-				"type": "address"
+				"internalType": "uint256",
+				"name": "holders",
+				"type": "uint256"
 			},
 			{
 				"indexed": false,
@@ -85,6 +85,12 @@
 				"indexed": false,
 				"internalType": "address",
 				"name": "seller",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "last_owner",
 				"type": "address"
 			},
 			{
@@ -114,6 +120,31 @@
 			},
 			{
 				"indexed": false,
+				"internalType": "address",
+				"name": "seller",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "buyer",
+				"type": "address"
+			}
+		],
+		"name": "TokenSold",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "tokenId",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
 				"internalType": "uint256",
 				"name": "price",
 				"type": "uint256"
@@ -127,11 +158,11 @@
 			{
 				"indexed": false,
 				"internalType": "address",
-				"name": "buyer",
+				"name": "owner",
 				"type": "address"
 			}
 		],
-		"name": "TokenSold",
+		"name": "TokenTransferedStore",
 		"type": "event"
 	},
 	{
@@ -254,99 +285,12 @@
 	},
 	{
 		"inputs": [],
-		"name": "getCurrentToken",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
 		"name": "getFeePrice",
 		"outputs": [
 			{
 				"internalType": "uint256",
 				"name": "",
 				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "tokenId",
-				"type": "uint256"
-			}
-		],
-		"name": "getFirstBuyer",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "getLatestIdToListedToken",
-		"outputs": [
-			{
-				"components": [
-					{
-						"internalType": "uint256",
-						"name": "tokenId",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "price",
-						"type": "uint256"
-					},
-					{
-						"internalType": "address payable",
-						"name": "marketAddress",
-						"type": "address"
-					},
-					{
-						"internalType": "address payable",
-						"name": "owner",
-						"type": "address"
-					},
-					{
-						"internalType": "address payable",
-						"name": "seller",
-						"type": "address"
-					},
-					{
-						"internalType": "address[]",
-						"name": "buyers",
-						"type": "address[]"
-					},
-					{
-						"internalType": "bool",
-						"name": "currentlyListed",
-						"type": "bool"
-					},
-					{
-						"internalType": "bool",
-						"name": "isOnStore",
-						"type": "bool"
-					}
-				],
-				"internalType": "struct LuxyMarketplace.ListedToken",
-				"name": "",
-				"type": "tuple"
 			}
 		],
 		"stateMutability": "view",
@@ -375,9 +319,9 @@
 						"type": "uint256"
 					},
 					{
-						"internalType": "address payable",
-						"name": "marketAddress",
-						"type": "address"
+						"internalType": "uint256",
+						"name": "holders",
+						"type": "uint256"
 					},
 					{
 						"internalType": "address payable",
@@ -387,6 +331,11 @@
 					{
 						"internalType": "address payable",
 						"name": "seller",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "last_owner",
 						"type": "address"
 					},
 					{
@@ -430,9 +379,9 @@
 						"type": "uint256"
 					},
 					{
-						"internalType": "address payable",
-						"name": "marketAddress",
-						"type": "address"
+						"internalType": "uint256",
+						"name": "holders",
+						"type": "uint256"
 					},
 					{
 						"internalType": "address payable",
@@ -442,6 +391,11 @@
 					{
 						"internalType": "address payable",
 						"name": "seller",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "last_owner",
 						"type": "address"
 					},
 					{
@@ -485,9 +439,9 @@
 						"type": "uint256"
 					},
 					{
-						"internalType": "address payable",
-						"name": "marketAddress",
-						"type": "address"
+						"internalType": "uint256",
+						"name": "holders",
+						"type": "uint256"
 					},
 					{
 						"internalType": "address payable",
@@ -497,6 +451,11 @@
 					{
 						"internalType": "address payable",
 						"name": "seller",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "last_owner",
 						"type": "address"
 					},
 					{
@@ -566,30 +525,6 @@
 				"internalType": "uint256",
 				"name": "tokenId",
 				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "seller",
-				"type": "address"
-			}
-		],
-		"name": "isTheOwner",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "tokenId",
-				"type": "uint256"
 			}
 		],
 		"name": "listNFT",
@@ -638,19 +573,6 @@
 			}
 		],
 		"name": "removeBuyer",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "tokenId",
-				"type": "uint256"
-			}
-		],
-		"name": "removeFromStore",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -822,6 +744,19 @@
 		"name": "transferFrom",
 		"outputs": [],
 		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "tokenId",
+				"type": "uint256"
+			}
+		],
+		"name": "transferToStore",
+		"outputs": [],
+		"stateMutability": "payable",
 		"type": "function"
 	},
 	{

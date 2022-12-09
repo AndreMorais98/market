@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Menu, Dropdown, Button } from "antd";
 import { DownOutlined } from "@ant-design/icons";
-import { PolygonLogo, ETHLogo } from "./Logos";
+import { PolygonLogo } from "./Logos";
 import { useChain, useMoralis } from "react-moralis";
 
 const styles = {
@@ -22,36 +22,6 @@ const styles = {
 
 const menuItems = [
   {
-    key: "0x1",
-    value: "Ethereum",
-    icon: <ETHLogo />,
-  },
-  {
-    key: "0x539",
-    value: "Local Chain",
-    icon: <ETHLogo />,
-  },
-  {
-    key: "0x3",
-    value: "Ropsten Testnet",
-    icon: <ETHLogo />,
-  },
-  {
-    key: "0x4",
-    value: "Rinkeby Testnet",
-    icon: <ETHLogo />,
-  },
-  {
-    key: "0x2a",
-    value: "Kovan Testnet",
-    icon: <ETHLogo />,
-  },
-  {
-    key: "0x5",
-    value: "Goerli Testnet",
-    icon: <ETHLogo />,
-  },
-  {
     key: "0x89",
     value: "Polygon",
     icon: <PolygonLogo />,
@@ -64,7 +34,7 @@ const menuItems = [
 ];
 
 function Chains() {
-  const { switchNetwork, chainId, chain } = useChain();
+  const { switchNetwork, chainId } = useChain();
   const { isAuthenticated } = useMoralis();
   const [selected, setSelected] = useState({});
 
@@ -72,11 +42,9 @@ function Chains() {
     if (!chainId) return null;
     const newSelected = menuItems.find((item) => item.key === chainId);
     setSelected(newSelected);
-    console.log("current chainId: ", chainId);
   }, [chainId]);
 
   const handleMenuClick = (e) => {
-    console.log("switch to: ", e.key);
     switchNetwork(e.key);
   };
 

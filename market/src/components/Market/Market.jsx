@@ -1,5 +1,5 @@
 import React, { useState }  from 'react';
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { ethers } from "ethers";
 
 import { useMoralis} from "react-moralis";
@@ -12,19 +12,11 @@ import abi from '../../contracts/abi.json'
 import "./market.css";
 
 function Market() {
-  const marketAddress = "0x17C171d47F53e61E09818ebdA56702C75A88c0CC"
+  const marketAddress = process.env.REACT_APP_MARKET_ADDRESS
 
   const [dataFetched, updateFetched] = useState(false);
   const [nfts, updateNfts] = useState([]);
 
-  let { search } = useLocation();
-
-  const query = new URLSearchParams(search);
-  const paramSearch = query.get('search');
-  const paramTypeCloth= query.get('type_cloth');
-  const paramMax= query.get('max');
-  const paramMin= query.get('min');
-  
   let navigate = useNavigate();
   
   const { isAuthenticated, account, chainId } = useMoralis();
@@ -47,6 +39,7 @@ function Market() {
         let item = {
             tokenId: i.tokenId.toNumber(),
             price: meta.price,
+            smart_price: ethers.utils.formatEther( i.price ),
             real_price: Math.round((ethers.utils.formatEther( i.price ) / 0.000728 / 0.00001)),
             currentlyListed: i.currentlyListed,
             isOnStore: i.isOnStore,
@@ -68,7 +61,6 @@ function Market() {
     }))
     updateFetched(true);
     updateNfts(items);
-    console.log(items)
     return items
   };
 
@@ -104,7 +96,7 @@ function Market() {
                 }
                 {dataFetched === true && nfts.map((nft, index) => {
                   const handleClick = () => {
-                    navigate(`/nft/${nft.owner}/${nft.tokenId}`)
+                    navigate(`/nft/${marketAddress}/${nft.tokenId}`)
                   }
 
                   return (

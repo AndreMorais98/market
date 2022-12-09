@@ -12,7 +12,7 @@ import "./profile.css";
 
 
 function Profile() {
-  const marketAddress = "0x17C171d47F53e61E09818ebdA56702C75A88c0CC"
+  const marketAddress = process.env.REACT_APP_MARKET_ADDRESS
 
   const [dataFetched, updateFetched] = useState(false);
   const [nfts, updateNfts] = useState([]);
@@ -42,6 +42,7 @@ function Profile() {
           real_price: Math.round((ethers.utils.formatEther( i.price ) / 0.000728 / 0.00001)),
           currentlyListed: i.currentlyListed,
           isOnStore: i.isOnStore,
+          marketAddress: i.marketAddress,
           seller: i.seller,
           owner: i.owner,
           brand: meta.brand,
@@ -59,7 +60,6 @@ function Profile() {
     }))
     updateFetched(true);
     updateNfts(items);
-    console.log(items)
     return items
   };
 
@@ -153,7 +153,7 @@ function Profile() {
             <div className="row">
               {dataFetched === true && nfts.map((nft, index) => {
                 const handleClick = () => {
-                  navigate(`/nft/${nft.owner}/${nft.tokenId}`)
+                  navigate(`/nft/${marketAddress}/${nft.tokenId}`)
                 }
 
                 return (

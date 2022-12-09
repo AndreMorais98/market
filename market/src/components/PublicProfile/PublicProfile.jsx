@@ -12,7 +12,7 @@ import abi from '../../contracts/abi.json';
 import "./publicprofile.css";
 
 function Profile() {
-  const marketAddress = "0x17C171d47F53e61E09818ebdA56702C75A88c0CC"
+  const marketAddress = process.env.REACT_APP_MARKET_ADDRESS
 
   let { address } = useParams()
 
@@ -63,7 +63,6 @@ function Profile() {
     }))
     updateFetched(true);
     updateNfts(items);
-    console.log(items)
     return items
   };
 
@@ -154,7 +153,7 @@ function Profile() {
             }
               {dataFetched === true && nfts.map((nft, index) => {
                 const handleClick = () => {
-                  navigate(`/nft/${nft.owner}/${nft.tokenId}`)
+                  navigate(`/nft/${marketAddress}/${nft.tokenId}`)
                 }
 
                 return (

@@ -10,7 +10,7 @@ import abi from '../../contracts/abi.json';
 import "./nft.css";
 
 function Nft() {
-  const marketAddress = "0x17C171d47F53e61E09818ebdA56702C75A88c0CC"
+  const marketAddress = process.env.REACT_APP_MARKET_ADDRESS
   
   const { isAuthenticated, account} = useMoralis();
   
@@ -25,8 +25,6 @@ function Nft() {
   const [notGetInBoth, updateNotGetInBoth] = useState(true);
   const [nft, updateNft] = useState({});
   const [formParams, updateFormParams] = useState({ price: ''});
-  const [addressParam, updateAddressParam] = useState({ address: ''});
-
 
 
   async function loafNFTMetadata(tokenId) {
@@ -46,13 +44,16 @@ function Nft() {
         tokenId: tokenId,
         currentlyListed: listedToken.currentlyListed,
         isOnStore: listedToken.isOnStore,
+        smart_price: ethers.utils.formatEther(listedToken.price),
         real_price: Math.round((ethers.utils.formatEther( listedToken.price ) / 0.000728 / 0.00001)),
-        matic_price: (ethers.utils.formatEther( listedToken.price ) / 0.000728),
+        matic_price: (ethers.utils.formatEther( listedToken.price ) / 0.000728).toFixed(3),
         initial_price: meta.price,
         buyers_list: listedToken.buyers,
+        holders: listedToken.holders.toNumber(),
         buyers_list_size: listedToken.buyers.length,
         seller: listedToken.seller,
         owner: listedToken.owner,
+        last_owner: listedToken.last_owner,
         brand: meta.brand,
         color: meta.color,
         description: meta.description,
@@ -111,7 +112,6 @@ function Nft() {
         lower: lower
       }
     }
-    console.log(complete_item)
     updateFetched(true);
     updateNft(complete_item);
   };
@@ -160,25 +160,7 @@ function Nft() {
 
         let contract = new ethers.Contract(marketAddress, abi, signer);
 
-        let transaction = await contract.executeSale(id, false);
-        await transaction.wait();
-
-        alert('You have transfered the NFT to ' + nft.buyers_list[0] + ' with success');
-    }
-    catch(e) {
-        alert("Transfer Error: "+e)
-    }
-  }
-
-  const executeFirstSale = async (e) => {
-    e.preventDefault();
-    try {
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner();
-
-        let contract = new ethers.Contract(marketAddress, abi, signer);
-
-        let transaction = await contract.executeFirstSale(id, true);
+        let transaction = await contract.executeSale(id);
         await transaction.wait();
 
         alert('You have transfered the NFT to ' + nft.buyers_list[0] + ' with success');
@@ -217,25 +199,6 @@ function Nft() {
     }
   }
 
-  const masterListNFT = async (e) => {
-    e.preventDefault();
-    try {
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner();
-
-        let contract = new ethers.Contract(marketAddress, abi, signer);
-
-        let listNFT = await contract.masterListNFT(id);
-        await listNFT.wait();
-
-        alert('You NFT is available on the Marketplace');
-    }
-    catch(e) {
-        alert("List Error: "+e)
-    }
-  }
-
-
   const listNFT = async (e) => {
     e.preventDefault();
     try {
@@ -247,10 +210,28 @@ function Nft() {
         let listNFT = await contract.listNFT(id);
         await listNFT.wait();
 
-        alert('You have to delivery your object to the store, and the NFT will be available on the market');
+        alert('You NFT is available on the Marketplace');
     }
     catch(e) {
         alert("List Error: "+e)
+    }
+  }
+
+  const transferToStore = async (e) => {
+    e.preventDefault();
+    try {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+
+        let contract = new ethers.Contract(marketAddress, abi, signer);
+
+        let transferToStore = await contract.transferToStore(id);
+        await transferToStore.wait();
+
+        alert('You have to delivery your object to the store, and the NFT will be available on the market');
+    }
+    catch(e) {
+        alert("transferToStore Error: "+e)
     }
   }
 
@@ -310,9 +291,6 @@ function Nft() {
     updateNotGetInBoth(false);
   }
 
-  console.log(isOwner, isSeller, isBoth)
-  
-
   if (nft === {}){
     return (
       <>
@@ -365,52 +343,47 @@ function Nft() {
                           <span> There is {nft.buyers_list_size} buyers in queue right now! </span>
                         </div>
                         }
+                        {nft.currentlyListed && !nft.isOnStore &&
+                        <div style={{paddingTop: "10px", textAlign: "center", alignSelf: "center"}} className="col-5">
+                          <span> This NFT will be available to buy when the asset is in the store! </span>
+                        </div>
+                        }
                         
-                        {isBoth && !nft.currentlyListed && !nft.isOnStore &&
+                        {isBoth && !nft.currentlyListed && nft.isOnStore &&
                           <div className="col-9 button-col">
-                            <button className="btn btn-primary" onClick={masterListNFT} type="button">List NFT</button>
-                          </div>
-                        }
-
-                        {isBoth && nft.currentlyListed && nft.isOnStore && nft.buyers_list_size !== 0 &&
-                          <div className="col-2 button-col">
-                            <button className="btn btn-primary" onClick={removeBuyer} type="button">Remove Buyer</button>
-                          </div>
-                        }
-                        {isBoth && nft.currentlyListed && nft.isOnStore && nft.buyers_list_size !== 0 &&
-                          <div className="col-2 button-col">
-                            <button style={{height: "62px"}} className="btn btn-primary" onClick={executeFirstSale} type="button">Transfer NFT</button>
-                          </div>
-                        }
-
-
-                        {!isOwner && isSeller && !nft.currentlyListed && !nft.isOnStore &&
-                          <div className="col-4 button-col">
                             <button className="btn btn-primary" onClick={listNFT} type="button">List NFT</button>
                           </div>
                         }
-                        {!isOwner && isSeller && !nft.currentlyListed && nft.isOnStore &&
+                        {isBoth && nft.currentlyListed && nft.isOnStore && nft.buyers_list_size === 0 &&
                           <div className="col-4 button-col">
                             <button className="btn btn-primary" onClick={removeListNFT} type="button">Remove from Marketplace</button>
                           </div>
                         }
 
-
-                        {isOwner && !isSeller && nft.currentlyListed && !nft.isOnStore &&
+                        {isBoth && nft.currentlyListed && !nft.isOnStore &&
                           <div className="col-4 button-col">
                             <button className="btn btn-primary" onClick={isOnStore} type="button">Confirm Delivery</button>
                           </div>
                         }
-                        {isOwner && !isSeller && nft.currentlyListed && nft.isOnStore && nft.buyers_list_size !== 0 &&
+
+                        {isBoth && nft.currentlyListed && nft.isOnStore && nft.buyers_list_size !== 0 &&
                           <div className="col-2 button-col">
                             <button className="btn btn-primary" onClick={removeBuyer} type="button">Remove Buyer</button>
                           </div>
                         }
-                        {isOwner && !isSeller && nft.currentlyListed && nft.isOnStore && nft.buyers_list_size !== 0 &&
+                        {isBoth && nft.currentlyListed && nft.isOnStore && nft.buyers_list_size !== 0 &&
                           <div className="col-2 button-col">
-                            <button style={{height: "62px"}} className="btn btn-primary" onClick={executeSale} type="button">Transfer</button>
+                            <button style={{height: "62px"}} className="btn btn-primary" onClick={executeSale} type="button">Transfer NFT</button>
                           </div>
                         }
+
+
+                        {!isOwner && isSeller && !nft.currentlyListed && !nft.isOnStore &&
+                          <div className="col-9 button-col">
+                            <button className="btn btn-primary" onClick={transferToStore} type="button">Transfer to Store</button>
+                          </div>
+                        }
+
                         
                         {!isOwner && !isSeller && nft.currentlyListed && nft.isOnStore && !nft.lower?.includes(account) &&
                           <div className="col-4 button-col">
@@ -425,11 +398,11 @@ function Nft() {
 
                         {!isOwner && !isSeller && nft.currentlyListed && nft.isOnStore && nft.lower[0]?.includes(account) &&
                           <div className="col-4" style={{paddingTop: "10px", textAlign: "center",  alignItems: "center", alignSelf: "center"}}>
-                            <b> You are the first in the queue, get in touch with the owner, sending your wallet address and NFT id</b>
+                            <b> You are the first in the queue, get in touch with the owner/store, sending your wallet address and NFT ID</b>
                           </div>
                         }
                       </div>
-                      {isOwner && !isSeller && nft.currentlyListed && nft.isOnStore && nft.buyers_list_size !== 0 &&
+                      {isBoth && nft.currentlyListed && nft.isOnStore && nft.buyers_list_size !== 0 &&
                         <div className='row'> 
                           <div className="col-12" style={{padding: "25px 0 0", textAlign: "center"}}>
                             <p>Next buyer is {nft.buyers_list[0]}</p>
@@ -509,6 +482,7 @@ function Nft() {
                     <p>Brand :<strong> {nft.brand} </strong></p>
                   }
                   <p>Product ID: <strong>{nft.product_id}</strong></p>
+                  <p>Total number of holders: <strong>{nft.holders}</strong></p>
                   <div className="d-flex">
                     <div className='row'>
                       <p style={{marginBottom: "10px", marginRight: "5px"}}>Owned by: 
@@ -516,9 +490,14 @@ function Nft() {
                           <strong> {nft.seller}</strong> 
                         </a>
                       </p>
-                      <p style={{marginBottom: "0px", marginRight: "5px"}}>Created by: 
+                      <p style={{marginBottom: "10px", marginRight: "5px"}}>Created by: 
                         <a className="profile-btn" href={`../../profile/${nft.owner}`}> 
                           <strong> {nft.owner}</strong> 
+                        </a>
+                      </p> 
+                      <p style={{marginBottom: "0px", marginRight: "5px"}}>Last Owner was: 
+                        <a className="profile-btn" href={`../../profile/${nft.last_owner}`}> 
+                          <strong> {nft.last_owner}</strong> 
                         </a>
                       </p> 
                     </div>
@@ -581,7 +560,7 @@ function Nft() {
                           }
                         </ul>
                         }
-                        {(nft?.type === "shirt" || "coat" || "trousers" || "shorts" || "shoes") &&
+                        {nft?.type === ("shirt" || "coat" || "trousers" || "shorts" || "shoes") &&
                         <ul>
                           <li><strong>Size:</strong> {nft?.size}</li>
                         </ul>

@@ -20,8 +20,8 @@ contract LuxyMarketplace is ERC721URIStorage {
         uint256 tokenId;
         uint256 price;
         uint256 holders;
-        address payable owner;
-        address payable seller;
+        address owner;
+        address seller;
         address last_owner;
         address [] buyers;
         bool currentlyListed;
@@ -82,8 +82,8 @@ contract LuxyMarketplace is ERC721URIStorage {
             tokenId,
             price,
             0,
-            payable(msg.sender),
-            payable(msg.sender),
+            msg.sender,
+            msg.sender,
             msg.sender,
             new address[](0),
             true,
@@ -202,7 +202,7 @@ contract LuxyMarketplace is ERC721URIStorage {
 
         idToLuxyToken[tokenId].currentlyListed = false;
         idToLuxyToken[tokenId].isOnStore = false;
-        idToLuxyToken[tokenId].seller = payable(buyer);
+        idToLuxyToken[tokenId].seller = buyer;
         idToLuxyToken[tokenId].buyers = new address[](0);
         idToLuxyToken[tokenId].holders = nr_holders + 1;
         _itemsSold.increment();
@@ -224,7 +224,7 @@ contract LuxyMarketplace is ERC721URIStorage {
 
         idToLuxyToken[tokenId].currentlyListed = true;
         idToLuxyToken[tokenId].last_owner = seller;
-        idToLuxyToken[tokenId].seller = payable(owner);
+        idToLuxyToken[tokenId].seller = owner;
         idToLuxyToken[tokenId].buyers = new address[](0);
 
         _transfer(msg.sender, address(this), tokenId);

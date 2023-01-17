@@ -324,12 +324,12 @@
 						"type": "uint256"
 					},
 					{
-						"internalType": "address payable",
+						"internalType": "address",
 						"name": "owner",
 						"type": "address"
 					},
 					{
-						"internalType": "address payable",
+						"internalType": "address",
 						"name": "seller",
 						"type": "address"
 					},
@@ -384,12 +384,12 @@
 						"type": "uint256"
 					},
 					{
-						"internalType": "address payable",
+						"internalType": "address",
 						"name": "owner",
 						"type": "address"
 					},
 					{
-						"internalType": "address payable",
+						"internalType": "address",
 						"name": "seller",
 						"type": "address"
 					},
@@ -444,12 +444,12 @@
 						"type": "uint256"
 					},
 					{
-						"internalType": "address payable",
+						"internalType": "address",
 						"name": "owner",
 						"type": "address"
 					},
 					{
-						"internalType": "address payable",
+						"internalType": "address",
 						"name": "seller",
 						"type": "address"
 					},

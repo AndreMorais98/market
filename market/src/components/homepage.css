@@ -140,6 +140,7 @@
   .principles .list-principle-right:hover,
   .principles .list-principle-left:hover {
     background-color: #59a796;
+    border-radius: 40px;
   }
   
   .principles .list-principle-left h1{

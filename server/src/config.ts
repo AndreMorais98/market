@@ -32,22 +32,6 @@ export default cleanEnv(process.env, {
     devDefault: 'http://localhost:1337/server',
   }),
 
-  REDIS_CONNECTION_STRING: str({
-    desc: 'Connection string for your redis instance in the format of redis://<host>:<port> or redis://<username>:<password>@<host>:<port>',
-    devDefault: 'redis://127.0.0.1:6379',
-  }),
-  RATE_LIMIT_TTL: num({
-    desc: 'Rate limit window in seconds',
-    default: 30,
-  }),
-  RATE_LIMIT_AUTHENTICATED: num({
-    desc: 'Rate limit requests per window for authenticated users',
-    default: 50,
-  }),
-  RATE_LIMIT_ANONYMOUS: num({
-    desc: 'Rate limit requests per window for anonymous users',
-    default: 20,
-  }),
   USE_STREAMS: bool({
     desc: 'Enable streams sync',
     default: false,

@@ -34,7 +34,7 @@ function Nft() {
     let contract = new ethers.Contract(marketAddress, abi, signer);
   
     const tokenURI = await contract.tokenURI(tokenId);
-    const listedToken = await contract.getListedTokenForId(tokenId);
+    const listedToken = await contract.getLuxyTokenForId(tokenId);
 
 
     let meta = await axios.get(tokenURI);
@@ -114,6 +114,7 @@ function Nft() {
     }
     updateFetched(true);
     updateNft(complete_item);
+    console.log(complete_item)
   };
 
   const reserveNFT = async (e) => {
@@ -560,7 +561,11 @@ function Nft() {
                           }
                         </ul>
                         }
-                        {nft?.type === ("shirt" || "coat" || "trousers" || "shorts" || "shoes") &&
+                        {nft?.type === "shirt"    || 
+                         nft?.type === "coat"     || 
+                         nft?.type === "trousers" || 
+                         nft?.type === "shorts"   || 
+                         nft?.type === "shoes"    &&
                         <ul>
                           <li><strong>Size:</strong> {nft?.size}</li>
                         </ul>
@@ -603,71 +608,6 @@ function Nft() {
           </div>
         </div>
       </div>
-
-      {/* <div className="nft-history">
-        <h2>NFT History</h2>
-        <table className="table">
-          <thead>
-            <tr>
-              <th scope="col">EVENT</th>
-              <th scope="col">PRICE</th>
-              <th scope="col">FROM</th>
-              <th scope="col">TO</th>
-              <th scope="col">VERIFIED BY</th>
-              <th scope="col">DATE</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            <tr>
-              <th>
-                <i className="fas fa-tag"> List</i>
-              </th>
-              <td style={{"display": "flex"}}> 
-                <img src="../../polygon-matic-logo.png" alt="polygon-icon" style={{"marginRight": "5px"}}/> 50
-              </td>
-              <td> 
-                <a href="/profile">Rolex</a>
-              </td>
-              <td> </td>
-              <td> </td>
-              <td>27-05-2022</td>
-            </tr>
-
-            <tr>
-              <th> 
-                <i className="fas fa-handshake"> Transfer</i>
-              </th>
-              <td style={{"display": "flex"}}> 
-                <img src="../../polygon-matic-logo.png" alt="polygon-icon" style={{"marginRight": "5px"}}/> 200
-              </td>
-              <td> 
-                <a href="/profile">Rolex</a>
-              </td>
-              <td>Otto</td>
-              <td> 
-                <a href="/profile">Rolex</a>
-              </td>
-              <td>27-05-2022</td>
-            </tr>
-
-            <tr>
-              <th>
-                <i className="fas fa-handshake"> Transfer</i>
-              </th>
-              <td style={{"display": "flex"}}> 
-                <img src="../../polygon-matic-logo.png" alt="polygon-icon" style={{"marginRight": "5px"}}/> 400
-              </td>
-              <td>Otto</td>
-              <td>Larry the Bird</td>
-              <td> 
-                <a href="/profile">Rolex</a>
-              </td>
-              <td>31-05-2022</td>
-            </tr>
-          </tbody>
-        </table>
-      </div> */}
     </div>
   </>
   );

@@ -2,7 +2,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Moralis from 'moralis'
 import { MoralisError } from '@moralisweb3/common-core';
-import { handleRateLimit } from '../../rateLimit'
 import { AxiosError } from 'axios'
 declare const Parse: any;
 
@@ -25,17 +24,8 @@ const getErrorMessage = (error: Error, name: string) => {
   return `API error while calling ${name}`
 }
 
-const beforeApiRequest = async (user: any, ip: any, name: string) => {
-  if (!(await handleRateLimit(user, ip))) {
-    throw new Error(
-      `Too many requests to ${name} API from this particular client, the clients needs to wait before sending more requests.`
-    );
-  }
-}
-
 Parse.Cloud.define("getBlock", async ({params, user, ip}: any) => {
   try {
-    await beforeApiRequest(user, ip, 'getBlock');
     const result = await Moralis.EvmApi.block.getBlock(params);
     return result?.raw;
   } catch (error) {
@@ -45,7 +35,6 @@ Parse.Cloud.define("getBlock", async ({params, user, ip}: any) => {
 
 Parse.Cloud.define("getDateToBlock", async ({params, user, ip}: any) => {
   try {
-    await beforeApiRequest(user, ip, 'getDateToBlock');
     const result = await Moralis.EvmApi.block.getDateToBlock(params);
     return result?.raw;
   } catch (error) {
@@ -55,7 +44,6 @@ Parse.Cloud.define("getDateToBlock", async ({params, user, ip}: any) => {
 
 Parse.Cloud.define("getLogsByAddress", async ({params, user, ip}: any) => {
   try {
-    await beforeApiRequest(user, ip, 'getLogsByAddress');
     const result = await Moralis.EvmApi.events.getContractLogs(params);
     return result?.raw;
   } catch (error) {
@@ -65,7 +53,6 @@ Parse.Cloud.define("getLogsByAddress", async ({params, user, ip}: any) => {
 
 Parse.Cloud.define("getNFTTransfersByBlock", async ({params, user, ip}: any) => {
   try {
-    await beforeApiRequest(user, ip, 'getNFTTransfersByBlock');
     const result = await Moralis.EvmApi.nft.getNFTTransfersByBlock(params);
     return result?.raw;
   } catch (error) {
@@ -75,7 +62,6 @@ Parse.Cloud.define("getNFTTransfersByBlock", async ({params, user, ip}: any) => 
 
 Parse.Cloud.define("getTransaction", async ({params, user, ip}: any) => {
   try {
-    await beforeApiRequest(user, ip, 'getTransaction');
     const result = await Moralis.EvmApi.transaction.getTransaction(params);
     return result?.raw;
   } catch (error) {
@@ -85,7 +71,6 @@ Parse.Cloud.define("getTransaction", async ({params, user, ip}: any) => {
 
 Parse.Cloud.define("getContractEvents", async ({params, user, ip}: any) => {
   try {
-    await beforeApiRequest(user, ip, 'getContractEvents');
     const result = await Moralis.EvmApi.events.getContractEvents(params);
     return result?.raw;
   } catch (error) {
@@ -95,7 +80,6 @@ Parse.Cloud.define("getContractEvents", async ({params, user, ip}: any) => {
 
 Parse.Cloud.define("runContractFunction", async ({params, user, ip}: any) => {
   try {
-    await beforeApiRequest(user, ip, 'runContractFunction');
     const result = await Moralis.EvmApi.utils.runContractFunction(params);
     return result?.raw;
   } catch (error) {
@@ -105,7 +89,6 @@ Parse.Cloud.define("runContractFunction", async ({params, user, ip}: any) => {
 
 Parse.Cloud.define("getTransactions", async ({params, user, ip}: any) => {
   try {
-    await beforeApiRequest(user, ip, 'getTransactions');
     const result = await Moralis.EvmApi.transaction.getWalletTransactions(params);
     return result?.raw;
   } catch (error) {
@@ -115,7 +98,6 @@ Parse.Cloud.define("getTransactions", async ({params, user, ip}: any) => {
 
 Parse.Cloud.define("getNativeBalance", async ({params, user, ip}: any) => {
   try {
-    await beforeApiRequest(user, ip, 'getNativeBalance');
     const result = await Moralis.EvmApi.balance.getNativeBalance(params);
     return result?.raw;
   } catch (error) {
@@ -125,7 +107,6 @@ Parse.Cloud.define("getNativeBalance", async ({params, user, ip}: any) => {
 
 Parse.Cloud.define("getTokenBalances", async ({params, user, ip}: any) => {
   try {
-    await beforeApiRequest(user, ip, 'getTokenBalances');
     const result = await Moralis.EvmApi.token.getWalletTokenBalances(params);
     return result?.raw;
   } catch (error) {
@@ -135,7 +116,6 @@ Parse.Cloud.define("getTokenBalances", async ({params, user, ip}: any) => {
 
 Parse.Cloud.define("getTokenTransfers", async ({params, user, ip}: any) => {
   try {
-    await beforeApiRequest(user, ip, 'getTokenTransfers');
     const result = await Moralis.EvmApi.token.getWalletTokenTransfers(params);
     return result?.raw;
   } catch (error) {
@@ -145,7 +125,6 @@ Parse.Cloud.define("getTokenTransfers", async ({params, user, ip}: any) => {
 
 Parse.Cloud.define("getNFTs", async ({params, user, ip}: any) => {
   try {
-    await beforeApiRequest(user, ip, 'getNFTs');
     const result = await Moralis.EvmApi.nft.getWalletNFTs(params);
     return result?.raw;
   } catch (error) {
@@ -155,7 +134,6 @@ Parse.Cloud.define("getNFTs", async ({params, user, ip}: any) => {
 
 Parse.Cloud.define("getNFTTransfers", async ({params, user, ip}: any) => {
   try {
-    await beforeApiRequest(user, ip, 'getNFTTransfers');
     const result = await Moralis.EvmApi.nft.getWalletNFTTransfers(params);
     return result?.raw;
   } catch (error) {
@@ -165,7 +143,6 @@ Parse.Cloud.define("getNFTTransfers", async ({params, user, ip}: any) => {
 
 Parse.Cloud.define("getWalletNFTCollections", async ({params, user, ip}: any) => {
   try {
-    await beforeApiRequest(user, ip, 'getWalletNFTCollections');
     const result = await Moralis.EvmApi.nft.getWalletNFTCollections(params);
     return result?.raw;
   } catch (error) {
@@ -175,7 +152,6 @@ Parse.Cloud.define("getWalletNFTCollections", async ({params, user, ip}: any) =>
 
 Parse.Cloud.define("getNFTsForContract", async ({params, user, ip}: any) => {
   try {
-    await beforeApiRequest(user, ip, 'getNFTsForContract');
     const result = await Moralis.EvmApi.nft.getWalletNFTs(params);
     return result?.raw;
   } catch (error) {
@@ -185,7 +161,6 @@ Parse.Cloud.define("getNFTsForContract", async ({params, user, ip}: any) => {
 
 Parse.Cloud.define("getTokenMetadata", async ({params, user, ip}: any) => {
   try {
-    await beforeApiRequest(user, ip, 'getTokenMetadata');
     const result = await Moralis.EvmApi.token.getTokenMetadata(params);
     return result?.raw;
   } catch (error) {
@@ -195,7 +170,6 @@ Parse.Cloud.define("getTokenMetadata", async ({params, user, ip}: any) => {
 
 Parse.Cloud.define("getNFTTrades", async ({params, user, ip}: any) => {
   try {
-    await beforeApiRequest(user, ip, 'getNFTTrades');
     const result = await Moralis.EvmApi.nft.getNFTTrades(params);
     return result?.raw;
   } catch (error) {
@@ -205,7 +179,6 @@ Parse.Cloud.define("getNFTTrades", async ({params, user, ip}: any) => {
 
 Parse.Cloud.define("getNFTLowestPrice", async ({params, user, ip}: any) => {
   try {
-    await beforeApiRequest(user, ip, 'getNFTLowestPrice');
     const result = await Moralis.EvmApi.nft.getNFTLowestPrice(params);
     return result?.raw;
   } catch (error) {
@@ -215,7 +188,6 @@ Parse.Cloud.define("getNFTLowestPrice", async ({params, user, ip}: any) => {
 
 Parse.Cloud.define("getTokenMetadataBySymbol", async ({params, user, ip}: any) => {
   try {
-    await beforeApiRequest(user, ip, 'getTokenMetadataBySymbol');
     const result = await Moralis.EvmApi.token.getTokenMetadataBySymbol(params);
     return result?.raw;
   } catch (error) {
@@ -225,7 +197,6 @@ Parse.Cloud.define("getTokenMetadataBySymbol", async ({params, user, ip}: any) =
 
 Parse.Cloud.define("getTokenPrice", async ({params, user, ip}: any) => {
   try {
-    await beforeApiRequest(user, ip, 'getTokenPrice');
     const result = await Moralis.EvmApi.token.getTokenPrice(params);
     return result?.raw;
   } catch (error) {
@@ -235,7 +206,6 @@ Parse.Cloud.define("getTokenPrice", async ({params, user, ip}: any) => {
 
 Parse.Cloud.define("getTokenAddressTransfers", async ({params, user, ip}: any) => {
   try {
-    await beforeApiRequest(user, ip, 'getTokenAddressTransfers');
     const result = await Moralis.EvmApi.token.getTokenTransfers(params);
     return result?.raw;
   } catch (error) {
@@ -245,7 +215,6 @@ Parse.Cloud.define("getTokenAddressTransfers", async ({params, user, ip}: any) =
 
 Parse.Cloud.define("getTokenAllowance", async ({params, user, ip}: any) => {
   try {
-    await beforeApiRequest(user, ip, 'getTokenAllowance');
     const result = await Moralis.EvmApi.token.getTokenAllowance(params);
     return result?.raw;
   } catch (error) {
@@ -255,7 +224,6 @@ Parse.Cloud.define("getTokenAllowance", async ({params, user, ip}: any) => {
 
 Parse.Cloud.define("searchNFTs", async ({params, user, ip}: any) => {
   try {
-    await beforeApiRequest(user, ip, 'searchNFTs');
     const result = await Moralis.EvmApi.nft.searchNFTs(params);
     return result?.raw;
   } catch (error) {
@@ -265,7 +233,6 @@ Parse.Cloud.define("searchNFTs", async ({params, user, ip}: any) => {
 
 Parse.Cloud.define("getNftTransfersFromToBlock", async ({params, user, ip}: any) => {
   try {
-    await beforeApiRequest(user, ip, 'getNftTransfersFromToBlock');
     const result = await Moralis.EvmApi.nft.getNFTTransfersFromToBlock(params);
     return result?.raw;
   } catch (error) {
@@ -275,7 +242,6 @@ Parse.Cloud.define("getNftTransfersFromToBlock", async ({params, user, ip}: any)
 
 Parse.Cloud.define("getAllTokenIds", async ({params, user, ip}: any) => {
   try {
-    await beforeApiRequest(user, ip, 'getAllTokenIds');
     const result = await Moralis.EvmApi.nft.getContractNFTs(params);
     return result?.raw;
   } catch (error) {
@@ -285,7 +251,6 @@ Parse.Cloud.define("getAllTokenIds", async ({params, user, ip}: any) => {
 
 Parse.Cloud.define("getContractNFTTransfers", async ({params, user, ip}: any) => {
   try {
-    await beforeApiRequest(user, ip, 'getContractNFTTransfers');
     const result = await Moralis.EvmApi.nft.getNFTContractTransfers(params);
     return result?.raw;
   } catch (error) {
@@ -295,7 +260,6 @@ Parse.Cloud.define("getContractNFTTransfers", async ({params, user, ip}: any) =>
 
 Parse.Cloud.define("getNFTOwners", async ({params, user, ip}: any) => {
   try {
-    await beforeApiRequest(user, ip, 'getNFTOwners');
     const result = await Moralis.EvmApi.nft.getNFTOwners(params);
     return result?.raw;
   } catch (error) {
@@ -305,7 +269,6 @@ Parse.Cloud.define("getNFTOwners", async ({params, user, ip}: any) => {
 
 Parse.Cloud.define("getNFTMetadata", async ({params, user, ip}: any) => {
   try {
-    await beforeApiRequest(user, ip, 'getNFTMetadata');
     const result = await Moralis.EvmApi.nft.getNFTContractMetadata(params);
     return result?.raw;
   } catch (error) {
@@ -315,7 +278,6 @@ Parse.Cloud.define("getNFTMetadata", async ({params, user, ip}: any) => {
 
 Parse.Cloud.define("reSyncMetadata", async ({params, user, ip}: any) => {
   try {
-    await beforeApiRequest(user, ip, 'reSyncMetadata');
     const result = await Moralis.EvmApi.nft.reSyncMetadata(params);
     return result?.raw;
   } catch (error) {
@@ -325,7 +287,6 @@ Parse.Cloud.define("reSyncMetadata", async ({params, user, ip}: any) => {
 
 Parse.Cloud.define("syncNFTContract", async ({params, user, ip}: any) => {
   try {
-    await beforeApiRequest(user, ip, 'syncNFTContract');
     const result = await Moralis.EvmApi.nft.syncNFTContract(params);
     return result?.raw;
   } catch (error) {
@@ -335,7 +296,6 @@ Parse.Cloud.define("syncNFTContract", async ({params, user, ip}: any) => {
 
 Parse.Cloud.define("getTokenIdMetadata", async ({params, user, ip}: any) => {
   try {
-    await beforeApiRequest(user, ip, 'getTokenIdMetadata');
     const result = await Moralis.EvmApi.nft.getNFTMetadata(params);
     return result?.raw;
   } catch (error) {
@@ -345,7 +305,6 @@ Parse.Cloud.define("getTokenIdMetadata", async ({params, user, ip}: any) => {
 
 Parse.Cloud.define("getTokenIdOwners", async ({params, user, ip}: any) => {
   try {
-    await beforeApiRequest(user, ip, 'getTokenIdOwners');
     const result = await Moralis.EvmApi.nft.getNFTTokenIdOwners(params);
     return result?.raw;
   } catch (error) {
@@ -355,7 +314,6 @@ Parse.Cloud.define("getTokenIdOwners", async ({params, user, ip}: any) => {
 
 Parse.Cloud.define("getWalletTokenIdTransfers", async ({params, user, ip}: any) => {
   try {
-    await beforeApiRequest(user, ip, 'getWalletTokenIdTransfers');
     const result = await Moralis.EvmApi.nft.getNFTTransfers(params);
     return result?.raw;
   } catch (error) {
@@ -365,7 +323,6 @@ Parse.Cloud.define("getWalletTokenIdTransfers", async ({params, user, ip}: any) 
 
 Parse.Cloud.define("resolveDomain", async ({params, user, ip}: any) => {
   try {
-    await beforeApiRequest(user, ip, 'resolveDomain');
     const result = await Moralis.EvmApi.resolve.resolveDomain(params);
     return result?.raw;
   } catch (error) {
@@ -375,7 +332,6 @@ Parse.Cloud.define("resolveDomain", async ({params, user, ip}: any) => {
 
 Parse.Cloud.define("resolveAddress", async ({params, user, ip}: any) => {
   try {
-    await beforeApiRequest(user, ip, 'resolveAddress');
     const result = await Moralis.EvmApi.resolve.resolveAddress(params);
     return result?.raw;
   } catch (error) {
@@ -385,7 +341,6 @@ Parse.Cloud.define("resolveAddress", async ({params, user, ip}: any) => {
 
 Parse.Cloud.define("getPairReserves", async ({params, user, ip}: any) => {
   try {
-    await beforeApiRequest(user, ip, 'getPairReserves');
     const result = await Moralis.EvmApi.defi.getPairReserves(params);
     return result?.raw;
   } catch (error) {
@@ -395,7 +350,6 @@ Parse.Cloud.define("getPairReserves", async ({params, user, ip}: any) => {
 
 Parse.Cloud.define("getPairAddress", async ({params, user, ip}: any) => {
   try {
-    await beforeApiRequest(user, ip, 'getPairAddress');
     const result = await Moralis.EvmApi.defi.getPairAddress(params);
     return result?.raw;
   } catch (error) {
@@ -405,7 +359,6 @@ Parse.Cloud.define("getPairAddress", async ({params, user, ip}: any) => {
 
 Parse.Cloud.define("uploadFolder", async ({params, user, ip}: any) => {
   try {
-    await beforeApiRequest(user, ip, 'uploadFolder');
     const result = await Moralis.EvmApi.ipfs.uploadFolder(params);
     return result?.raw;
   } catch (error) {
@@ -415,7 +368,6 @@ Parse.Cloud.define("uploadFolder", async ({params, user, ip}: any) => {
 
 Parse.Cloud.define("web3ApiVersion", async ({params, user, ip}: any) => {
   try {
-    await beforeApiRequest(user, ip, 'web3ApiVersion');
     // @ts-ignore
     const result = await Moralis.EvmApi.utils.web3ApiVersion(params);
     return result?.raw;
@@ -426,7 +378,6 @@ Parse.Cloud.define("web3ApiVersion", async ({params, user, ip}: any) => {
 
 Parse.Cloud.define("endpointWeights", async ({params, user, ip}: any) => {
   try {
-    await beforeApiRequest(user, ip, 'endpointWeights');
     // @ts-ignore
     const result = await Moralis.EvmApi.utils.endpointWeights(params);
     return result?.raw;

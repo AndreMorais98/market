@@ -26,7 +26,7 @@ function Profile() {
   async function getMyNFTs () {
     const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
     const signer = provider.getSigner()
- 
+
     let contract = new ethers.Contract(marketAddress, abi, signer);
 
     const nfts = await contract.getNFTs();
@@ -93,8 +93,15 @@ function Profile() {
                   <Blockie className="img-account" currentWallet scale={25} />                  
                   <div className="mt-3 links">
                     <div className="username-div">
-                      <h4 className="username"> {user.attributes.username} </h4>
-                      <img className="img-verified" src="verified.png" alt="verified"/>
+                      {account === "0x88a5399e74895264c1dd65c91418bf81695703da" &&
+                        <h4 className="username"> Gucci </h4>
+                      }
+                      {account !== "0x88a5399e74895264c1dd65c91418bf81695703da" &&
+                        <h4 className="username"> {user.attributes.username} </h4>
+                      }
+                      {account === "0x88a5399e74895264c1dd65c91418bf81695703da" &&
+                        <img className="img-verified" src="verified.png" alt="verified"/>
+                      }
                     </div>
                     <p className="text-muted font-size-sm" style={{marginBottom: "10px"}}> {account} </p>
                     <a href="https://andremorais98.github.io/">

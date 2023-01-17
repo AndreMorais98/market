@@ -236,3 +236,12 @@ body{
     height: auto;
     width: 100%;   
 }
+
+.nft-info {
+    height: 140px;
+}
+
+.nft-info .links h4{
+    font-size: 20px;
+    font-weight: 700;
+}

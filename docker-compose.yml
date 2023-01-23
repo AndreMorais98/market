@@ -1,0 +1,10 @@
+version: '3'
+services:
+  server:
+    build: server/
+    ports:
+      - "1337:1337"
+  market:
+    build: market/
+    ports:
+      - "3000:3000"

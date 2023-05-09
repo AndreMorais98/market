@@ -90,7 +90,7 @@ function Market() {
             <div className="card-body">
               <div className="row">
                 {nfts.length === 0 &&
-                  <h2 style={{margin: "100px", width: "100%", textAlign: "center"}}>
+                  <h2 style={{padding: "100px", width: "100%", textAlign: "center"}}>
                     There is no NFTs on the market
                   </h2>
                 }

@@ -1,10 +1,10 @@
 version: '3'
 services:
   server:
-    build: server/
+    image: andremorais98/luxyserver
     ports:
       - "1337:1337"
   market:
-    build: market/
+    image: andremorais98/luxymarket
     ports:
       - "3000:3000"

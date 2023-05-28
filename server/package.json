@@ -15,7 +15,7 @@
     "graphql": "^16.6.0",
     "graphql-ws": "^5.10.1",
     "moralis": "^2.8.2",
-    "ngrok": "^4.3.3",
+    "ngrok": "^5.0.0-beta.2",
     "parse-server": "^5.2.7",
     "yarn": "^1.22.19"
   },

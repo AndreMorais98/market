@@ -2,7 +2,8 @@
 
 ## Requisites:
 - Docker
-- Metamask
+- Metamask (https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn)
+- DO NOT USE ADBLOCK
 
 ## Run project
 - Create a "docker-compose.yml" with the code below:

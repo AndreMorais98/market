@@ -1,4 +1,6 @@
 # Luxy Marketplace
+### Warning
+If you are running with docker, you don't need anything of this
 
 ## Create a file .env in the market root and configure it
 ```

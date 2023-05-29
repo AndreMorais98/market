@@ -1,4 +1,6 @@
 # Self Hosted Server
+### Warning
+If you are running with docker, you don't need anything of this
 
 ## Create a file .env in the server root and configure it
 ```

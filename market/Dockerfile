@@ -7,6 +7,9 @@ WORKDIR /src/
 # Copy the package.json and package-lock.json files to the container
 COPY . /src/
 
+# Copy production to into development to be loaded inside container
+COPY .env.production /src/.env.development
+
 # Build the server
 RUN npm install
 

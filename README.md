@@ -1,22 +1,16 @@
 # Dissertation - Luxy Marketplace
 
-## Requisites:
-- Docker
-- Metamask (https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn)
-- DO NOT USE ADBLOCK
+## Instructions
 
-## Run project
-- Create a "docker-compose.yml" with the code below:
-```yaml
-    version: '3'
-    services:
-    server:
-        image: andremorais98/luxyserver
-        ports:
-        - "1337:1337"
-    market:
-        image: andremorais98/luxymarket
-        ports:
-        - "3000:3000"
+- Acess to http://luxy-market.projj.eu/
+- Disable Adblock
+- Install a cripto wallet
+- Add Mumbai to your networks:
+
 ```
-- Run "docker-compose up"
+Network Name: Mumbai Testnet
+New RPC URL: https://rpc-mumbai.maticvigil.com/
+Chain ID: 80001
+Currency Symbol: MATIC
+Block Explorer URL: https://polygonscan.com/
+```
